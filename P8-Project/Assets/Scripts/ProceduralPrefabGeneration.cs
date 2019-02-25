@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class ProceduralPrefabGeneration : MonoBehaviour {
-
-    public GameObject roomTemplate;
+    
+    public GameObject[] roomArray;
     public float rooms;
     public float roomDistance;
 
@@ -12,7 +12,8 @@ public class ProceduralPrefabGeneration : MonoBehaviour {
     {
         for (int i = 0; i < rooms; i++)
         {
-                Instantiate(roomTemplate, new Vector3(roomDistance * i, 0, 0), Quaternion.identity);
+            int rand = Random.Range(0, 1);
+            Instantiate(roomArray[rand], new Vector3(roomDistance * i, 0, 0), Quaternion.identity);
         }
     }
 	

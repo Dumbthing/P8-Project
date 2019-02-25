@@ -4,10 +4,15 @@ using UnityEngine;
 
 public class PortalTeleporterScript : MonoBehaviour {
 
-    public Transform player;
-    public Transform reciever;
+    Transform player;
+    public Transform reciever;  
 
     private bool playerIsOverlapping = false;
+
+    private void Start()
+    {
+        player = GameObject.FindGameObjectWithTag("Player").transform;
+    }
 
     // Update is called once per frame
     void Update()
