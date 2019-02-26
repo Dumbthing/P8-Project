@@ -24,7 +24,7 @@ public class PortalCamera : MonoBehaviour {
         transform.position = destination.position + playerOffsetFromPortal;
 
         float angularDifferenceBetweenPortalRotations = Quaternion.Angle(destination.rotation, entrance.rotation);
-        angularDifferenceBetweenPortalRotations += 180f;
+        angularDifferenceBetweenPortalRotations += 180f; //Our offset was wrong when we changed parents. So might have to delete this if we get errors later. 
 
         Quaternion portalRotationalDifference = Quaternion.AngleAxis(angularDifferenceBetweenPortalRotations, Vector3.up);
         Vector3 newCameradirection = (portalRotationalDifference * playerCamera.forward);
