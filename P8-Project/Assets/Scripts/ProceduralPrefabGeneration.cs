@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class ProceduralPrefabGeneration : MonoBehaviour {
-
-    public GameObject startRoom;
+    
     public GameObject[] roomArray;
     public float rooms;
     public float roomDistance;
