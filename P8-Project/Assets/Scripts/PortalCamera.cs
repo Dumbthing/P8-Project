@@ -5,17 +5,17 @@ using UnityEngine;
 public class PortalCamera : MonoBehaviour {
 
     Transform playerCamera;
+    Transform entrance;
     public Transform destination;
-    public Transform entrance;
     
 
 
     private void Start()
     {
         playerCamera = GameObject.FindGameObjectWithTag("Player").GetComponentInChildren<Camera>().transform;
+        entrance = transform.parent;
     }
-
-    // Update is called once per frame
+    
     void LateUpdate () {
 
         //Vector3 pos = destination.transform.InverseTransformPoint(playerCamera.position);
