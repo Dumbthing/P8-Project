@@ -3,14 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class PortalTeleporter : MonoBehaviour {
-
-    Transform player;
-    Transform playerCamera;
-    GameObject portalCamera;
-    Transform entrance; // Portal parent
-    Transform reciever;
-
-    public Transform destination; // Other portal parents
+    
+    Material material;
+    Camera portalCamera;
+    Transform player, playerCamera, entrance, reciever;
+    public Transform destination; // Other portal parents, need new method for finding destination procedurally
 
     private bool playerIsOverlapping = false;
 
@@ -18,10 +15,20 @@ public class PortalTeleporter : MonoBehaviour {
     {
         player = GameObject.FindGameObjectWithTag("Player").transform;
         playerCamera = GameObject.FindGameObjectWithTag("Player").GetComponentInChildren<Camera>().transform;
-        entrance = transform.parent;
-        portalCamera = entrance.gameObject.GetComponentInChildren<Camera>().gameObject;
+        entrance = transform;
+        reciever = destination.GetComponent<Collider>().transform;
 
-        reciever = destination.GetComponentInChildren<Collider>().transform;
+        portalCamera = GetComponentInChildren<Camera>();
+        material = GetComponent<Renderer>().material;
+
+
+        if (portalCamera.targetTexture != null)
+        {
+            portalCamera.targetTexture.Release();
+        }
+
+        portalCamera.targetTexture = new RenderTexture(Screen.width, Screen.height, 24);
+        material.mainTexture = portalCamera.targetTexture;
     }
 
     // Update is called once per frame
@@ -48,10 +55,8 @@ public class PortalTeleporter : MonoBehaviour {
         }
     }
 
-    void LateUpdate() // Camera related
+    void LateUpdate() // Camera update loop
     {
-        //Vector3 pos = destination.transform.InverseTransformPoint(playerCamera.position);
-        //transform.localPosition = new Vector3(-pos.x, transform.localPosition.y, -pos.z);
         Vector3 playerOffsetFromPortal = playerCamera.position - entrance.position; //offset 
         portalCamera.transform.position = destination.position + playerOffsetFromPortal;
 
@@ -67,7 +72,6 @@ public class PortalTeleporter : MonoBehaviour {
     {
         if (other.tag == "Player")
         {
-            Debug.Log("Enter collision detected");
             playerIsOverlapping = true;
         }
     }
@@ -76,7 +80,6 @@ public class PortalTeleporter : MonoBehaviour {
     {
         if (other.tag == "Player")
         {
-            Debug.Log("Exit collision detected");
             playerIsOverlapping = false;
         }
     }

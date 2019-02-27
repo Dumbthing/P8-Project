@@ -9,8 +9,8 @@ public class PortalTexture : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-        camera = this.GetComponentInChildren<Camera>();
-        material = this.GetComponentInChildren<Renderer>().material;
+        camera = GetComponentInChildren<Camera>();
+        material = GetComponent<Renderer>().material;
         //texture = GameObject.Find("/Portal1-2/RenderPlaneTemplate").GetComponent<Material>().mainTexture;
         //material = GameObject.FindGameObjectWithTag("Portal").GetComponent<Renderer>().material;
        
