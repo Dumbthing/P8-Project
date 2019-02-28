@@ -19,7 +19,7 @@ public class PortalTeleporter : MonoBehaviour {
         reciever = destination.GetComponent<Collider>().transform;
 
         portalCamera = GetComponentInChildren<Camera>();
-        GetComponent<Renderer>().material = new Material(Shader.Find("ScreenCutoutShader"));
+        //GetComponent<Renderer>().material = new Material(Shader.Find("ScreenCutoutShader"));
         material = GetComponent<Renderer>().material;
 
 
