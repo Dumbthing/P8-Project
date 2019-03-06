@@ -8,6 +8,8 @@ public class TrapCollission : MonoBehaviour {
 public GameObject Enemy;
 
 public GameObject Trap;
+
+public GameObject projectile;
 	
 public bool poison;
 
@@ -27,7 +29,7 @@ public float midpointHeadMidpoint;
 
 private float randDuck;
 
-private GameObject projectile;
+
 
 public Vector3 localLeftWallOffset, localRightWallOffset; 
 
@@ -36,8 +38,7 @@ public Vector3 localLeftWallOffset, localRightWallOffset;
 		_pSystem = Trap.GetComponent<ParticleSystem>();
 		HMDPosition = GameObject.FindWithTag("HMD");
 		localLeftWallOffset = Trap.transform.position + localLeftWallOffset;
-		localRightWallOffset = Trap.transform.position + localRightWallOffset;
-		projectile = GameObject.FindGameObjectWithTag("Projectile");
+		localRightWallOffset = Trap.transform.position + localRightWallOffset;	
 	}
 	
 	// Update is called once per frame
@@ -118,6 +119,7 @@ public Vector3 localLeftWallOffset, localRightWallOffset;
 		}
 	void rightFireWall() {
 			Debug.Log("Firewall = rightFireWall");
+			Instantiate(projectile, localRightWallOffset, projectile.transform.rotation);
 		}
 
 	void duckWall() {
