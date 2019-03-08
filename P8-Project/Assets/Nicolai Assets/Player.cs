@@ -16,6 +16,8 @@ public class Player : MonoBehaviour {
 		position = transform.position;
 		transform.Translate(speed*Input.GetAxis("Horizontal") * Time.deltaTime, 0f, speed*Input.GetAxis("Vertical") * Time.deltaTime);
 	}
+
+	
      
 //    public void Move()
 //     {
