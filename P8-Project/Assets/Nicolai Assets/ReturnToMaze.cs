@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class ReturnToMaze : MonoBehaviour {
 
-	private Collider[] amountOfOverlaps = new Collider[10];
+	// private Collider[] amountOfOverlaps = new Collider[10];
 	private int amountOfCollisions;
 	// Use this for initialization
 	void Start () {
@@ -16,8 +16,8 @@ public class ReturnToMaze : MonoBehaviour {
 		
 	}
 
-	void OnCollisionEnter(Collider collPlayer) {
-		if(collPlayer.tag == "Player") {
+	void OnCollisionEnter(Collision collPlayer) {
+		if(collPlayer.gameObject.tag == "Player") {
 			// Method 1: 
 			// Disable render for whole level or just the single wall, and keep level.
 			// levelrenderer.enabled = false;
