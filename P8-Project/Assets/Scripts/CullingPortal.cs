@@ -14,11 +14,11 @@ public class CullingPortal : MonoBehaviour {
     // Comparison variables
     private bool singlePortalCollision = false;
     private bool defineBackwardPortal = false;
-    public int portalExitScenario = 0; // Default is 0: do nothing
+    private int portalExitScenario = 0; // Default is 0: do nothing
     private int portalStep = 0;
     private int currentRoom = 0, maxRooms;
-
-    private int lastPortalId;
+    
+    private Vector3 backwardPortalPos;
     private Vector3 lastPortalPos;
 
 	void Start ()
@@ -32,51 +32,57 @@ public class CullingPortal : MonoBehaviour {
     {
         if (!singlePortalCollision)
         {
-            Debug.Log("Current room: " + currentRoom + " < maxRooms: " + maxRooms);
-            Debug.Log("Portal step: " + portalStep);
             // Check whether current room is the last room, or whether a player has just enetered a portal
-            if (currentRoom < maxRooms || portalStep == 1 || portal.transform.localPosition == lastPortalPos)
+            if (currentRoom < maxRooms || portalStep == 1 || portal.transform.localPosition == backwardPortalPos)
             {
-                /// Scenario 1 [COMPLETE] -  Only works for 2 portal setup
                 if (portalStep == 0) // First portal
                 {
-                    if (portal.transform.localPosition != lastPortalPos)
+                    if (portal.transform.localPosition != backwardPortalPos)
                     {
                         currentRoom++;
-                        portalStep++;
                         portalExitScenario = 1;
                     }
                     else
                     {
                         currentRoom--;
-                        portalStep++;
                         portalExitScenario = 2;
                     }
+                    lastPortalPos = portal.transform.localPosition;
+                    portalStep++;
                 }
                 else // Second portal
                 {
-                    if (portalExitScenario == 1)
+                    if (portal.transform.localPosition == lastPortalPos) // Player went back while between portals
                     {
-                        rooms[currentRoom - 1].SetActive(false);
-                        HideLayer(rooms[currentRoom - 1].layer, portal);
+                            rooms[currentRoom].SetActive(false);
+                            HideLayer(rooms[currentRoom].layer, portal);
+                        if (portalExitScenario == 1)
+                            SetActiveChild(rooms[currentRoom].transform, "Portal", true); // Enable portals in new room, in case they are disabled.
+                        if (portalExitScenario == 2)
+                            SetActiveChild(rooms[currentRoom].transform, "Portal", true); // Enable portals in new room, in case they are disabled.
                     }
-                    else if (portalExitScenario == 2)
+                    else
                     {
-                        rooms[currentRoom + 1].SetActive(false);
-                        HideLayer(rooms[currentRoom + 1].layer, portal);
-                    }
+                        if (portalExitScenario == 1)
+                        {
+                            rooms[currentRoom - 1].SetActive(false);
+                            HideLayer(rooms[currentRoom - 1].layer, portal);
+                        }
+                        else if (portalExitScenario == 2)
+                        {
+                            rooms[currentRoom + 1].SetActive(false);
+                            HideLayer(rooms[currentRoom + 1].layer, portal);
+                        }
 
-                    if (!defineBackwardPortal)
-                    {
-                        lastPortalPos = portal.transform.localPosition;
-                        defineBackwardPortal = true;
+                        if (!defineBackwardPortal)
+                        {
+                            backwardPortalPos = portal.transform.localPosition;
+                            defineBackwardPortal = true;
+                        }
                     }
                     portalStep--;
                 }
             }
-            /// Scenario 2 [INCOMPLETE] - Needs to take player back when entering portal defined as back portal
-
-            /// Scenario 3 [INCOMPLETE] -
 
             /// Scenario 4 [INCOMPLETE] -
             /// Scenario 5 [INCOMPLETE] -
@@ -126,7 +132,7 @@ public class CullingPortal : MonoBehaviour {
         for (int i = 0; i < parent.childCount; i++)
         {
             Transform child = parent.GetChild(i);
-            if (child.tag == _tag && child.GetInstanceID() == lastPortalId)
+            if (child.tag == _tag && child.transform.localPosition != lastPortalPos) // Not sure if this should be lastPortalPos
             {
                 child.gameObject.SetActive(enabled);
             }
