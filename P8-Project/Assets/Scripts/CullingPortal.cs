@@ -6,13 +6,14 @@ public class CullingPortal : MonoBehaviour {
 
     // Inspector variables
     public GameObject[] rooms;
+    GameObject[] newRooms;
 
     // Referencial variables to components of current gameobject
     Camera playerCam;
     LayerMask oldMask;
 
     // Comparison variables
-    private bool singlePortalCollision = false;
+    public bool singlePortalCollision = false;
     private bool defineBackwardPortal = false;
     private int portalExitScenario = 0; // Default is 0: do nothing
     private int portalStep = 0;
@@ -26,6 +27,27 @@ public class CullingPortal : MonoBehaviour {
         playerCam = GetComponentInChildren<Camera>();
         oldMask = playerCam.cullingMask; // Original culling mask
         maxRooms = rooms.Length-1;
+        newRooms = new GameObject[rooms.Length];
+        GenerateLevel();
+    }
+
+    private void GenerateLevel()
+    {
+        for (int i = 0; i < rooms.Length; i++)
+        {
+            newRooms[i] = Instantiate(rooms[i], new Vector3(0.5f, 0, 0.5f),Quaternion.identity);
+            if (i != 0)
+            {
+                newRooms[i].SetActive(false);
+                SetActiveChild(newRooms[i].transform, "Portal", false);
+            }
+            else
+            {
+                newRooms[i].SetActive(true);
+                SetActiveChild(newRooms[i].transform, "Portal", true);
+            }
+
+        }
     }
 
     private void OnTriggerEnter(Collider portal) // Portal collision
@@ -54,24 +76,24 @@ public class CullingPortal : MonoBehaviour {
                 {
                     if (portal.transform.localPosition == lastPortalPos) // Player went back while between portals
                     {
-                            rooms[currentRoom].SetActive(false);
-                            HideLayer(rooms[currentRoom].layer, portal);
+                        newRooms[currentRoom].SetActive(false);
+                        HideLayer(newRooms[currentRoom].layer, portal);
                         if (portalExitScenario == 1)
-                            SetActiveChild(rooms[currentRoom].transform, "Portal", true); // Enable portals in new room, in case they are disabled.
+                            SetActiveChild(newRooms[currentRoom].transform, "Portal", true); // Enable portals in new room, in case they are disabled.
                         if (portalExitScenario == 2)
-                            SetActiveChild(rooms[currentRoom].transform, "Portal", true); // Enable portals in new room, in case they are disabled.
+                            SetActiveChild(newRooms[currentRoom].transform, "Portal", true); // Enable portals in new room, in case they are disabled.
                     }
                     else
                     {
                         if (portalExitScenario == 1)
                         {
-                            rooms[currentRoom - 1].SetActive(false);
-                            HideLayer(rooms[currentRoom - 1].layer, portal);
+                            newRooms[currentRoom - 1].SetActive(false);
+                            HideLayer(newRooms[currentRoom - 1].layer, portal);
                         }
                         else if (portalExitScenario == 2)
                         {
-                            rooms[currentRoom + 1].SetActive(false);
-                            HideLayer(rooms[currentRoom + 1].layer, portal);
+                            newRooms[currentRoom + 1].SetActive(false);
+                            HideLayer(newRooms[currentRoom + 1].layer, portal);
                         }
 
                         if (!defineBackwardPortal)
@@ -83,8 +105,7 @@ public class CullingPortal : MonoBehaviour {
                     portalStep--;
                 }
             }
-
-            /// Scenario 4 [INCOMPLETE] -
+            
             /// Scenario 5 [INCOMPLETE] -
             singlePortalCollision = true;
         }
@@ -100,18 +121,18 @@ public class CullingPortal : MonoBehaviour {
     {
         if (portalExitScenario != 0) // True for all except 0
         {
-            rooms[currentRoom].SetActive(true); // Enabling new room, including its portals
-            ShowLayer(rooms[currentRoom].layer, portal);
-            SetActiveChild(rooms[currentRoom].transform, "Portal", true); // Enable portals in new room, in case they are disabled.
+            newRooms[currentRoom].SetActive(true); // Enabling new room, including its portals
+            ShowLayer(newRooms[currentRoom].layer, portal);
+            SetActiveChild(newRooms[currentRoom].transform, "Portal", true); // Enable portals in new room, in case they are disabled.
         }
 
         if (portalExitScenario == 1) // Scenario 1: Enter "next-room" portal, exit other portal
         {
-            SetActiveChild(rooms[currentRoom - 1].transform, "Portal", false); // Since we enabled new portals, we should disable the existing ones.
+            SetActiveChild(newRooms[currentRoom - 1].transform, "Portal", false); // Since we enabled new portals, we should disable the existing ones.
         }
         else if (portalExitScenario == 2) // Scenario 2: Enter "previous-room" portal, exit other portal
         {
-            SetActiveChild(rooms[currentRoom + 1].transform, "Portal", false); // Since we enabled new portals, we should disable the existing ones.
+            SetActiveChild(newRooms[currentRoom + 1].transform, "Portal", false); // Since we enabled new portals, we should disable the existing ones.
             
         }
     }
