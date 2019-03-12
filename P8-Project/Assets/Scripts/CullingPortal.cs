@@ -13,8 +13,9 @@ public class CullingPortal : MonoBehaviour {
     LayerMask oldMask;
 
     // Comparison variables
-    private bool singlePortalCollision = false, defineBackwardPortal = false;
+    public bool singlePortalCollision = false, defineBackwardPortal = false;
     public bool endRoomReached = false;
+    public bool playerReturned = false;
     private int portalExitScenario = 0; // Default is 0: do nothing
     private int portalStep = 0;
     private int currentRoom = 0, maxRooms;
@@ -22,7 +23,7 @@ public class CullingPortal : MonoBehaviour {
     private Vector3 backwardPortalPos;
     private Vector3 lastPortalPos;
 
-	void Start ()
+    void Start ()
     {
         playerCam = GetComponentInChildren<Camera>();
         oldMask = playerCam.cullingMask; // Original culling mask
@@ -56,63 +57,65 @@ public class CullingPortal : MonoBehaviour {
         {
             /// Check whether current room is the last room, whether a player has just enetered a portal, or whether the portal is leading backward
             //if (currentRoom < maxRooms || portalStep == 1 || portal.transform.localPosition == backwardPortalPos)
-                if (portalStep == 0) // First portal
+            if (portalStep == 0) // First portal
+            {
+                if (portal.transform.localPosition != backwardPortalPos && currentRoom < maxRooms)
                 {
-                    if (portal.transform.localPosition != backwardPortalPos && currentRoom < maxRooms)
-                    {
-                        currentRoom++;
-                        portalExitScenario = 1;
-                    }
-                    else if (portal.transform.localPosition == backwardPortalPos && currentRoom != 0)
-                    {
-                        currentRoom--;
-                        portalExitScenario = 2;
-                    }
-                    else if (currentRoom == maxRooms || currentRoom == 0)
-                    {
-                        // Do nothing, and make sure next step also does nothing
-                        endRoomReached = true;
-                    }
-                    lastPortalPos = portal.transform.localPosition;
-                    portalStep++;
+                    currentRoom++;
+                    portalExitScenario = 1;
                 }
-                else if (portalStep == 1)
+                else if (portal.transform.localPosition == backwardPortalPos && currentRoom != 0)
                 {
-                    if (!endRoomReached)
+                    currentRoom--;
+                    portalExitScenario = 2;
+                }
+                else if (currentRoom == maxRooms || currentRoom == 0)
+                {
+                    // Do nothing, and make sure next step also does nothing
+                    endRoomReached = true;
+                }
+                lastPortalPos = portal.transform.localPosition;
+                portalStep++;
+            }
+            else if (portalStep == 1)
+            {
+                if (!endRoomReached)
+                {
+                    if (portal.transform.localPosition == lastPortalPos) // Player went back while between portals
                     {
-                        if (portal.transform.localPosition == lastPortalPos) // Player went back while between portals
+                        if (portalExitScenario == 1)
                         {
-                            newRooms[currentRoom].SetActive(false);
-                            HideLayer(newRooms[currentRoom].layer, portal);
-                            if (portalExitScenario == 1)
-                                SetActiveChild(newRooms[currentRoom].transform, "Portal", true); // Enable portals in new room, in case they are disabled.
-                            if (portalExitScenario == 2)
-                                SetActiveChild(newRooms[currentRoom].transform, "Portal", true); // Enable portals in new room, in case they are disabled.
+                            currentRoom--;
                         }
-                        else
+                        if (portalExitScenario == 2)
                         {
-                            if (portalExitScenario == 1)
-                            {
-                                newRooms[currentRoom - 1].SetActive(false);
-                                HideLayer(newRooms[currentRoom - 1].layer, portal);
-                            }
-                            else if (portalExitScenario == 2)
-                            {
-                                newRooms[currentRoom + 1].SetActive(false);
-                                HideLayer(newRooms[currentRoom + 1].layer, portal);
-                            }
+                            currentRoom++;
+                        }
+                        playerReturned = true;
+                    }
+                    else
+                    {
+                        if (portalExitScenario == 1)
+                        {
+                            newRooms[currentRoom - 1].SetActive(false);
+                            HideLayer(newRooms[currentRoom - 1].layer, portal);
+                        }
+                        else if (portalExitScenario == 2)
+                        {
+                            newRooms[currentRoom + 1].SetActive(false);
+                            HideLayer(newRooms[currentRoom + 1].layer, portal);
+                        }
 
-                            if (!defineBackwardPortal)
-                            {
-                                backwardPortalPos = portal.transform.localPosition;
-                                defineBackwardPortal = true;
-                            }
+                        if (!defineBackwardPortal)
+                        {
+                            backwardPortalPos = portal.transform.localPosition;
+                            defineBackwardPortal = true;
                         }
                     }
-                    portalStep--;
-                    endRoomReached = false;
                 }
-            
+                portalStep--;
+                endRoomReached = false;
+            }
             /// Scenario 4 [INCOMPLETE] -
             singlePortalCollision = true;
         }
@@ -120,11 +123,14 @@ public class CullingPortal : MonoBehaviour {
 
     private void OnTriggerExit(Collider portal) // Out of portal
     {
-        PortalScenario(portalExitScenario, portal);
+        if (!playerReturned)
+            PortalScenarioNext(portalExitScenario, portal);
+        else
+            PortalScenarioReturn(portalExitScenario, portal);
         singlePortalCollision = false; // Bool variable to stop multiple OnTriggerEnter calls
     }
 
-    private void PortalScenario(int scenario, Collider portal)
+    private void PortalScenarioNext(int scenario, Collider portal)
     {
         if (portalExitScenario != 0) // True for all except 0
         {
@@ -132,7 +138,6 @@ public class CullingPortal : MonoBehaviour {
             ShowLayer(newRooms[currentRoom].layer, portal);
             SetActiveChild(newRooms[currentRoom].transform, "Portal", true); // Enable portals in new room, in case they are disabled.
         }
-
         if (portalExitScenario == 1) // Scenario 1: Enter "next-room" portal, exit other portal
         {
             SetActiveChild(newRooms[currentRoom - 1].transform, "Portal", false); // Since we enabled new portals, we should disable the existing ones.
@@ -140,8 +145,23 @@ public class CullingPortal : MonoBehaviour {
         else if (portalExitScenario == 2) // Scenario 2: Enter "previous-room" portal, exit other portal
         {
             SetActiveChild(newRooms[currentRoom + 1].transform, "Portal", false); // Since we enabled new portals, we should disable the existing ones.
-            
         }
+    }
+
+    private void PortalScenarioReturn(int scenario, Collider portal)
+    {
+        if (portalExitScenario == 1)
+        {
+            SetActiveChild(newRooms[currentRoom + 1].transform, "Portal", false);
+            newRooms[currentRoom + 1].SetActive(false);
+        }
+        else if (portalExitScenario == 2)
+        {
+            SetActiveChild(newRooms[currentRoom - 1].transform, "Portal", false);
+            newRooms[currentRoom - 1].SetActive(false);
+        }
+        SetActiveChild(newRooms[currentRoom].transform, "Portal", true);
+        playerReturned = false;
     }
 
     // Access other portals
