@@ -122,6 +122,7 @@ GameObject:
   m_Component:
   - component: {fileID: 797151005}
   - component: {fileID: 797151004}
+  - component: {fileID: 797151006}
   m_Layer: 0
   m_Name: ProceduralGenerationHandler
   m_TagString: Untagged
@@ -140,6 +141,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4e671804c1c7a1446964db6a9996eb87, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  portalTele: {fileID: 797151006}
   startRoom: {fileID: 1392608261445934, guid: c58706e2e77732a4d8b9ce1e084edde7, type: 2}
   endRoom: {fileID: 1019700333006770, guid: 370b1c17960afeb4eac9cdb3b36014aa, type: 2}
   roomTypeOneArray:
@@ -173,6 +175,18 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &797151006
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 797151003}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3b7626f7ce921384cadf7dbb801ad5db, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  destination: {fileID: 0}
 --- !u!1001 &1360999464
 Prefab:
   m_ObjectHideFlags: 0
@@ -236,7 +250,12 @@ Prefab:
       propertyPath: m_Enabled
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    - target: {fileID: 2000000, guid: 054e0f02fcd5eba40bc6bb6e9f467688, type: 2}
+      propertyPath: m_CullingMask.m_Bits
+      value: 4294967295
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 114069912395874002, guid: 054e0f02fcd5eba40bc6bb6e9f467688, type: 2}
   m_SourcePrefab: {fileID: 100100000, guid: 054e0f02fcd5eba40bc6bb6e9f467688, type: 2}
   m_IsPrefabAsset: 0
 --- !u!1 &1842751020

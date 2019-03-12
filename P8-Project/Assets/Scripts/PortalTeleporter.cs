@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class PortalTeleporter : MonoBehaviour {
     
+    
     Material material;
     Camera portalCamera;
     Transform player, playerCamera, entrance, reciever;
@@ -16,6 +17,8 @@ public class PortalTeleporter : MonoBehaviour {
         player = GameObject.FindGameObjectWithTag("Player").transform;
         playerCamera = GameObject.FindGameObjectWithTag("Player").GetComponentInChildren<Camera>().transform;
         entrance = transform;
+        //reciever.position = transform.position + new Vector3 (5f, 0f, 0f);
+        
         reciever = destination.GetComponent<Collider>().transform;
 
         portalCamera = GetComponentInChildren<Camera>();
@@ -49,7 +52,7 @@ public class PortalTeleporter : MonoBehaviour {
                 player.Rotate(Vector3.up, rotationDiff);
 
                 Vector3 positionOffset = Quaternion.Euler(0f, rotationDiff, 0f) * portalToPlayer;
-                player.position = reciever.position + positionOffset;
+                player.position = reciever.position;
 
                 playerIsOverlapping = false;
             }

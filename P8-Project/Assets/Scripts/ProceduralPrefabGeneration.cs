@@ -1,15 +1,22 @@
-﻿using System.Collections;
+﻿
+
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 
 public class ProceduralPrefabGeneration : MonoBehaviour {
 
+    public PortalTeleporter portalTele;
+
     public GameObject startRoom, endRoom;
     public GameObject[] roomTypeOneArray;
     public GameObject[] roomTypeTwoArray;
     public GameObject[] roomTypeThreeArray;
     public GameObject[] roomTypeFourArray;
+
+    GameObject portal;
+    GameObject portalTemp;
 
     [Tooltip("Input is multiplied by the amount of room types!")]
     public float rooms;
@@ -35,7 +42,7 @@ public class ProceduralPrefabGeneration : MonoBehaviour {
 
     void AssignPortals()
     {
-
+       
     }
 
 
@@ -49,6 +56,22 @@ public class ProceduralPrefabGeneration : MonoBehaviour {
                 TagCreate.AddTag("Portal" + "_" + i + "_1");
                 roomTypeOneArray[i - 1].tag = ("Room1"+"_"+i);
                 Instantiate(roomTypeOneArray[i - 1], new Vector3(roomDistance * -1.5f, 0, roomDistance * i), Quaternion.identity); // Far-left
+                portal = GameObject.FindGameObjectWithTag("Room1" + "_" + i);
+
+                for (int j = 0; j< portal.transform.childCount; j++)
+                {
+                    Transform child = portal.transform.GetChild(j);
+                    if (child.tag == "Portal1")
+                    {
+                        //child.tag = ("Portal" + "_" + i + "_1");
+                        child.GetComponent<PortalTeleporter>().destination = child.transform;
+                    }
+                    else if (child.tag == "Portal2")
+                    {
+                        child.GetComponent<PortalTeleporter>().destination = child.transform;
+                    }
+                }
+
 
                 TagCreate.AddTag("Room2" + "_" + i);
                 TagCreate.AddTag("Portal" + "_" + i + "_2");
