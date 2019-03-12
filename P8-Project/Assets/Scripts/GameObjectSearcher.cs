@@ -38,4 +38,26 @@ public class GameObjectSearcher : MonoBehaviour
             }
         }
     }
+    public Transform GetSingleChildObject(Transform parent, string _tag)
+    {
+        for (int i = 0; i < parent.childCount; i++)
+        {
+            Transform child = parent.GetChild(i);
+            if (child.tag == _tag)
+            {
+                return child;
+            }
+        }
+        return null;
+    }
+
+    public void SetActiveChild(Transform parent, string _tag, bool boolVal)
+    {
+        for (int i = 0; i < parent.childCount; i++)
+        {
+            Transform child = parent.GetChild(i);
+            if (child.tag == _tag)
+                child.gameObject.SetActive(boolVal);
+        }
+    }
 }
