@@ -1,0 +1,4 @@
+﻿Shader "Custom/StencilBufferJ"
+{
+	
+}
