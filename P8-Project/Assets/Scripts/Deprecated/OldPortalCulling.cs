@@ -2,14 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CullingPortal : MonoBehaviour {
+public class OldPortalCulling : MonoBehaviour
+{
 
     // Inspector variables
     public GameObject[] rooms;
-
-    [HideInInspector]
-    public GameObject[] newRooms;
-    public int maxRooms;
+    GameObject[] newRooms;
 
     // Referencial variables to components of current gameobject
     Camera playerCam;
@@ -19,16 +17,15 @@ public class CullingPortal : MonoBehaviour {
     // Comparison variables
     private bool singlePortalCollision = false, endRoomReached = false, playerReturned = false;
     private int portalExitScenario = 0, portalStep = 0; // Default is 0: do nothing
-    private int currentRoom = 0;
-    
+    private int currentRoom = 0, maxRooms;
+
     private Vector3 backwardPortalPos, lastPortalPos;
 
-    void Start ()
+    void Start()
     {
-        cameras = GetComponent<CameraEnabler>();
         playerCam = GetComponentInChildren<Camera>();
         //oldMask = playerCam.cullingMask; // Original culling mask
-        maxRooms = rooms.Length-1;
+        maxRooms = rooms.Length - 1;
         newRooms = new GameObject[rooms.Length];
         GenerateLevel();
     }
@@ -37,13 +34,15 @@ public class CullingPortal : MonoBehaviour {
     {
         for (int i = 0; i < rooms.Length; i++)
         {
-            newRooms[i] = Instantiate(rooms[i], new Vector3(0f, 0f, 0f) ,Quaternion.identity);
+            newRooms[i] = Instantiate(rooms[i], new Vector3(0f, 0f, 0f), Quaternion.identity);
             if (i != 0)
             {
+                newRooms[i].SetActive(false);
                 SetActiveChild(newRooms[i].transform, "Portal", false);
             }
             else
             {
+                newRooms[i].SetActive(true);
                 SetActiveChild(newRooms[i].transform, "Portal", true);
             }
 
@@ -62,14 +61,11 @@ public class CullingPortal : MonoBehaviour {
                 {
                     currentRoom++;
                     portalExitScenario = 1;
-                    cameras.SetNewCullingMasks(currentRoom);
-
                 }
                 else if (portal.transform.localPosition == backwardPortalPos && currentRoom != 0)
                 {
                     currentRoom--;
                     portalExitScenario = 2;
-                    cameras.SetNewCullingMasks(currentRoom);
                 }
                 else if (currentRoom == maxRooms || currentRoom == 0)
                 {
@@ -88,12 +84,10 @@ public class CullingPortal : MonoBehaviour {
                         if (portalExitScenario == 1)
                         {
                             currentRoom--;
-                            cameras.SetNewCullingMasks(currentRoom);
                         }
                         if (portalExitScenario == 2)
                         {
                             currentRoom++;
-                            cameras.SetNewCullingMasks(currentRoom);
                         }
                         playerReturned = true;
                     }
@@ -101,16 +95,16 @@ public class CullingPortal : MonoBehaviour {
                     {
                         if (portalExitScenario == 1)
                         {
-                            /// Enters new room
-                            //HideLayer(newRooms[currentRoom - 1].layer, portal);
+                            newRooms[currentRoom - 1].SetActive(false);
+                            HideLayer(newRooms[currentRoom - 1].layer, portal);
                         }
                         else if (portalExitScenario == 2)
                         {
-                            /// Enters previous room
-                            //HideLayer(newRooms[currentRoom + 1].layer, portal);
+                            newRooms[currentRoom + 1].SetActive(false);
+                            HideLayer(newRooms[currentRoom + 1].layer, portal);
                         }
 
-                        if (backwardPortalPos == new Vector3(0,0,0))
+                        if (backwardPortalPos == new Vector3(0, 0, 0))
                         {
                             backwardPortalPos = portal.transform.localPosition;
                         }
@@ -137,6 +131,8 @@ public class CullingPortal : MonoBehaviour {
     {
         if (portalExitScenario != 0) // True for all except 0
         {
+            newRooms[currentRoom].SetActive(true); // Enabling new room, including its portals
+            ShowLayer(newRooms[currentRoom].layer, portal);
             SetActiveChild(newRooms[currentRoom].transform, "Portal", true); // Enable portals in new room, in case they are disabled.
         }
         if (portalExitScenario == 1) // Scenario 1: Enter "next-room" portal, exit other portal
@@ -154,10 +150,12 @@ public class CullingPortal : MonoBehaviour {
         if (portalExitScenario == 1)
         {
             SetActiveChild(newRooms[currentRoom + 1].transform, "Portal", false);
+            newRooms[currentRoom + 1].SetActive(false);
         }
         else if (portalExitScenario == 2)
         {
             SetActiveChild(newRooms[currentRoom - 1].transform, "Portal", false);
+            newRooms[currentRoom - 1].SetActive(false);
         }
         SetActiveChild(newRooms[currentRoom].transform, "Portal", true);
         playerReturned = false;
