@@ -5,7 +5,8 @@ using UnityEngine;
 public class PortalManager : MonoBehaviour {
 
     /// Inspector variables
-    public GameObject[] startRooms, endRooms, roomType1, roomType2, roomType3;
+    public GameObject[] startRooms, endRooms, rooms;
+    public string portalTag = "Portal";
 
     /// Public, non-inspector variables
     [HideInInspector]
@@ -25,7 +26,7 @@ public class PortalManager : MonoBehaviour {
     void Start()
     {
         cameras = GetComponent<CameraEnabler>(); // Script that handles which layer is rendered by which camera
-        maxRooms = (roomType1.Length - 1) + (roomType2.Length-1) + (roomType3.Length - 1);
+        maxRooms = (rooms.Length - 1);
         layout = new GameObject[maxRooms + 1];
         GenerateLevel(); // Method to generate level from the prefab rooms
     }
@@ -35,7 +36,7 @@ public class PortalManager : MonoBehaviour {
         layout[0] = Instantiate(startRooms[Random.Range(0, startRooms.Length - 1)], new Vector3(0f, 0f, 0f), Quaternion.identity);
         for (int i = 0; i < maxRooms + 1; i++)
         {
-            layout[1] = Instantiate(roomType1[i], new Vector3(0f, 0f, 0f), Quaternion.identity);
+            layout[i] = Instantiate(rooms[i], new Vector3(0f, 0f, 0f), Quaternion.identity);
             if (i != 0)
             {
                 SetActiveChild(layout[i].transform, "Portal", false);
@@ -128,5 +129,17 @@ public class PortalManager : MonoBehaviour {
             }
         }
     }
+
+    //private Transform[] GetPortalPositionInRoom(GameObject room)
+    //{
+    //    Vector3[] portalPositions;
+    //    for (int i = 0; i < room.transform.childCount; i++)
+    //    {
+    //        Transform child = room.transform.GetChild(i);
+    //        if (child.tag == portalTag)
+    //            portalPositions[0] = child.localPosition;
+    //    }
+    //    return portalPositions;
+    //}
 }
 
