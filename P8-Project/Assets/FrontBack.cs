@@ -4,10 +4,18 @@ using UnityEngine;
 
 public class FrontBack : MonoBehaviour
 {
+    Vector3 toTarget;
+    Vector3 fromTarget;
+    bool once = false;
+    float offset;
+
+
+    
+
     // Start is called before the first frame update
     void Start()
     {
-        
+
     }
 
     // Update is called once per frame
@@ -19,18 +27,52 @@ public class FrontBack : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        Debug.Log("HIT");
-        Vector3 toTarget = (other.gameObject.transform.position - transform.position).normalized;
-
-        if (Vector3.Dot(toTarget, gameObject.transform.forward) > 0)
+        if (!once)
         {
-            Debug.Log("from front");
-        }
-        else
-        {
-            Debug.Log("from back");
+            Debug.Log("IN");
+            toTarget = (other.gameObject.transform.position);
+            once = true;
         }
     }
 
+    void OnTriggerExit(Collider other)
+    {
+        if (other.name.Contains("x") || other.name.Contains("X"))
+        {
+            if (once)
+            {
+                fromTarget = other.gameObject.transform.position;
+                offset = toTarget.x - fromTarget.x;
+                //Debug.Log(offset); // Enable this to debug the Offset and adjust accordingly below
+                if (offset >= 0.3f || offset <= -0.3f) //Might have to adjust this depending on our Collider + Player size. 
+                {
+                    Debug.Log("New Way");
+                }
+                else
+                {
+                    Debug.Log("Same way");
+                }
+            }
+        }
+
+        if (other.name.Contains("z") || other.name.Contains("Z"))
+        {
+            if (once)
+            {
+                fromTarget = other.gameObject.transform.position;
+                offset = toTarget.z - fromTarget.z;
+                //Debug.Log(offset); // Enable this to debug the Offset and adjust accordingly below
+                if (offset >= 0.3f || offset <= -0.3f) //Might have to adjust this depending on our Collider + Player size. 
+                {
+                    Debug.Log("New Way");
+                }
+                else
+                {
+                    Debug.Log("Same way");
+                }
+            }
+        }
+        once = false;
+    }
 
 }
