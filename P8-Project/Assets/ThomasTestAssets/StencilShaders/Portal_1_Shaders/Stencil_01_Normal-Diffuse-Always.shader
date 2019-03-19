@@ -1,4 +1,4 @@
-Shader "Stencils/Portal_1/Diffuse" {
+Shader "Stencils/Portal_1/Diffuse-Always" {
 Properties {
 	_Color ("Main Color", Color) = (1,1,1,1)
 	_MainTex ("Base (RGB)", 2D) = "white" {}
@@ -6,7 +6,7 @@ Properties {
 SubShader {
 Stencil {
 Ref 1
-Comp equal
+Comp always
 Pass keep
 Fail keep
 }
