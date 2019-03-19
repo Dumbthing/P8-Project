@@ -1,11 +1,11 @@
-Shader "Stencils/Portal_2/Diffuse" {
+Shader "Stencils/Portal_1/Diffuse-Equal" {
 Properties {
 	_Color ("Main Color", Color) = (1,1,1,1)
 	_MainTex ("Base (RGB)", 2D) = "white" {}
 }
 SubShader {
 Stencil {
-Ref 2
+Ref 1
 Comp equal
 Pass keep
 Fail keep
