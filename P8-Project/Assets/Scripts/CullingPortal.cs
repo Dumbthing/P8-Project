@@ -5,6 +5,14 @@ using UnityEngine;
 public class CullingPortal : MonoBehaviour {
 
     // Inspector variables
+
+    //Thomas Inserted
+    Vector3 toTarget;
+    Vector3 fromTarget;
+    bool once = false;
+    float offset;
+
+
     public GameObject[] rooms;
 
     [HideInInspector]
@@ -54,6 +62,7 @@ public class CullingPortal : MonoBehaviour {
     {
         if (!singlePortalCollision)
         {
+            toTarget = (gameObject.transform.position);
             /// Check whether current room is the last room, whether a player has just enetered a portal, or whether the portal is leading backward
             //if (currentRoom < maxRooms || portalStep == 1 || portal.transform.localPosition == backwardPortalPos)
             if (portalStep == 0) // First portal
@@ -126,11 +135,24 @@ public class CullingPortal : MonoBehaviour {
 
     private void OnTriggerExit(Collider portal) // Out of portal
     {
-        if (!playerReturned)
+        fromTarget = gameObject.transform.position;
+        offset = toTarget.z - fromTarget.z;
+        Debug.Log(offset); // Enable this to debug the Offset and adjust accordingly below
+        if (offset >= 0.06f || offset <= -0.06f) //Might have to adjust this depending on our Collider + Player size. 
+        {
+            Debug.Log("Videre");
             PortalScenarioNext(portalExitScenario, portal);
+        }
         else
+        {
+            Debug.Log("Tilbage");
             PortalScenarioReturn(portalExitScenario, portal);
-        singlePortalCollision = false; // Bool variable to stop multiple OnTriggerEnter calls
+        }
+            //if (!playerReturned)
+            //    PortalScenarioNext(portalExitScenario, portal);
+            //else
+            //    PortalScenarioReturn(portalExitScenario, portal);
+            singlePortalCollision = false; // Bool variable to stop multiple OnTriggerEnter calls
     }
 
     private void PortalScenarioNext(int scenario, Collider portal)
