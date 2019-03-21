@@ -15,6 +15,7 @@ public class PortalManager : MonoBehaviour {
 
     /// Referencial variables to components of current gameobject
     CameraEnabler cameras;
+    GameObject[] roomsSaved;
 
     /// Comparison variables
     private bool singlePortalCollision = false, playerReturned = false;
@@ -25,29 +26,51 @@ public class PortalManager : MonoBehaviour {
 
     void Start()
     {
+        roomsSaved = rooms;
         cameras = GetComponent<CameraEnabler>(); // Script that handles which layer is rendered by which camera
-        maxRooms = (rooms.Length - 1);
-        layout = new GameObject[maxRooms + 1];
+        maxRooms = (rooms.Length - 1); // Should probably be a public variable set by player
+        layout = new GameObject[maxRooms + 3];
         GenerateLevel(); // Method to generate level from the prefab rooms
     }
 
     private void GenerateLevel()
     {
-        layout[0] = Instantiate(startRooms[Random.Range(0, startRooms.Length - 1)], new Vector3(0f, 0f, 0f), Quaternion.identity);
-        for (int i = 0; i < maxRooms + 1; i++)
+        layout[0] = Instantiate(startRooms[Random.Range(0, startRooms.Length - 1)], new Vector3(0f, 0f, 0f), Quaternion.identity); // Set a start room
+        for (int i = 1; i < maxRooms + 1; i++) // Iterate over layout
         {
-            layout[i] = Instantiate(rooms[i], new Vector3(0f, 0f, 0f), Quaternion.identity);
-            if (i != 0)
+            Debug.Log("Iteration " + i);
+            List<Vector3> portalPositionsInLastRoomList = GetPortalPositionInRoom(layout[i-1]);
+            //List<Vector3> debugPortalPositionsInNewRoomList = new List<Vector3>();
+            Vector3[] portalPosition = new Vector3[portalPositionsInLastRoomList.Count];
+            int increment = 0;
+            foreach (Vector3 portalPos in portalPositionsInLastRoomList)
             {
-                SetActiveChild(layout[i].transform, "Portal", false);
+                portalPosition[increment] = portalPos;
+                increment++;
             }
-            else
+            for (int j = 0; j < rooms.Length; j++) // Iterate over rooms
             {
-                SetActiveChild(layout[i].transform, "Portal", true);
+                List<Vector3> portalPositionsInNewRoomList = GetPortalPositionInRoom(rooms[j]);
+                int containedPortals = 0;
+                /// Checks whether exactly 1 of the portals in the room has the same position as exactly 1 portal in the previous room in the layout.
+                for (int k = 0; k < portalPositionsInLastRoomList.Count; k++)
+                {
+                    if (portalPositionsInNewRoomList.Contains(portalPosition[k])) // Might need an additional checker for more than 1 equal portal pos
+                    {
+                        containedPortals++;
+                    }
+                }
+                if (containedPortals == 1)
+                {
+                    layout[i] = Instantiate(rooms[j], new Vector3(0f, 0f, 0f), Quaternion.identity);
+                    SetActiveChild(layout[i].transform, "Portal", false);
+                    rooms = RemoveIndices(rooms,j);
+                    break;
+                }
+                //debugPortalPositionsInNewRoomList.AddRange(portalPositionsInNewRoomList);
             }
-
-        }
-        layout[layout.Length+1] = Instantiate(endRooms[Random.Range(0, startRooms.Length - 1)], new Vector3(0f, 0f, 0f), Quaternion.identity);
+        } // Endroom is currently not connected with previous room
+        layout[layout.Length+1] = Instantiate(endRooms[Random.Range(0, endRooms.Length - 1)], new Vector3(0f, 0f, 0f), Quaternion.identity);
     }
 
     private void OnTriggerEnter(Collider portal) // Portal collision
@@ -130,16 +153,42 @@ public class PortalManager : MonoBehaviour {
         }
     }
 
-    //private Transform[] GetPortalPositionInRoom(GameObject room)
-    //{
-    //    Vector3[] portalPositions;
-    //    for (int i = 0; i < room.transform.childCount; i++)
-    //    {
-    //        Transform child = room.transform.GetChild(i);
-    //        if (child.tag == portalTag)
-    //            portalPositions[0] = child.localPosition;
-    //    }
-    //    return portalPositions;
-    //}
+    private List<Vector3> GetPortalPositionInRoom(GameObject room)
+    {
+        List<Vector3> portalPositions = new List<Vector3>();
+        for (int i = 0; i < room.transform.childCount; i++)
+        {
+            Transform child = room.transform.GetChild(i);
+            if (child.tag == portalTag)
+            {
+                portalPositions.Add(child.localPosition);
+            }
+        }
+        return portalPositions;
+    }
+
+    private GameObject[] RemoveIndices(GameObject[] IndicesArray, int RemoveAt)
+    {
+        GameObject[] newIndicesArray = new GameObject[IndicesArray.Length - 1];
+
+        int i = 0;
+        int j = 0;
+        while (i < IndicesArray.Length)
+        {
+            if (i != RemoveAt)
+            {
+                newIndicesArray[j] = IndicesArray[i];
+                j++;
+            }
+            else
+            {
+                Debug.Log("Removed element " + i + " from array");
+            }
+
+            i++;
+        }
+
+        return newIndicesArray;
+    }
 }
 
