@@ -14,7 +14,7 @@ public class EnemyController : MonoBehaviour {
 	private float agentRadius = 0.5f; 
 	private float acceleration = 2;
 
-	private bool countingRespawn;
+	private bool countingRespawn, currCounting, returnSpawn;
 
 	private Vector3 spawnPoint, newSpawnPoint;
 
@@ -49,12 +49,20 @@ public class EnemyController : MonoBehaviour {
 			}
 		} */
 
-		if(playerDistance <= 2f) {
+		if(playerDistance <= 2f  && !returnSpawn) {
 			runAway();
+			
 		}
+
+
+		else if(transform.position != spawnPoint && Vector3.Distance(transform.position, spawnPoint) <= 2 ) {
+			StopCoroutine(returnSpawnCounter());
+		}		
+		
 		else {
-			returnToSpawn();
+			StartCoroutine(returnSpawnCounter());
 		}
+
 		// agent.Move(player.position);
 		// Debug.Log("Player position is:" + " " + player.position);
 		// Debug.Log("Agent Destination is:" + " " + agent.destination);
@@ -69,33 +77,35 @@ public class EnemyController : MonoBehaviour {
 		agent.destination = escape_Direction;
 		//transform.LookAt(escape_Direction);
 		//transform.position = wantedPosition*Time.deltaTime*speed;
+
 	}
 
 	void returnToSpawn() {
-		if(!countingRespawn) {
-			StartCoroutine("returnSpawnCounter");
+		if(!countingRespawn && !currCounting) {
+			
 		//	Debug.Log("Started coroutine");
+			if(returnSpawn) {
 			agent.isStopped = false;
 			agent.destination = spawnPoint;
-		}
-		else {
+			
+		/* else if(!currCounting) {
 			Debug.Log("Entered return to spawn");
 		//	Debug.Log("Stopped coroutine");	
 			agent.isStopped = true;
 			StopCoroutine("returnSpawnCounter");			
-			countingRespawn = false;
+			countingRespawn = false; */
 
-		if(transform.position != spawnPoint) {
-			
+			if(Vector3.Distance(transform.position, spawnPoint) < 2f) {
+				Debug.Log("Entered Lerp");
+				agent.isStopped = true;
+				transform.position = Vector3.Lerp(transform.position, spawnPoint, 0f) * Time.deltaTime;
+				returnSpawn = false;
+				StopCoroutine(returnSpawnCounter());
 			//transform.LookAt(spawnPoint);
 			//transform.position = Vector3.forward*Time.deltaTime*speed;
 
-		}
-		else {
-
-		}
-
-
+				}
+			}
 
 		}
 
@@ -105,14 +115,17 @@ public class EnemyController : MonoBehaviour {
 	IEnumerator returnSpawnCounter() {
 		
 		if(!countingRespawn) {
-			bool currCounting;
+			currCounting = true;
 			yield return new WaitForSeconds(returnSpawnTime);
-			currCounting = false;
 			Debug.Log("Started counting");
-			if(!currCounting)
+			returnSpawn = true;
+			currCounting = false;
+			returnToSpawn();
+			//if(!currCounting)
 			countingRespawn = true;
 		}
 		
+
 		
 	}
 }
