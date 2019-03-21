@@ -21,23 +21,30 @@ public class PortalManager : MonoBehaviour {
     private bool singlePortalCollision = false, playerReturned = false;
     private int portalExitScenario = 0; // Default is 0: do nothing
     private int currentRoom = 0;
-    private Vector3 backwardPortalPos, lastPortalPos;
-
+    private Vector3 backwardPortalPos, lastPortalPos, lastExitPortal;
+    private int roomsUsed = 0;
+    private int nextLayer = 8;
 
     void Start()
     {
         roomsSaved = rooms;
         cameras = GetComponent<CameraEnabler>(); // Script that handles which layer is rendered by which camera
         maxRooms = (rooms.Length - 1); // Should probably be a public variable set by player
-        layout = new GameObject[maxRooms + 3];
+        layout = new GameObject[4];
         GenerateLevel(); // Method to generate level from the prefab rooms
     }
 
     private void GenerateLevel()
     {
         layout[0] = Instantiate(startRooms[Random.Range(0, startRooms.Length - 1)], new Vector3(0f, 0f, 0f), Quaternion.identity); // Set a start room
-        for (int i = 1; i < maxRooms + 1; i++) // Iterate over layout
+        layout[0].layer = nextLayer;
+        ChangeLayersRecursively(layout[0].transform, nextLayer);
+
+        lastExitPortal = GetARandomPortalPositionInRoom(layout[0]);
+        for (int i = 1; i < layout.Length-1; i++) // Iterate over layout
         {
+            nextLayer++;
+            Debug.Log("Last room's exit portal position: " + lastExitPortal);
             Debug.Log("Iteration " + i);
             List<Vector3> portalPositionsInLastRoomList = GetPortalPositionInRoom(layout[i-1]);
             //List<Vector3> debugPortalPositionsInNewRoomList = new List<Vector3>();
@@ -48,7 +55,7 @@ public class PortalManager : MonoBehaviour {
                 portalPosition[increment] = portalPos;
                 increment++;
             }
-            for (int j = 0; j < rooms.Length; j++) // Iterate over rooms
+            for (int j = 0; j < rooms.Length - roomsUsed; j++) // Iterate over rooms
             {
                 List<Vector3> portalPositionsInNewRoomList = GetPortalPositionInRoom(rooms[j]);
                 int containedPortals = 0;
@@ -56,21 +63,26 @@ public class PortalManager : MonoBehaviour {
                 for (int k = 0; k < portalPositionsInLastRoomList.Count; k++)
                 {
                     if (portalPositionsInNewRoomList.Contains(portalPosition[k])) // Might need an additional checker for more than 1 equal portal pos
-                    {
+                    { //  && portalPosition[k]
                         containedPortals++;
                     }
                 }
                 if (containedPortals == 1)
                 {
                     layout[i] = Instantiate(rooms[j], new Vector3(0f, 0f, 0f), Quaternion.identity);
+                    layout[i].layer = nextLayer;
+                    ChangeLayersRecursively(layout[i].transform, nextLayer);
                     SetActiveChild(layout[i].transform, "Portal", false);
                     rooms = RemoveIndices(rooms,j);
+                    roomsUsed++ ;
                     break;
                 }
-                //debugPortalPositionsInNewRoomList.AddRange(portalPositionsInNewRoomList);
             }
         } // Endroom is currently not connected with previous room
-        layout[layout.Length+1] = Instantiate(endRooms[Random.Range(0, endRooms.Length - 1)], new Vector3(0f, 0f, 0f), Quaternion.identity);
+        nextLayer++;
+        layout[layout.Length-1] = Instantiate(endRooms[Random.Range(0, endRooms.Length - 1)], new Vector3(0f, 0f, 0f), Quaternion.identity);
+        layout[layout.Length-1].layer = nextLayer;
+        ChangeLayersRecursively(layout[layout.Length-1].transform, nextLayer);
     }
 
     private void OnTriggerEnter(Collider portal) // Portal collision
@@ -167,6 +179,23 @@ public class PortalManager : MonoBehaviour {
         return portalPositions;
     }
 
+    private Vector3 GetARandomPortalPositionInRoom(GameObject room)
+    {
+        List<Vector3> newExitPortals = new List<Vector3>();
+        for (int i = 0; i < room.transform.childCount; i++)
+        {
+            Transform child = room.transform.GetChild(i);
+            if (child.tag == portalTag && child.localPosition != lastExitPortal)
+            {
+                newExitPortals.Add(child.localPosition);
+            }
+        }
+        int r = Random.Range(0, newExitPortals.Count - 1);
+        if (r < 0)
+            Debug.Log("No portals found in request room");
+        return newExitPortals[r];
+    }
+
     private GameObject[] RemoveIndices(GameObject[] IndicesArray, int RemoveAt)
     {
         GameObject[] newIndicesArray = new GameObject[IndicesArray.Length - 1];
@@ -184,11 +213,18 @@ public class PortalManager : MonoBehaviour {
             {
                 Debug.Log("Removed element " + i + " from array");
             }
-
             i++;
         }
-
         return newIndicesArray;
+    }
+
+    private void ChangeLayersRecursively(Transform trans, int newLayer)
+    {
+        foreach (Transform child in trans)
+        {
+            child.gameObject.layer = newLayer;
+            ChangeLayersRecursively(child, newLayer);
+        }
     }
 }
 
