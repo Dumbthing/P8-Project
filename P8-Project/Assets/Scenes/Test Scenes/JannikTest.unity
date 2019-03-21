@@ -122,8 +122,6 @@ GameObject:
   m_Component:
   - component: {fileID: 143810054}
   - component: {fileID: 143810053}
-  - component: {fileID: 143810056}
-  - component: {fileID: 143810055}
   m_Layer: 0
   m_Name: Directional Light
   m_TagString: Untagged
@@ -183,30 +181,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
---- !u!114 &143810055
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 143810052}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c6c2871f720b2af4e9210febdac74517, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &143810056
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 143810052}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7a68c43fe1f2a47cfa234b5eeaa98012, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &649551889
 GameObject:
   m_ObjectHideFlags: 0
@@ -311,6 +285,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: StencilPlayer
       objectReference: {fileID: 0}
+    - target: {fileID: 7582784935731481609, guid: 7cf08298ef8099e4caf253f06eb55cb3,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7580078247732514751, guid: 7cf08298ef8099e4caf253f06eb55cb3,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -381,6 +360,11 @@ PrefabInstance:
       propertyPath: rooms.Array.data[2]
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 8867468886081592266, guid: 7cf08298ef8099e4caf253f06eb55cb3,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 7582784935731481606, guid: 7cf08298ef8099e4caf253f06eb55cb3, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 7cf08298ef8099e4caf253f06eb55cb3, type: 3}
@@ -402,11 +386,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8cc7a5bb14ea25c42b26e0eae2579c94, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  startRooms: []
-  endRooms: []
-  roomType1: []
-  roomType2: []
-  roomType3: []
+  startRooms:
+  - {fileID: 4972782824954961925, guid: 11942f218341f744db5865a4e8aea0be, type: 3}
+  - {fileID: 4731506611833869698, guid: c3d059eef86181c4c9f1dc0e63a0e6e1, type: 3}
+  - {fileID: 3911174919978062693, guid: 845fe3e39ab8042498e2c3651357d817, type: 3}
+  endRooms:
+  - {fileID: 6188385862166964200, guid: 5ccad8954fa073d428fe561af20af101, type: 3}
+  - {fileID: 6149119174334514048, guid: d51485d7946e7f24392f3643647ff58e, type: 3}
+  rooms:
+  - {fileID: 6391006167978817216, guid: f824f32c14b59fd4a9680aa73d95cf13, type: 3}
+  - {fileID: 6391006167978817216, guid: 6fd24b30360f486439163c599144cebc, type: 3}
+  - {fileID: 1397931108333587660, guid: 76c31649d6caba440a4bad507d1af477, type: 3}
+  - {fileID: 4066022496949600972, guid: 3ea0fcefa3f9137499ac8df9871dc045, type: 3}
+  - {fileID: 3258915621743159170, guid: 164796af6928cee4ea9a5107cd9f559f, type: 3}
+  - {fileID: 1682193021154678360, guid: 8f2ea8942dd849e48a343fb92b2be601, type: 3}
+  - {fileID: 3067189848668186676, guid: 28ddf2f1244e1c84bb1a010ce4f6aebe, type: 3}
+  - {fileID: 2604039215449241051, guid: 52b6e970d59f5c04ab390661a1095fc0, type: 3}
+  - {fileID: 1683067152973284741, guid: 12bb16b071b775d4880fc3e006d27042, type: 3}
+  - {fileID: 1667339339118140386, guid: f7bf1b04025ae504c9470801039014e8, type: 3}
+  portalTag: Portal
   layout: []
   maxRooms: 0
 --- !u!114 &8867468886484811505
