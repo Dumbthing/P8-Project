@@ -7,6 +7,9 @@ public class EnemyNavigation : MonoBehaviour
 {
     private GameObject _Player;
     private bool returningToSpawn, currCounting, canReturn, fleeing;
+    public float spawnProximity = 1.1f;
+
+    public float playerProximity = 2.0f;
 
     private Vector3 spawnPoint;
 
@@ -26,56 +29,60 @@ public class EnemyNavigation : MonoBehaviour
     {
         distancePlayer = Vector3.Distance(transform.position, _Player.transform.position);
         distanceSpawn = Vector3.Distance(transform.position, spawnPoint);
-        if(distancePlayer < 2.0f && !returningToSpawn) {
-            
-            flee();
+        agent.isStopped = false;
+
+        if(distancePlayer > playerProximity && distanceSpawn <= spawnProximity /* && !fleeing */ ) {
+            agent.isStopped = true;
         }
-        if(distancePlayer > 2.0f && distanceSpawn > 1.0f /* && !fleeing */) {
-            returnToSpawn();
+        else if (distancePlayer < playerProximity) {
+            Vector3 escape_Direction = transform.position - _Player.transform.position;
+            agent.destination = escape_Direction;
+        }
+        else if (distanceSpawn >= spawnProximity) {
+            agent.destination = spawnPoint;
         }
     }
 
     void flee() {
-        fleeing = true;
         Vector3 escape_Direction = transform.position - _Player.transform.position;
         agent.destination = escape_Direction;
         agent.isStopped = false;
     }
 
     void returnToSpawn() {
-        returningToSpawn = true;
-        if(!currCounting && !canReturn) {
-        StartCoroutine(returnWaitTime());            
-        }
+
+
+
+/*         if(!currCounting && !canReturn) {
+            StartCoroutine(returnWaitTime());
         
+        }
         else if(canReturn) {
             Debug.Log("Returning to spawn");
             agent.destination = spawnPoint;
             agent.isStopped = false;
             Debug.Log("Distance is: " + distanceSpawn);
-
-            if(distanceSpawn < 1.02f ) {
+            
+            // Need a condition to enter this, even though distanceSpawn is under 1.05f, as it now just freezes in place if it's standing there.
+            if(distanceSpawn < spawnProximity) {
                 Debug.Log("Agent stopped at spawnpoint");
                 agent.isStopped = true;
 
                 canReturn = false;
                 returningToSpawn = false;
             }
-//            agent.isStopped = true;
-//            transform.position = Vector3.Lerp(transform.position, spawnPoint, 1f) * Time.deltaTime;
-        StopCoroutine(returnWaitTime());
-        }
-        
-        
 
+        StopCoroutine(returnWaitTime());
+        } */
+ 
 
 
     }
 
-    IEnumerator returnWaitTime() {
+ /*    IEnumerator returnWaitTime() {
         currCounting = true;
         yield return new WaitForSecondsRealtime(5f);
         canReturn = true;
         currCounting = false;
-    }
+    } */
 }
