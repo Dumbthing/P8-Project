@@ -7,11 +7,11 @@ public class PortalManager : MonoBehaviour {
     /// Inspector variables
     public GameObject[] startRooms, endRooms, rooms;
     public string portalTag = "Portal";
+    public int maxRooms;
 
     /// Public, non-inspector variables
     [HideInInspector]
     public GameObject[] layout;
-    public int maxRooms;
 
     /// Referencial variables to components of current gameobject
     CameraEnabler cameras;
@@ -29,8 +29,7 @@ public class PortalManager : MonoBehaviour {
     {
         roomsSaved = rooms;
         cameras = GetComponent<CameraEnabler>(); // Script that handles which layer is rendered by which camera
-        maxRooms = (rooms.Length - 1); // Should probably be a public variable set by player
-        layout = new GameObject[4];
+        layout = new GameObject[maxRooms+1]; // Start- and End-rooms are always included
         GenerateLevel(); // Method to generate level from the prefab rooms
     }
 
@@ -39,31 +38,38 @@ public class PortalManager : MonoBehaviour {
         layout[0] = Instantiate(startRooms[Random.Range(0, startRooms.Length - 1)], new Vector3(0f, 0f, 0f), Quaternion.identity); // Set a start room
         layout[0].layer = nextLayer;
         ChangeLayersRecursively(layout[0].transform, nextLayer);
-
         lastExitPortal = GetARandomPortalPositionInRoom(layout[0]);
-        for (int i = 1; i < layout.Length-1; i++) // Iterate over layout
+
+        GenerateRooms();
+        SelectEndRoom();
+    }
+
+    private void GenerateRooms()
+    {
+        RandomizeArray(rooms);
+        for (int i = 1; i < maxRooms; i++) // Iterate over layout
         {
             nextLayer++;
-            Debug.Log("Last room's exit portal position: " + lastExitPortal);
-            Debug.Log("Iteration " + i);
-            List<Vector3> portalPositionsInLastRoomList = GetPortalPositionInRoom(layout[i-1]);
-            //List<Vector3> debugPortalPositionsInNewRoomList = new List<Vector3>();
-            Vector3[] portalPosition = new Vector3[portalPositionsInLastRoomList.Count];
-            int increment = 0;
-            foreach (Vector3 portalPos in portalPositionsInLastRoomList)
-            {
-                portalPosition[increment] = portalPos;
-                increment++;
-            }
+            //List<Vector3> portalPositionsInLastRoomList = GetPortalPositionInRoom(layout[i - 1]);
+            List<Transform> portalTransformsInLastRoomList = GetPortalTransformsInRoom(layout[i - 1]);
             for (int j = 0; j < rooms.Length - roomsUsed; j++) // Iterate over rooms
             {
                 List<Vector3> portalPositionsInNewRoomList = GetPortalPositionInRoom(rooms[j]);
+                List<Quaternion> portalRotationsInNewRoomList = GetPortalRotationsInRoom(rooms[j]);
                 int containedPortals = 0;
                 /// Checks whether exactly 1 of the portals in the room has the same position as exactly 1 portal in the previous room in the layout.
-                for (int k = 0; k < portalPositionsInLastRoomList.Count; k++)
+                //for (int k = 0; k < portalPositionsInLastRoomList.Count; k++)
+                //{
+                //    if (portalPositionsInNewRoomList.Contains(portalPositionsInLastRoomList[k]))
+                //    {
+                //        containedPortals++;
+                //    }
+                //}
+                for (int k = 0; k < portalTransformsInLastRoomList.Count; k++)
                 {
-                    if (portalPositionsInNewRoomList.Contains(portalPosition[k])) // Might need an additional checker for more than 1 equal portal pos
-                    { //  && portalPosition[k]
+                    if (portalPositionsInNewRoomList.Contains(portalTransformsInLastRoomList[k].localPosition) &&
+                        portalRotationsInNewRoomList.Contains(portalTransformsInLastRoomList[k].localRotation))
+                    {
                         containedPortals++;
                     }
                 }
@@ -73,16 +79,42 @@ public class PortalManager : MonoBehaviour {
                     layout[i].layer = nextLayer;
                     ChangeLayersRecursively(layout[i].transform, nextLayer);
                     SetActiveChild(layout[i].transform, "Portal", false);
-                    rooms = RemoveIndices(rooms,j);
-                    roomsUsed++ ;
-                    break;
+                    rooms = RemoveIndices(rooms, j);
+                    roomsUsed++;
+                    break; // Breaks from the current for loop
+                }
+                if (j == rooms.Length - roomsUsed - 1) // Last iteration
+                {
+                    return; // Breaks from both for loops since they are inside a method
                 }
             }
-        } // Endroom is currently not connected with previous room
+        }
+    }
+
+    private void SelectEndRoom()
+    {
         nextLayer++;
-        layout[layout.Length-1] = Instantiate(endRooms[Random.Range(0, endRooms.Length - 1)], new Vector3(0f, 0f, 0f), Quaternion.identity);
-        layout[layout.Length-1].layer = nextLayer;
-        ChangeLayersRecursively(layout[layout.Length-1].transform, nextLayer);
+        List<Transform> portalTransformsRoomBeforeEnd = GetPortalTransformsInRoom(layout[roomsUsed]); // Stores portal from previous room in a list
+        RandomizeArray(endRooms);
+        /// End room
+        for (int i = 0; i < endRooms.Length; i++) // Iterate over rooms
+        {
+            List<Vector3> portalPositionsInNewRoomList = GetPortalPositionInRoom(endRooms[i]);
+            List<Quaternion> portalRotationsInNewRoomList = GetPortalRotationsInRoom(endRooms[i]);
+            /// Checks whether exactly 1 of the portals in the room has the same position as exactly 1 portal in the previous room in the layout.
+            for (int j = 0; j < portalTransformsRoomBeforeEnd.Count; j++)
+            {
+                if (portalPositionsInNewRoomList.Contains(portalTransformsRoomBeforeEnd[j].localPosition) &&
+                        portalRotationsInNewRoomList.Contains(portalTransformsRoomBeforeEnd[j].localRotation))
+                {
+                    layout[roomsUsed + 1] = Instantiate(endRooms[i], new Vector3(0f, 0f, 0f), Quaternion.identity);
+                    layout[roomsUsed + 1].layer = nextLayer;
+                    SetActiveChild(layout[roomsUsed + 1].transform, "Portal", false);
+                    ChangeLayersRecursively(layout[roomsUsed + 1].transform, nextLayer);
+                    return; // Breaks from the nested for loop
+                }
+            }
+        }
     }
 
     private void OnTriggerEnter(Collider portal) // Portal collision
@@ -165,6 +197,20 @@ public class PortalManager : MonoBehaviour {
         }
     }
 
+    private List<Transform> GetPortalTransformsInRoom(GameObject room)
+    {
+        List<Transform> portalPositions = new List<Transform>();
+        for (int i = 0; i < room.transform.childCount; i++)
+        {
+            Transform child = room.transform.GetChild(i);
+            if (child.tag == portalTag)
+            {
+                portalPositions.Add(child);
+            }
+        }
+        return portalPositions;
+    }
+
     private List<Vector3> GetPortalPositionInRoom(GameObject room)
     {
         List<Vector3> portalPositions = new List<Vector3>();
@@ -179,6 +225,20 @@ public class PortalManager : MonoBehaviour {
         return portalPositions;
     }
 
+    private List<Quaternion> GetPortalRotationsInRoom(GameObject room)
+    {
+        List<Quaternion> portalRotations = new List<Quaternion>();
+        for (int i = 0; i < room.transform.childCount; i++)
+        {
+            Transform child = room.transform.GetChild(i);
+            if (child.tag == portalTag)
+            {
+                portalRotations.Add(child.localRotation);
+            }
+        }
+        return portalRotations;
+    }
+    
     private Vector3 GetARandomPortalPositionInRoom(GameObject room)
     {
         List<Vector3> newExitPortals = new List<Vector3>();
@@ -224,6 +284,17 @@ public class PortalManager : MonoBehaviour {
         {
             child.gameObject.layer = newLayer;
             ChangeLayersRecursively(child, newLayer);
+        }
+    }
+
+    void RandomizeArray(GameObject[] arr) // Fischer-Yates shuffle
+    {
+        for (int i = 0; i < arr.Length; i++)
+        {
+            int r = Random.Range(0, arr.Length - 1);
+            GameObject temp = arr[i];
+            arr[i] = arr[r];
+            arr[r] = temp;
         }
     }
 }
