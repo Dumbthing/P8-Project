@@ -3,6 +3,8 @@ using UnityEngine;
 
 public static class Utils
 {
+    static public Vector3 worldSpacePoint = new Vector3(0.0f, 0.0f, 0.0f);
+
     static public   void RandomizeArray(GameObject[] arr) // Fischer-Yates shuffle
     {
         for (int i = 0; i < arr.Length; i++)
@@ -68,6 +70,23 @@ public static class Utils
             if (child.tag == entryPortalTag || child.tag == exitPortalTag)
             {
                 portalPositions.Add(child);
+            }
+        }
+        return portalPositions;
+    }
+
+    static public List<Transform> GetPortalTransformsInRoom(GameObject room, string entryPortalTag, string exitPortalTag, float rotationParameter)
+    {
+        List<Transform> portalPositions = new List<Transform>();
+        for (int i = 0; i < room.transform.childCount; i++)
+        {
+            Transform child = room.transform.GetChild(i);
+            if (child.tag == entryPortalTag || child.tag == exitPortalTag)
+            {
+                Transform portalPos = child;
+                portalPos.Rotate(worldSpacePoint, rotationParameter); // Rotates the vector around a point with an amount of degrees
+                portalPositions.Add(portalPos);
+                Debug.Log(portalPos);
             }
         }
         return portalPositions;

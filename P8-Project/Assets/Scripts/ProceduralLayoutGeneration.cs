@@ -11,7 +11,7 @@ public class ProceduralLayoutGeneration : MonoBehaviour
     public int maxRooms = 99;    // CURRENTLY OBSELETE, but can be used to limit the max amount of rooms later...
 
     /// Public variables, hidden from the Inspector. Use keyword [HideInInspector] before every variable!
-    [HideInInspector]
+    //[HideInInspector]
     public List<GameObject> layoutList; // Public, since other scripts need access to it
     [HideInInspector]
     public int currentRoom = 0;
@@ -19,8 +19,6 @@ public class ProceduralLayoutGeneration : MonoBehaviour
     /// Private variables
     private int roomsUsed = 0;
     private int setNextLayer = 8;
-
-
 
     /* We use awake as it is called before start, and this must always be called exactly once.
      * Note that if we want to be able to call this function multiple times, like if we want to
@@ -35,7 +33,7 @@ public class ProceduralLayoutGeneration : MonoBehaviour
         GenerateEndRoom();
     }
 
-    private void GenerateStartRoom()
+    private void GenerateStartRoom() // No need to rotate start room
     {
         layoutList.Add(Instantiate(startRooms[Random.Range(0, startRooms.Length - 1)], new Vector3(0f, 0f, 0f), Quaternion.identity)); // Set a start room
         layoutList[0].layer = setNextLayer;
@@ -51,23 +49,45 @@ public class ProceduralLayoutGeneration : MonoBehaviour
             for (int j = 0; j < rooms.Length - roomsUsed; j++) // Iterate over rooms
             {
                 List<Transform> portalsInNewRoomList = Utils.GetPortalTransformsInRoom(rooms[j], entryPortalTag, exitPortalTag);
+                List<Transform> ninetyDegPortalsInNewRoomList = Utils.GetPortalTransformsInRoom(rooms[j], entryPortalTag, exitPortalTag, 90.0f);
+                List<Transform> oneEightyDegPortalsInNewRoomList = Utils.GetPortalTransformsInRoom(rooms[j], entryPortalTag, exitPortalTag, 180.0f);
+                List<Transform> twoSeventyDegPortalsInNewRoomList = Utils.GetPortalTransformsInRoom(rooms[j], entryPortalTag, exitPortalTag, 270.0f);
                 int containedPortals = 0;
+                float rotationParameter = 0.0f;
                 for (int k = 0; k < portalsInLastRoomList.Count; k++)
                 {
                     for (int l = 0; l < portalsInNewRoomList.Count; l++)
                     {
-                        if (portalsInLastRoomList[k].localPosition == portalsInNewRoomList[l].localPosition &&  // Checks for position
-                            portalsInLastRoomList[k].localRotation == portalsInNewRoomList[l].localRotation &&  // Checks for rotation
-                            portalsInLastRoomList[k].tag != portalsInNewRoomList[l].tag)                        // Checks for different tag
+                        if (portalsInLastRoomList[k].localRotation == portalsInNewRoomList[l].localRotation &&  // Check for local rotation
+                            portalsInLastRoomList[k].tag != portalsInNewRoomList[l].tag)                        // Check for tag
                         {
-                            containedPortals++;
+                            if (portalsInLastRoomList[k].position == portalsInNewRoomList[l].position)          // Check for world position
+                            {
+                                containedPortals++;
+                            }
+                            else if (portalsInLastRoomList[k].position == ninetyDegPortalsInNewRoomList[l].position)    // Check for world position when rotated by 90 degrees
+                            {
+                                containedPortals++;
+                                rotationParameter = 90.0f;
+                            }
+                            else if (portalsInLastRoomList[k].position == oneEightyDegPortalsInNewRoomList[l].position)
+                            {
+                                containedPortals++;
+                                rotationParameter = 180.0f;
+                            }
+                            else if (portalsInLastRoomList[k].position == twoSeventyDegPortalsInNewRoomList[l].position)
+                            {
+                                containedPortals++;
+                                rotationParameter = 270.0f;
+                            }
+
                         }
                     }
                 }
                 if (containedPortals == 1)
                 {
                     setNextLayer++;
-                    layoutList.Add(Instantiate(rooms[j], new Vector3(0f, 0f, 0f), Quaternion.identity));
+                    layoutList.Add(Instantiate(rooms[j], Utils.worldSpacePoint, Quaternion.Euler(0.0f, rotationParameter, 0.0f)));
                     layoutList[roomsUsed + 1].layer = setNextLayer;
                     Utils.ChangeLayersRecursively(layoutList[roomsUsed + 1].transform, setNextLayer);
                     Utils.SetActiveChild(layoutList[roomsUsed + 1].transform, false, entryPortalTag, exitPortalTag);
@@ -86,24 +106,59 @@ public class ProceduralLayoutGeneration : MonoBehaviour
     private void GenerateEndRoom()
     {
         setNextLayer++;
-        List<Transform> portalTransformsRoomBeforeEnd = Utils.GetPortalTransformsInRoom(layoutList[roomsUsed], entryPortalTag, exitPortalTag); // Stores portal from previous room in a list
+        List<Transform> portalsInLastRoomList = Utils.GetPortalTransformsInRoom(layoutList[roomsUsed], entryPortalTag, exitPortalTag); // Stores portal from previous room in a list
         Utils.RandomizeArray(endRooms);
         /// End room
         for (int i = 0; i < endRooms.Length; i++) // Iterate over rooms
         {
-            List<Vector3> portalPositionsInNewRoomList = Utils.GetPortalPositionInRoom(endRooms[i], entryPortalTag, exitPortalTag);
-            List<Quaternion> portalRotationsInNewRoomList = Utils.GetPortalRotationsInRoom(endRooms[i], entryPortalTag, exitPortalTag);
+            List<Transform> portalsInEndRoomList = Utils.GetPortalTransformsInRoom(endRooms[i], entryPortalTag, exitPortalTag);
+            List<Transform> ninetyDegPortalsInEndRoomList = Utils.GetPortalTransformsInRoom(endRooms[i], entryPortalTag, exitPortalTag, 90);
+            List<Transform> oneEightDegPortalsInEndRoomList = Utils.GetPortalTransformsInRoom(endRooms[i], entryPortalTag, exitPortalTag, 180);
+            List<Transform> twoSeventyDegPortalsInEndRoomList = Utils.GetPortalTransformsInRoom(endRooms[i], entryPortalTag, exitPortalTag, 270);
+            float rotationParameter = 0;
+            bool connectedPortal = false;
+
+            //List<Vector3> portalPositionsInNewRoomList = Utils.GetPortalPositionInRoom(endRooms[i], entryPortalTag, exitPortalTag);
+            //List<Quaternion> portalRotationsInNewRoomList = Utils.GetPortalRotationsInRoom(endRooms[i], entryPortalTag, exitPortalTag);
             /// Checks whether exactly 1 of the portals in the room has the same position as exactly 1 portal in the previous room in the layout.
-            for (int j = 0; j < portalTransformsRoomBeforeEnd.Count; j++)
+            for (int j = 0; j < portalsInLastRoomList.Count; j++)
             {
-                if (portalPositionsInNewRoomList.Contains(portalTransformsRoomBeforeEnd[j].localPosition) &&
-                        portalRotationsInNewRoomList.Contains(portalTransformsRoomBeforeEnd[j].localRotation))
+                for (int k = 0; k < portalsInEndRoomList.Count; k++)
                 {
-                    layoutList.Add(Instantiate(endRooms[i], new Vector3(0f, 0f, 0f), Quaternion.identity));
-                    layoutList[roomsUsed + 1].layer = setNextLayer;
-                    Utils.SetActiveChild(layoutList[roomsUsed + 1].transform, false, entryPortalTag, exitPortalTag);
-                    Utils.ChangeLayersRecursively(layoutList[roomsUsed + 1].transform, setNextLayer);
-                    return; // Breaks from the function
+                    //if (portalPositionsInNewRoomList.Contains(portalTransformsRoomBeforeEnd[j].position) &&
+                    //        portalRotationsInNewRoomList.Contains(portalTransformsRoomBeforeEnd[j].localRotation))
+                    if (portalsInLastRoomList[j].localRotation == portalsInEndRoomList[k].localRotation &&  // Check for local rotation
+                    portalsInLastRoomList[j].tag != portalsInEndRoomList[k].tag)                        // Check for tag
+                    {
+                        if (portalsInLastRoomList[j].position == portalsInEndRoomList[k].position)          // Check for world position
+                        {
+                            rotationParameter = 0;
+                            connectedPortal = true;
+                        }
+                        else if (portalsInLastRoomList[j].position == ninetyDegPortalsInEndRoomList[k].position)
+                        {
+                            rotationParameter = 0;
+                            connectedPortal = true;
+                        }
+                        else if (portalsInLastRoomList[j].position == oneEightDegPortalsInEndRoomList[k].position)
+                        {
+                            rotationParameter = 0;
+                            connectedPortal = true;
+                        }
+                        else if (portalsInLastRoomList[j].position == twoSeventyDegPortalsInEndRoomList[k].position)
+                        {
+                            rotationParameter = 0;
+                            connectedPortal = true;
+                        }
+                    }
+                    if (connectedPortal)
+                    {
+                        layoutList.Add(Instantiate(endRooms[i], Utils.worldSpacePoint, Quaternion.Euler(0.0f, rotationParameter, 0.0f)));
+                        layoutList[roomsUsed + 1].layer = setNextLayer;
+                        Utils.SetActiveChild(layoutList[roomsUsed + 1].transform, false, entryPortalTag, exitPortalTag);
+                        Utils.ChangeLayersRecursively(layoutList[roomsUsed + 1].transform, setNextLayer);
+                        return; // Breaks from the function
+                    }
                 }
             }
         }
