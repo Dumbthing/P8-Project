@@ -86,7 +86,6 @@ public static class Utils
                 Transform portalPos = child;
                 portalPos.Rotate(worldSpacePoint, rotationParameter); // Rotates the vector around a point with an amount of degrees
                 portalPositions.Add(portalPos);
-                Debug.Log(portalPos);
             }
         }
         return portalPositions;
