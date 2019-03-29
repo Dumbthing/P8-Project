@@ -60,35 +60,46 @@ public static class Utils
             }
         }
     }
-
-    static public List<Transform> GetPortalTransformsInRoom(GameObject room, string entryPortalTag, string exitPortalTag)
+    static public List<Transform> GetPortalTransformsInRoom(GameObject room, string _tag, float rotationParameter)
     {
-        List<Transform> portalPositions = new List<Transform>();
+        List<Transform> portalList = new List<Transform>();
         for (int i = 0; i < room.transform.childCount; i++)
         {
             Transform child = room.transform.GetChild(i);
-            if (child.tag == entryPortalTag || child.tag == exitPortalTag)
+            if (child.tag == _tag)
             {
-                portalPositions.Add(child);
+                if (rotationParameter > 0.0f)
+                {
+                    Transform portal = child;
+                    portal.Rotate(worldSpacePoint, rotationParameter); // Rotates the vector around a point with an amount of degrees
+                    portalList.Add(portal);
+                }
+                else 
+                    portalList.Add(child);
             }
         }
-        return portalPositions;
+        return portalList;
     }
 
     static public List<Transform> GetPortalTransformsInRoom(GameObject room, string entryPortalTag, string exitPortalTag, float rotationParameter)
     {
-        List<Transform> portalPositions = new List<Transform>();
+        List<Transform> portalList = new List<Transform>();
         for (int i = 0; i < room.transform.childCount; i++)
         {
             Transform child = room.transform.GetChild(i);
             if (child.tag == entryPortalTag || child.tag == exitPortalTag)
             {
-                Transform portalPos = child;
-                portalPos.Rotate(worldSpacePoint, rotationParameter); // Rotates the vector around a point with an amount of degrees
-                portalPositions.Add(portalPos);
+                if (rotationParameter > 0)
+                {
+                    Transform portal = child;
+                    portal.Rotate(worldSpacePoint, rotationParameter); // Rotates the vector around a point with an amount of degrees
+                    portalList.Add(portal);
+                }
+                else
+                    portalList.Add(child);
             }
         }
-        return portalPositions;
+        return portalList;
     }
 
     static public List<Vector3> GetPortalPositionInRoom(GameObject room, string entryPortalTag, string exitPortalTag)

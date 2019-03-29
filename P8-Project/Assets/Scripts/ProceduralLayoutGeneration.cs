@@ -42,16 +42,13 @@ public class ProceduralLayoutGeneration : MonoBehaviour
 
     private void GenerateLayout()
     {
-        int iterationCounter = 0;
         Utils.RandomizeArray(rooms);
         for (int i = 1; i < maxRooms; i++) // Iterate over layout
         {
-            List<Transform> portalsInLastRoomList = Utils.GetPortalTransformsInRoom(layoutList[i - 1], entryPortalTag, exitPortalTag);
+            List<Transform> portalsInLastRoomList = Utils.GetPortalTransformsInRoom(layoutList[i - 1], exitPortalTag, 0.0f);
             for (int j = 0; j < rooms.Length; j++) // Iterate over rooms
             {
-                iterationCounter++;
-                Debug.Log("Iteration #: " + iterationCounter);
-                List<Transform> portalsInNewRoomList = Utils.GetPortalTransformsInRoom(rooms[j], entryPortalTag, exitPortalTag);
+                List<Transform> portalsInNewRoomList = Utils.GetPortalTransformsInRoom(rooms[j], entryPortalTag, exitPortalTag, 0.0f);
                 List<Transform> ninetyDegPortalsInNewRoomList = Utils.GetPortalTransformsInRoom(rooms[j], entryPortalTag, exitPortalTag, 90.0f);
                 List<Transform> oneEightyDegPortalsInNewRoomList = Utils.GetPortalTransformsInRoom(rooms[j], entryPortalTag, exitPortalTag, 180.0f);
                 List<Transform> twoSeventyDegPortalsInNewRoomList = Utils.GetPortalTransformsInRoom(rooms[j], entryPortalTag, exitPortalTag, 270.0f);
@@ -61,9 +58,18 @@ public class ProceduralLayoutGeneration : MonoBehaviour
                 {
                     for (int l = 0; l < portalsInNewRoomList.Count; l++)
                     {
+                        Debug.Log("Portal " + k + " (" + portalsInLastRoomList[k].name + ") in last room has the rotation: " + portalsInLastRoomList[k].localRotation +
+                            ", \nwhile Portal " + l + " (" + portalsInNewRoomList[l].name + ") in new room has the rotation: " + portalsInNewRoomList[l].localRotation);
+                        Debug.Log("Portal " + k + " (" + portalsInLastRoomList[k].name + ") in last room has the tag: " + portalsInLastRoomList[k].tag +
+                            ", \nwhile Portal " + l + " (" + portalsInNewRoomList[l].name + ") in new room has the tag: " + portalsInNewRoomList[l].tag);
                         if (portalsInLastRoomList[k].localRotation == portalsInNewRoomList[l].localRotation &&  // Check for local rotation
                             portalsInLastRoomList[k].tag != portalsInNewRoomList[l].tag)                        // Check for tag
                         {
+                            Debug.Log("Portal rotation and tag accepted, checking position: \n" +
+                                "Portal " + k + " (" + portalsInLastRoomList[k].name + ") in last room has the position: " + portalsInLastRoomList[k].position +
+                            ", \nwhile Portal " + l + " (" + portalsInNewRoomList[l].name + ") in new room has the position: " + portalsInNewRoomList[l].position + 
+                            " OR at 90 degrees: " + ninetyDegPortalsInNewRoomList[l].position + "\nOR at 180 degrees: " + oneEightyDegPortalsInNewRoomList[l].position +
+                            " OR at 270 degrees: " + twoSeventyDegPortalsInNewRoomList[l].position);
                             if (portalsInLastRoomList[k].position == portalsInNewRoomList[l].position)          // Check for world position
                             {
                                 Debug.Log("0 deg portal registered");
@@ -95,6 +101,7 @@ public class ProceduralLayoutGeneration : MonoBehaviour
                 {
                     setNextLayer++;
                     layoutList.Add(Instantiate(rooms[j], Utils.worldSpacePoint, Quaternion.Euler(0.0f, rotationParameter, 0.0f)));
+                    Debug.Log("Instantiated room with " + rotationParameter + " rotation.");
                     layoutList[roomsUsed + 1].layer = setNextLayer;
                     Utils.ChangeLayersRecursively(layoutList[roomsUsed + 1].transform, setNextLayer);
                     Utils.SetActiveChild(layoutList[roomsUsed + 1].transform, false, entryPortalTag, exitPortalTag);
@@ -113,15 +120,15 @@ public class ProceduralLayoutGeneration : MonoBehaviour
     private void GenerateEndRoom()
     {
         setNextLayer++;
-        List<Transform> portalsInLastRoomList = Utils.GetPortalTransformsInRoom(layoutList[roomsUsed], entryPortalTag, exitPortalTag); // Stores portal from previous room in a list
+        List<Transform> portalsInLastRoomList = Utils.GetPortalTransformsInRoom(layoutList[roomsUsed], exitPortalTag, 0.0f); // Stores portal from previous room in a list
         Utils.RandomizeArray(endRooms);
         /// End room
         for (int i = 0; i < endRooms.Length; i++) // Iterate over rooms
         {
-            List<Transform> portalsInEndRoomList = Utils.GetPortalTransformsInRoom(endRooms[i], entryPortalTag, exitPortalTag);
-            List<Transform> ninetyDegPortalsInEndRoomList = Utils.GetPortalTransformsInRoom(endRooms[i], entryPortalTag, exitPortalTag, 90.0f);
-            List<Transform> oneEightDegPortalsInEndRoomList = Utils.GetPortalTransformsInRoom(endRooms[i], entryPortalTag, exitPortalTag, 180.0f);
-            List<Transform> twoSeventyDegPortalsInEndRoomList = Utils.GetPortalTransformsInRoom(endRooms[i], entryPortalTag, exitPortalTag, 270.0f);
+            List<Transform> portalsInEndRoomList = Utils.GetPortalTransformsInRoom(endRooms[i], entryPortalTag, 0.0f);
+            List<Transform> ninetyDegPortalsInEndRoomList = Utils.GetPortalTransformsInRoom(endRooms[i], entryPortalTag, 90.0f);
+            List<Transform> oneEightDegPortalsInEndRoomList = Utils.GetPortalTransformsInRoom(endRooms[i], entryPortalTag, 180.0f);
+            List<Transform> twoSeventyDegPortalsInEndRoomList = Utils.GetPortalTransformsInRoom(endRooms[i], entryPortalTag, 270.0f);
             float rotationParameter = 0;
             bool connectedPortal = false;
             
