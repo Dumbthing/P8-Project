@@ -42,12 +42,15 @@ public class ProceduralLayoutGeneration : MonoBehaviour
 
     private void GenerateLayout()
     {
+        int iterationCounter = 0;
         Utils.RandomizeArray(rooms);
         for (int i = 1; i < maxRooms; i++) // Iterate over layout
         {
             List<Transform> portalsInLastRoomList = Utils.GetPortalTransformsInRoom(layoutList[i - 1], entryPortalTag, exitPortalTag);
-            for (int j = 0; j < rooms.Length - roomsUsed; j++) // Iterate over rooms
+            for (int j = 0; j < rooms.Length; j++) // Iterate over rooms
             {
+                iterationCounter++;
+                Debug.Log("Iteration #: " + iterationCounter);
                 List<Transform> portalsInNewRoomList = Utils.GetPortalTransformsInRoom(rooms[j], entryPortalTag, exitPortalTag);
                 List<Transform> ninetyDegPortalsInNewRoomList = Utils.GetPortalTransformsInRoom(rooms[j], entryPortalTag, exitPortalTag, 90.0f);
                 List<Transform> oneEightyDegPortalsInNewRoomList = Utils.GetPortalTransformsInRoom(rooms[j], entryPortalTag, exitPortalTag, 180.0f);
@@ -63,20 +66,24 @@ public class ProceduralLayoutGeneration : MonoBehaviour
                         {
                             if (portalsInLastRoomList[k].position == portalsInNewRoomList[l].position)          // Check for world position
                             {
+                                Debug.Log("0 deg portal registered");
                                 containedPortals++;
                             }
                             else if (portalsInLastRoomList[k].position == ninetyDegPortalsInNewRoomList[l].position)    // Check for world position when rotated by 90 degrees
                             {
+                                Debug.Log("90 deg portal registered");
                                 containedPortals++;
                                 rotationParameter = 90.0f;
                             }
                             else if (portalsInLastRoomList[k].position == oneEightyDegPortalsInNewRoomList[l].position)
                             {
+                                Debug.Log("180 deg portal registered");
                                 containedPortals++;
                                 rotationParameter = 180.0f;
                             }
                             else if (portalsInLastRoomList[k].position == twoSeventyDegPortalsInNewRoomList[l].position)
                             {
+                                Debug.Log("270 deg portal registered");
                                 containedPortals++;
                                 rotationParameter = 270.0f;
                             }
@@ -95,7 +102,7 @@ public class ProceduralLayoutGeneration : MonoBehaviour
                     roomsUsed++;
                     break; // Breaks from the current for loop
                 }
-                if (j == rooms.Length - roomsUsed - 1) // Last iteration
+                if (j == rooms.Length - 1) // Last iteration
                 {
                     return; // Breaks from both for loops since they are inside a method
                 }
@@ -112,47 +119,44 @@ public class ProceduralLayoutGeneration : MonoBehaviour
         for (int i = 0; i < endRooms.Length; i++) // Iterate over rooms
         {
             List<Transform> portalsInEndRoomList = Utils.GetPortalTransformsInRoom(endRooms[i], entryPortalTag, exitPortalTag);
-            List<Transform> ninetyDegPortalsInEndRoomList = Utils.GetPortalTransformsInRoom(endRooms[i], entryPortalTag, exitPortalTag, 90);
-            List<Transform> oneEightDegPortalsInEndRoomList = Utils.GetPortalTransformsInRoom(endRooms[i], entryPortalTag, exitPortalTag, 180);
-            List<Transform> twoSeventyDegPortalsInEndRoomList = Utils.GetPortalTransformsInRoom(endRooms[i], entryPortalTag, exitPortalTag, 270);
+            List<Transform> ninetyDegPortalsInEndRoomList = Utils.GetPortalTransformsInRoom(endRooms[i], entryPortalTag, exitPortalTag, 90.0f);
+            List<Transform> oneEightDegPortalsInEndRoomList = Utils.GetPortalTransformsInRoom(endRooms[i], entryPortalTag, exitPortalTag, 180.0f);
+            List<Transform> twoSeventyDegPortalsInEndRoomList = Utils.GetPortalTransformsInRoom(endRooms[i], entryPortalTag, exitPortalTag, 270.0f);
             float rotationParameter = 0;
             bool connectedPortal = false;
-
-            //List<Vector3> portalPositionsInNewRoomList = Utils.GetPortalPositionInRoom(endRooms[i], entryPortalTag, exitPortalTag);
-            //List<Quaternion> portalRotationsInNewRoomList = Utils.GetPortalRotationsInRoom(endRooms[i], entryPortalTag, exitPortalTag);
+            
             /// Checks whether exactly 1 of the portals in the room has the same position as exactly 1 portal in the previous room in the layout.
             for (int j = 0; j < portalsInLastRoomList.Count; j++)
             {
                 for (int k = 0; k < portalsInEndRoomList.Count; k++)
                 {
-                    //if (portalPositionsInNewRoomList.Contains(portalTransformsRoomBeforeEnd[j].position) &&
-                    //        portalRotationsInNewRoomList.Contains(portalTransformsRoomBeforeEnd[j].localRotation))
                     if (portalsInLastRoomList[j].localRotation == portalsInEndRoomList[k].localRotation &&  // Check for local rotation
                     portalsInLastRoomList[j].tag != portalsInEndRoomList[k].tag)                        // Check for tag
                     {
                         if (portalsInLastRoomList[j].position == portalsInEndRoomList[k].position)          // Check for world position
                         {
-                            rotationParameter = 0;
+                            rotationParameter = 0.0f;
                             connectedPortal = true;
                         }
                         else if (portalsInLastRoomList[j].position == ninetyDegPortalsInEndRoomList[k].position)
                         {
-                            rotationParameter = 0;
+                            rotationParameter = 90.0f;
                             connectedPortal = true;
                         }
                         else if (portalsInLastRoomList[j].position == oneEightDegPortalsInEndRoomList[k].position)
                         {
-                            rotationParameter = 0;
+                            rotationParameter = 180.0f;
                             connectedPortal = true;
                         }
                         else if (portalsInLastRoomList[j].position == twoSeventyDegPortalsInEndRoomList[k].position)
                         {
-                            rotationParameter = 0;
+                            rotationParameter = 270.0f;
                             connectedPortal = true;
                         }
                     }
                     if (connectedPortal)
                     {
+                        Debug.Log("End portal placed with rotation: " + rotationParameter);
                         layoutList.Add(Instantiate(endRooms[i], Utils.worldSpacePoint, Quaternion.Euler(0.0f, rotationParameter, 0.0f)));
                         layoutList[roomsUsed + 1].layer = setNextLayer;
                         Utils.SetActiveChild(layoutList[roomsUsed + 1].transform, false, entryPortalTag, exitPortalTag);
