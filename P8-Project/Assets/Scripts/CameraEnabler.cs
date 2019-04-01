@@ -4,11 +4,10 @@ using UnityEngine;
 
 public class CameraEnabler : MonoBehaviour
 {
-    CullingPortal portalScript;
+    public ProceduralLayoutGeneration layout;
     Camera currentLayerCam, nextLayerCam, previousLayerCam, skyboxCam;
     void Start()
     {
-        portalScript = GetComponent<CullingPortal>();
         skyboxCam = GameObject.Find("SkyboxCam").GetComponent<Camera>();
         skyboxCam.enabled = true;
         previousLayerCam = GameObject.Find("PreviousLayerCam").GetComponent<Camera>();
@@ -25,13 +24,14 @@ public class CameraEnabler : MonoBehaviour
         previousLayerCam.cullingMask = 0;
         currentLayerCam.cullingMask = 0;
         nextLayerCam.cullingMask = 0;
-        
+
+        currentLayerCam.cullingMask |= 1 << 0;    // Always keep default
         // Bit-shift new culling masks based on layer of current room (depending on camera), without going out of bounds.
-        currentLayerCam.cullingMask |= 1 << portalScript.newRooms[currentRoom].layer;
+        currentLayerCam.cullingMask |= 1 << layout.layoutList[currentRoom].layer;
         if (currentRoom > 0)
-            previousLayerCam.cullingMask |= 1 << portalScript.newRooms[currentRoom - 1].layer;
-        if (currentRoom < portalScript.maxRooms)
-            nextLayerCam.cullingMask |= 1 << portalScript.newRooms[currentRoom + 1].layer;
+            previousLayerCam.cullingMask |= 1 << layout.layoutList[currentRoom - 1].layer;
+        if (currentRoom + 1 < layout.layoutList.Count)
+            nextLayerCam.cullingMask |= 1 << layout.layoutList[currentRoom + 1].layer;
     }
 
     public void SetPreviousLayer(int onOrOff, int newPreviousLayer)
