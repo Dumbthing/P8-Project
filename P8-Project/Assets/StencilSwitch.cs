@@ -8,15 +8,23 @@ public class StencilSwitch : MonoBehaviour
     GameObject room2;
     Renderer rend;
     Material newMat;
+    Camera PreviousCam;
+    Camera CurrentCam;
+    Camera NextCam;
+
     // Start is called before the first frame update
     void Start()
     {
 
         room = GameObject.FindGameObjectWithTag("Room1_2");
         room2 = GameObject.FindGameObjectWithTag("Room3_2");
+     
+
+
     }
 
-    // Update is called once per frame
+
+
     void Update()
     {
 
@@ -30,8 +38,7 @@ public class StencilSwitch : MonoBehaviour
 
         if (Vector3.Dot(toTarget, gameObject.transform.forward) > 0)
         {
-            //Enter from back
-            
+
             foreach (Renderer r in room2.GetComponentsInChildren<Renderer>())
             {
                 r.material.shader = Shader.Find("Stencils/Portal_1/Diffuse-Always");
