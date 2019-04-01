@@ -4,6 +4,7 @@ using UnityEngine;
 public static class Utils
 {
     static public Vector3 worldSpacePoint = new Vector3(0.0f, 0.0f, 0.0f);
+    static int uniqueIterator = 0;
 
     static public   void RandomizeArray(GameObject[] arr) // Fischer-Yates shuffle
     {
@@ -60,7 +61,7 @@ public static class Utils
             }
         }
     }
-    static public List<Transform> GetPortalTransformsInRoom(GameObject room, string _tag, float rotationParameter)
+    static public List<Transform> GetPortalTransformsInRoom(GameObject room, string _tag)
     {
         List<Transform> portalList = new List<Transform>();
         for (int i = 0; i < room.transform.childCount; i++)
@@ -68,20 +69,13 @@ public static class Utils
             Transform child = room.transform.GetChild(i);
             if (child.tag == _tag)
             {
-                if (rotationParameter > 0.0f)
-                {
-                    Transform portal = child;
-                    portal.Rotate(worldSpacePoint, rotationParameter); // Rotates the vector around a point with an amount of degrees
-                    portalList.Add(portal);
-                }
-                else 
-                    portalList.Add(child);
+                portalList.Add(child);
             }
         }
         return portalList;
     }
 
-    static public List<Transform> GetPortalTransformsInRoom(GameObject room, string entryPortalTag, string exitPortalTag, float rotationParameter)
+    static public List<Transform> GetPortalTransformsInRoom(GameObject room, string entryPortalTag, string exitPortalTag)
     {
         List<Transform> portalList = new List<Transform>();
         for (int i = 0; i < room.transform.childCount; i++)
@@ -89,20 +83,36 @@ public static class Utils
             Transform child = room.transform.GetChild(i);
             if (child.tag == entryPortalTag || child.tag == exitPortalTag)
             {
-                if (rotationParameter > 0)
-                {
-                    Transform portal = child;
-                    portal.Rotate(worldSpacePoint, rotationParameter); // Rotates the vector around a point with an amount of degrees
-                    portalList.Add(portal);
-                }
-                else
                     portalList.Add(child);
             }
         }
         return portalList;
     }
 
-    static public List<Vector3> GetPortalPositionInRoom(GameObject room, string entryPortalTag, string exitPortalTag)
+    static public List<Vector3> GetPortalPositionsInRoom(GameObject room, string _tag, float rotationParameter)
+    {
+        List<Vector3> portalPositions = new List<Vector3>();
+        for (int i = 0; i < room.transform.childCount; i++)
+        {
+            Transform child = room.transform.GetChild(i);
+            if (child.tag == _tag)
+            {
+                if (rotationParameter > 0)
+                {
+                    Vector3 portal = child.position;
+                    portal = Quaternion.Euler(0.0f, rotationParameter, 0.0f) * portal;
+                    portalPositions.Add(portal);
+                }
+                else
+                {
+                    portalPositions.Add(child.position);
+                }
+            }
+        }
+        return portalPositions;
+    }
+
+    static public List<Vector3> GetPortalPositionsInRoom(GameObject room, string entryPortalTag, string exitPortalTag, float rotationParameter)
     {
         List<Vector3> portalPositions = new List<Vector3>();
         for (int i = 0; i < room.transform.childCount; i++)
@@ -110,7 +120,16 @@ public static class Utils
             Transform child = room.transform.GetChild(i);
             if (child.tag == entryPortalTag || child.tag == exitPortalTag)
             {
-                portalPositions.Add(child.localPosition);
+                if (rotationParameter > 0)
+                {
+                    Vector3 portal = child.position;
+                    portal = Quaternion.Euler(0.0f, rotationParameter, 0.0f) * portal;
+                    portalPositions.Add(portal);
+                }
+                else
+                {
+                    portalPositions.Add(child.position);
+                }
             }
         }
         return portalPositions;
