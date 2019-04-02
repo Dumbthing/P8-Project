@@ -61,12 +61,16 @@ public class CameraEnabler : MonoBehaviour
                         r.material.shader = Shader.Find("Stencils/Portal_2/Diffuse-Always");
                 }
             }
-            else if (goArray[i].layer == layout.layoutList[currentRoom + 1].layer && currentRoom < layout.layoutList.Count) // Next (Portal3)
+
+            if (currentRoom < layout.layoutList.Count - 1)
             {
-                foreach (Renderer r in goArray[i].GetComponentsInChildren<Renderer>())
+                if (goArray[i].layer == layout.layoutList[currentRoom + 1].layer) // Next (Portal3)
                 {
-                    if (r.gameObject.tag != "StencilNext")
-                        r.material.shader = Shader.Find("Stencils/Portal_3/Diffuse-Equal");
+                    foreach (Renderer r in goArray[i].GetComponentsInChildren<Renderer>())
+                    {
+                        if (r.gameObject.tag != "StencilNext")
+                            r.material.shader = Shader.Find("Stencils/Portal_3/Diffuse-Equal");
+                    }
                 }
             }
         }
