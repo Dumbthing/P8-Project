@@ -39,7 +39,8 @@ public class CameraEnabler : MonoBehaviour
     public void SetStencilShader(int currentRoom)
     {
         /// Set materials in next and previous rooms to be visible through stencil mask only
-        GameObject[] goArray = FindObjectsOfType(typeof(GameObject)) as GameObject[];
+        GameObject[] goArray = GameObject.FindGameObjectsWithTag("Room");
+        //GameObject[] goArray = FindObjectsOfType(typeof(GameObject)) as GameObject[];
         for (int i = 0; i < goArray.Length; i++)
         {
             if (currentRoom > 0 )
@@ -48,8 +49,11 @@ public class CameraEnabler : MonoBehaviour
                 {
                     foreach (Renderer r in goArray[i].GetComponentsInChildren<Renderer>())
                     {
-                        if (r.gameObject.tag != "StencilPrevious")
+                        if (r.tag != "StencilNext" && r.tag != "StencilPrevious")
+                        {
+                            Debug.Log("Renderer: " + r.name + " " + r.tag);
                             r.material.shader = Shader.Find("Stencils/Portal_1/Diffuse-Equal");
+                        }
                     }
                 }
             }
@@ -57,8 +61,11 @@ public class CameraEnabler : MonoBehaviour
             {
                 foreach (Renderer r in goArray[i].GetComponentsInChildren<Renderer>())
                 {
-                    if (r.material.shader != Shader.Find("Stencils/Masks/StencilMask_2"))
-                        r.material.shader = Shader.Find("Stencils/Portal_2/Diffuse-Always");
+                    if (r.tag != "StencilNext" && r.tag != "StencilPrevious")
+                    {
+                        Debug.Log("Renderer: " + r.name + " " + r.tag);
+                        r.material.shader = Shader.Find("Standard");
+                    }
                 }
             }
 
@@ -68,8 +75,11 @@ public class CameraEnabler : MonoBehaviour
                 {
                     foreach (Renderer r in goArray[i].GetComponentsInChildren<Renderer>())
                     {
-                        if (r.gameObject.tag != "StencilNext")
+                        if (r.tag != "StencilNext" && r.tag != "StencilPrevious")
+                        {
+                            Debug.Log("Renderer: " + r.name + " " + r.tag);
                             r.material.shader = Shader.Find("Stencils/Portal_3/Diffuse-Equal");
+                        }
                     }
                 }
             }
