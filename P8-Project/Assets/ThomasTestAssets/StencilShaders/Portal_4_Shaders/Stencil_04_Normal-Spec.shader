@@ -21,7 +21,7 @@ Shader "Stencils/Portal_4/Bumped Specular"
 			Fail keep
 		}
 		
-		Tags { "RenderType"="Opaque" }
+		Tags { "RenderType"="Opaque"}
 			LOD 400
 			
 		CGPROGRAM

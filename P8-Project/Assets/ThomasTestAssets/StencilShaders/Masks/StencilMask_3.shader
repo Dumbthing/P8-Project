@@ -7,12 +7,13 @@ Shader "Stencils/Masks/StencilMask_3"
 	{
 		Tags { "RenderType"="Opaque" "Queue"="Geometry-100"}
 		ColorMask 0
-		ZWrite On
+		ZWrite Off
 		Stencil 
 		{
 			Ref 3
 			Comp Always
-			Pass Keep
+			Pass Replace
+			
 		}
 		
 		Pass
