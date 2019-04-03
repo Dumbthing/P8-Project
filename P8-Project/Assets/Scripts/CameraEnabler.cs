@@ -8,12 +8,12 @@ public class CameraEnabler : MonoBehaviour
     Camera currentLayerCam, nextLayerCam, previousLayerCam, skyboxCam;
     void Start()
     {
-        skyboxCam = GameObject.Find("SkyboxCam").GetComponent<Camera>();
-        skyboxCam.enabled = true;
-        previousLayerCam = GameObject.Find("PreviousLayerCam").GetComponent<Camera>();
-        previousLayerCam.enabled = true;
-        nextLayerCam = GameObject.Find("NextLayerCam").GetComponent<Camera>();
-        nextLayerCam.enabled = true;
+        //skyboxCam = GameObject.Find("SkyboxCam").GetComponent<Camera>();
+        //skyboxCam.enabled = true;
+        //previousLayerCam = GameObject.Find("PreviousLayerCam").GetComponent<Camera>();
+        //previousLayerCam.enabled = true;
+        //nextLayerCam = GameObject.Find("NextLayerCam").GetComponent<Camera>();
+        //nextLayerCam.enabled = true;
         currentLayerCam = GetComponentInChildren<Camera>(); // Main camera
         currentLayerCam.enabled = true;
         SetStencilShader(0);
@@ -23,17 +23,17 @@ public class CameraEnabler : MonoBehaviour
     {
         SetStencilShader(currentRoom);
         /// Reset all culling masks
-        previousLayerCam.cullingMask = 0;
-        currentLayerCam.cullingMask = 0;
-        nextLayerCam.cullingMask = 0;
+        //previousLayerCam.cullingMask = 0;
+        //nextLayerCam.cullingMask = 0;
+        //currentLayerCam.cullingMask = 0;
 
-        currentLayerCam.cullingMask |= 1 << 0;    // Always keep default
+        //currentLayerCam.cullingMask |= 1 << 0;    // Always keep default
         /// Bit-shift new culling masks based on layer of current room (depending on camera), without going out of bounds.
-        currentLayerCam.cullingMask |= 1 << layout.layoutList[currentRoom].layer;
-        if (currentRoom > 0)
-            previousLayerCam.cullingMask |= 1 << layout.layoutList[currentRoom - 1].layer;
-        if (currentRoom + 1 < layout.layoutList.Count)
-            nextLayerCam.cullingMask |= 1 << layout.layoutList[currentRoom + 1].layer;
+        //currentLayerCam.cullingMask |= 1 << layout.layoutList[currentRoom].layer;
+        //if (currentRoom > 0)
+        //    previousLayerCam.cullingMask |= 1 << layout.layoutList[currentRoom - 1].layer;
+        //if (currentRoom + 1 < layout.layoutList.Count)
+        //    nextLayerCam.cullingMask |= 1 << layout.layoutList[currentRoom + 1].layer;
     }
 
     public void SetStencilShader(int currentRoom)
@@ -49,7 +49,7 @@ public class CameraEnabler : MonoBehaviour
                 {
                     foreach (Renderer r in goArray[i].GetComponentsInChildren<Renderer>())
                     {
-                        if (r.tag != "StencilNext" && r.tag != "StencilPrevious")
+                        if (r.tag != "EntryPortal" && r.tag != "ExitPortal")
                         {
                             Debug.Log("Renderer: " + r.name + " " + r.tag);
                             r.material.shader = Shader.Find("Stencils/Portal_1/Diffuse-Equal");
@@ -61,10 +61,10 @@ public class CameraEnabler : MonoBehaviour
             {
                 foreach (Renderer r in goArray[i].GetComponentsInChildren<Renderer>())
                 {
-                    if (r.tag != "StencilNext" && r.tag != "StencilPrevious")
+                    if (r.tag != "EntryPortal" && r.tag != "ExitPortal")
                     {
                         Debug.Log("Renderer: " + r.name + " " + r.tag);
-                        r.material.shader = Shader.Find("Standard");
+                        r.material.shader = Shader.Find("Stencils/Portal_2/Diffuse-Equal");
                     }
                 }
             }
@@ -75,7 +75,7 @@ public class CameraEnabler : MonoBehaviour
                 {
                     foreach (Renderer r in goArray[i].GetComponentsInChildren<Renderer>())
                     {
-                        if (r.tag != "StencilNext" && r.tag != "StencilPrevious")
+                        if (r.tag != "EntryPortal" && r.tag != "ExitPortal")
                         {
                             Debug.Log("Renderer: " + r.name + " " + r.tag);
                             r.material.shader = Shader.Find("Stencils/Portal_3/Diffuse-Equal");

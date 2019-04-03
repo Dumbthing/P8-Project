@@ -107,6 +107,10 @@ public class ProceduralLayoutGeneration : MonoBehaviour
                     Utils.SetActiveChild(layoutList[roomsUsed + 1].transform, false, entryPortalTag, exitPortalTag);
                     rooms = Utils.RemoveIndices(rooms, j);
                     roomsUsed++;
+                    if (layoutList.Count > 2)
+                    {
+                        layoutList[i].SetActive(false);
+                    }
                     break; // Breaks from the current for loop
                 }
                 if (j == rooms.Length - 1) // Last iteration

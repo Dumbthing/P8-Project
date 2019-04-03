@@ -1,8 +1,5 @@
 Shader "Stencils/Portal_2/Diffuse-Equal" {
 Properties {
-
-	
-
 	_Color ("Main Color", Color) = (1,1,1,1)
 	_MainTex ("Base (RGB)", 2D) = "white" {}
 }

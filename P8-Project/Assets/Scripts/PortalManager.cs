@@ -59,10 +59,19 @@ public class PortalManager : MonoBehaviour {
             if (portalExitScenario == 1) // Scenario 1: Enter "next-room" portal
             {
                 Utils.SetActiveChild(layout.layoutList[layout.currentRoom - 1].transform, false, layout.entryPortalTag, layout.exitPortalTag); // Since we enabled new portals, we should disable the existing ones.
+                if (layout.currentRoom < layout.layoutList.Count + 1)
+                    layout.layoutList[layout.currentRoom + 1].SetActive(true);
+                if (layout.currentRoom > 1)
+                    layout.layoutList[layout.currentRoom - 2].SetActive(false);
             }
             else if (portalExitScenario == 2) // Scenario 2: Enter "previous-room" portal
             {
                 Utils.SetActiveChild(layout.layoutList[layout.currentRoom + 1].transform, false, layout.entryPortalTag, layout.exitPortalTag); // Since we enabled new portals, we should disable the existing ones.
+                if (layout.currentRoom > 0)
+                    layout.layoutList[layout.currentRoom - 1].SetActive(true);
+                if (layout.currentRoom < layout.layoutList.Count + 2)
+                    layout.layoutList[layout.currentRoom + 2].SetActive(false);
+
             }
         }
         else // Should occur if the player enters and exits collider on the same side
