@@ -5,7 +5,7 @@ using UnityEngine;
 public class PortalManager : MonoBehaviour {
 
     /// Inspector variables
-    CameraEnabler cameras;
+    StencilController stencil;
     public ProceduralLayoutGeneration layout;
 
     /// Public, non-inspector variables
@@ -14,11 +14,10 @@ public class PortalManager : MonoBehaviour {
     private bool singlePortalCollision = false, playerReturned = false;
     private int portalExitScenario = 0; // Default is 0: do nothing
     private Vector3 backwardPortalPos, lastPortalPos;
-    private int currentLayer = 8;
 
     void Start()
     {
-        cameras = GetComponent<CameraEnabler>(); // Script that handles which layer is rendered by which camera
+        stencil = GetComponent<StencilController>(); // Script that handles which layer is rendered by which camera
     }
 
     private void OnTriggerEnter(Collider portal) // Portal collision
@@ -38,8 +37,7 @@ public class PortalManager : MonoBehaviour {
             else
                 Debug.Log("Unknown portal tag encountered - No action taken.");
 
-            cameras.SetNewCullingMasks(layout.currentRoom);
-            //lastPortalPos = portal.transform.localPosition; // Store position of last portal
+            stencil.SetStencilShader(layout.currentRoom);
             singlePortalCollision = true;
         }
     }
@@ -59,7 +57,7 @@ public class PortalManager : MonoBehaviour {
             if (portalExitScenario == 1) // Scenario 1: Enter "next-room" portal
             {
                 Utils.SetActiveChild(layout.layoutList[layout.currentRoom - 1].transform, false, layout.entryPortalTag, layout.exitPortalTag); // Since we enabled new portals, we should disable the existing ones.
-                if (layout.currentRoom < layout.layoutList.Count + 1)
+                if (layout.currentRoom < layout.layoutList.Count - 1)
                     layout.layoutList[layout.currentRoom + 1].SetActive(true);
                 if (layout.currentRoom > 1)
                     layout.layoutList[layout.currentRoom - 2].SetActive(false);
@@ -69,7 +67,7 @@ public class PortalManager : MonoBehaviour {
                 Utils.SetActiveChild(layout.layoutList[layout.currentRoom + 1].transform, false, layout.entryPortalTag, layout.exitPortalTag); // Since we enabled new portals, we should disable the existing ones.
                 if (layout.currentRoom > 0)
                     layout.layoutList[layout.currentRoom - 1].SetActive(true);
-                if (layout.currentRoom < layout.layoutList.Count + 2)
+                if (layout.currentRoom < layout.layoutList.Count - 2)
                     layout.layoutList[layout.currentRoom + 2].SetActive(false);
 
             }

@@ -61,53 +61,43 @@ public class ProceduralLayoutGeneration : MonoBehaviour
                     {
                         if (portalsInLastRoomList[k].tag != portalsInNewRoomList[l].tag)
                         {
-                            //if (portalsInLastRoomList[k].localEulerAngles == portalsInNewRoomList[l].localEulerAngles &&  // Check for local rotation
-                            //    portalsInLastRoomList[k].tag != portalsInNewRoomList[l].tag)                        // Check for tag
-                            //{
-                            //Debug.Log(uniqueIterator + " Portal rotation and tag accepted, checking position: \n" +
-                            //    "Portal " + k + " (" + portalsInLastRoomList[k].name + ") in last room has the position: " + portalsInLastRoomList[k].position +
-                            //", \nwhile Portal " + l + " (" + portalsInNewRoomList[l].name + ") in new room has the position: " + portalsInNewRoomList[l].position +
-                            //" OR at 90 degrees: " + ninetyDegPortalsInNewRoomList[l] + "\nOR at 180 degrees: " + oneEightyDegPortalsInNewRoomList[l] +
-                            //" OR at 270 degrees: " + twoSeventyDegPortalsInNewRoomList[l]);
-                            //uniqueIterator++;
-                            if (portalsInLastRoomList[k].position == portalsInNewRoomList[l].position)          // Check for world position
+                            float newPortalRot = portalsInNewRoomList[l].eulerAngles.y;
+                            if (portalsInLastRoomList[k].position == portalsInNewRoomList[l].position &&
+                                portalsInLastRoomList[k].eulerAngles.y != newPortalRot)          // Check for world position
                             {
-                                Debug.Log("0 deg portal registered");
                                 containedPortals++;
                             }
-                            else if (portalsInLastRoomList[k].position == ninetyDegPortalsInNewRoomList[l])    // Check for world position when rotated by 90 degrees
+                            else if (portalsInLastRoomList[k].position == ninetyDegPortalsInNewRoomList[l] &&
+                                portalsInLastRoomList[k].eulerAngles.y != newPortalRot + 90.0f)    // Check for world position when rotated by 90 degrees
                             {
-                                Debug.Log("90 deg portal registered");
                                 containedPortals++;
                                 rotationParameter = 90.0f;
                             }
-                            else if (portalsInLastRoomList[k].position == oneEightyDegPortalsInNewRoomList[l])
+                            else if (portalsInLastRoomList[k].position == oneEightyDegPortalsInNewRoomList[l] &&
+                                portalsInLastRoomList[k].eulerAngles.y != newPortalRot + 180.0f)
                             {
-                                Debug.Log("180 deg portal registered");
                                 containedPortals++;
                                 rotationParameter = 180.0f;
                             }
-                            else if (portalsInLastRoomList[k].position == twoSeventyDegPortalsInNewRoomList[l])
+                            else if (portalsInLastRoomList[k].position == twoSeventyDegPortalsInNewRoomList[l] &&
+                                portalsInLastRoomList[k].eulerAngles.y != newPortalRot + 270.0f)
                             {
-                                Debug.Log("270 deg portal registered");
                                 containedPortals++;
                                 rotationParameter = 270.0f;
                             }
                         }
                     }
                 }
-                Debug.Log("Contained Poratls = " + containedPortals);
                 if (containedPortals == 1)
                 {
                     setNextLayer++;
                     layoutList.Add(Instantiate(rooms[j], Utils.worldSpacePoint, Quaternion.Euler(0.0f, rotationParameter, 0.0f)));
-                    Debug.Log("Instantiated room with " + rotationParameter + " rotation.");
                     layoutList[roomsUsed + 1].layer = setNextLayer;
                     Utils.ChangeLayersRecursively(layoutList[roomsUsed + 1].transform, setNextLayer);
                     Utils.SetActiveChild(layoutList[roomsUsed + 1].transform, false, entryPortalTag, exitPortalTag);
                     rooms = Utils.RemoveIndices(rooms, j);
                     roomsUsed++;
-                    if (layoutList.Count > 2)
+                    if (layoutList.Count > 2) // Only the first two rooms should be active on start
                     {
                         layoutList[i].SetActive(false);
                     }
@@ -141,12 +131,11 @@ public class ProceduralLayoutGeneration : MonoBehaviour
             {
                 for (int k = 0; k < portalsInEndRoomList.Count; k++)
                 {
-                    if (portalsInLastRoomList[j].localEulerAngles == portalsInEndRoomList[k].localEulerAngles &&  // Check for local rotation
-                    portalsInLastRoomList[j].tag != portalsInEndRoomList[k].tag)                                // Check for tag
+                    if (portalsInLastRoomList[j].eulerAngles != portalsInEndRoomList[k].eulerAngles &&  // Check for rotation
+                    portalsInLastRoomList[j].tag != portalsInEndRoomList[k].tag)                        // Check for tag
                     {
-                        if (portalsInLastRoomList[j].position == portalsInEndRoomList[k].position)          // Check for world position
+                        if (portalsInLastRoomList[j].position == portalsInEndRoomList[k].position)      // Check for world position
                         {
-                            rotationParameter = 0.0f;
                             connectedPortal = true;
                         }
                         else if (portalsInLastRoomList[j].position == ninetyDegPortalsInEndRoomList[k])
@@ -167,7 +156,6 @@ public class ProceduralLayoutGeneration : MonoBehaviour
                     }
                     if (connectedPortal)
                     {
-                        Debug.Log("End portal placed with rotation: " + rotationParameter);
                         layoutList.Add(Instantiate(endRooms[i], Utils.worldSpacePoint, Quaternion.Euler(0.0f, rotationParameter, 0.0f)));
                         layoutList[roomsUsed + 1].layer = setNextLayer;
                         Utils.SetActiveChild(layoutList[roomsUsed + 1].transform, false, entryPortalTag, exitPortalTag);
