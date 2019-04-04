@@ -7,7 +7,7 @@ Shader "Stencils/Masks/StencilMask_4"
 	{
 		Tags { "RenderType"="Opaque" "Queue"="Geometry-100"}
 		ColorMask 0
-		ZWrite off
+		ZWrite Off
 		Stencil 
 		{
 			Ref 4

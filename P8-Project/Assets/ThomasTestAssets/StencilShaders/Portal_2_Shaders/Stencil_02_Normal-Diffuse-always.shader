@@ -1,8 +1,5 @@
 Shader "Stencils/Portal_2/Diffuse-Always" {
 Properties {
-
-	
-
 	_Color ("Main Color", Color) = (1,1,1,1)
 	_MainTex ("Base (RGB)", 2D) = "white" {}
 }
@@ -12,9 +9,8 @@ SubShader {
 
 Stencil {
 Ref 2
-Comp always
-//Comp equal
-Pass keep
+Comp Always
+Pass Keep
 Fail keep
 }
 	Tags { "RenderType"="Opaque" }
