@@ -10,7 +10,7 @@ Comp equal
 Pass keep
 Fail keep
 }
-	Tags { "RenderType"="Opaque" }
+	Tags { "RenderType"="Opaque" "Queue"="4" }
 	LOD 200
 
 CGPROGRAM

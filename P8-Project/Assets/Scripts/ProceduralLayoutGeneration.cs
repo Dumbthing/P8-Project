@@ -20,6 +20,7 @@ public class ProceduralLayoutGeneration : MonoBehaviour
     private int roomsUsed = 0;
     private int setNextLayer = 8;
     private int uniqueIterator;
+    private float zeroF = 0.0f, ninetyF = 90.0f, oneEightyF = 180.0f, twoSeventyF = 270.0f;
 
     /* We use awake as it is called before start, and this must always be called exactly once.
      * Note that if we want to be able to call this function multiple times, like if we want to
@@ -50,11 +51,11 @@ public class ProceduralLayoutGeneration : MonoBehaviour
             for (int j = 0; j < rooms.Length; j++) // Iterate over rooms
             {
                 List<Transform> portalsInNewRoomList = Utils.GetPortalTransformsInRoom(rooms[j], entryPortalTag, exitPortalTag);
-                List<Vector3> ninetyDegPortalsInNewRoomList = Utils.GetPortalPositionsInRoom(rooms[j], entryPortalTag, exitPortalTag, 90.0f);
-                List<Vector3> oneEightyDegPortalsInNewRoomList = Utils.GetPortalPositionsInRoom(rooms[j], entryPortalTag, exitPortalTag, 180.0f);
-                List<Vector3> twoSeventyDegPortalsInNewRoomList = Utils.GetPortalPositionsInRoom(rooms[j], entryPortalTag, exitPortalTag, 270.0f);
+                List<Vector3> ninetyDegPortalsInNewRoomList = Utils.GetPortalPositionsInRoom(rooms[j], entryPortalTag, exitPortalTag, ninetyF);
+                List<Vector3> oneEightyDegPortalsInNewRoomList = Utils.GetPortalPositionsInRoom(rooms[j], entryPortalTag, exitPortalTag, oneEightyF);
+                List<Vector3> twoSeventyDegPortalsInNewRoomList = Utils.GetPortalPositionsInRoom(rooms[j], entryPortalTag, exitPortalTag, twoSeventyF);
                 int containedPortals = 0;
-                float rotationParameter = 0.0f;
+                float rotationParameter = zeroF;
                 for (int k = 0; k < portalsInLastRoomList.Count; k++)
                 {
                     for (int l = 0; l < portalsInNewRoomList.Count; l++)
@@ -62,28 +63,99 @@ public class ProceduralLayoutGeneration : MonoBehaviour
                         if (portalsInLastRoomList[k].tag != portalsInNewRoomList[l].tag)
                         {
                             float newPortalRot = portalsInNewRoomList[l].eulerAngles.y;
+                            float unrotatedRot = zeroF;
+                            if (portalsInNewRoomList[l].eulerAngles.y == ninetyF)
+                                unrotatedRot = ninetyF;
+                            else if (portalsInNewRoomList[l].eulerAngles.y == oneEightyF)
+                                unrotatedRot = oneEightyF;
+                            else if (portalsInNewRoomList[l].eulerAngles.y == twoSeventyF)
+                                unrotatedRot = twoSeventyF;
+
                             if (portalsInLastRoomList[k].position == portalsInNewRoomList[l].position &&
-                                portalsInLastRoomList[k].eulerAngles.y != newPortalRot)          // Check for world position
+                                portalsInLastRoomList[k].eulerAngles.y != newPortalRot)          // Check for world position and y world rotation
                             {
                                 containedPortals++;
                             }
-                            else if (portalsInLastRoomList[k].position == ninetyDegPortalsInNewRoomList[l] &&
-                                portalsInLastRoomList[k].eulerAngles.y != newPortalRot + 90.0f)    // Check for world position when rotated by 90 degrees
+                            else if (portalsInLastRoomList[k].position == ninetyDegPortalsInNewRoomList[l]) // Check for world position when rotated by 90 degrees
                             {
-                                containedPortals++;
-                                rotationParameter = 90.0f;
+                                if (unrotatedRot != twoSeventyF) // unrotated rotation is 90 and rotation should therefore not be incremented by 90 when at 270
+                                {
+                                    if (portalsInLastRoomList[k].eulerAngles.y != newPortalRot + ninetyF )
+                                    {
+                                        containedPortals++;
+                                        rotationParameter = ninetyF;
+                                    }
+                                }
+                                else                                    // 90 + 270 = 360 -> 0
+                                {
+                                    if (portalsInLastRoomList[k].eulerAngles.y != zeroF) 
+                                    {
+                                        containedPortals++;
+                                        rotationParameter = ninetyF;
+                                    }
+                                }
                             }
-                            else if (portalsInLastRoomList[k].position == oneEightyDegPortalsInNewRoomList[l] &&
-                                portalsInLastRoomList[k].eulerAngles.y != newPortalRot + 180.0f)
+                            else if (portalsInLastRoomList[k].position == oneEightyDegPortalsInNewRoomList[l])  // Check for world position when rotated by 180 degrees
                             {
-                                containedPortals++;
-                                rotationParameter = 180.0f;
+                                if (unrotatedRot != oneEightyF && unrotatedRot != twoSeventyF)
+                                {
+                                    if (portalsInLastRoomList[k].eulerAngles.y != newPortalRot + oneEightyF)
+                                    {
+                                        containedPortals++;
+                                        rotationParameter = oneEightyF;
+                                    }
+                                }
+                                else if (unrotatedRot == oneEightyF)        // 180 + 180 = 360 -> 0
+                                {
+                                    if (portalsInLastRoomList[k].eulerAngles.y != zeroF)
+                                    {
+                                        containedPortals++;
+                                        rotationParameter = oneEightyF;
+                                    }
+                                }
+                                else if (unrotatedRot == twoSeventyF)       // 180 + 270 = 450 -> 90
+                                {
+                                    if (portalsInLastRoomList[k].eulerAngles.y != ninetyF)
+                                    {
+                                        containedPortals++;
+                                        rotationParameter = oneEightyF;
+                                    }
+                                }
                             }
-                            else if (portalsInLastRoomList[k].position == twoSeventyDegPortalsInNewRoomList[l] &&
-                                portalsInLastRoomList[k].eulerAngles.y != newPortalRot + 270.0f)
+                            else if (portalsInLastRoomList[k].position == twoSeventyDegPortalsInNewRoomList[l])  // Check for world position when rotated by 270 degrees
                             {
-                                containedPortals++;
-                                rotationParameter = 270.0f;
+                                if (unrotatedRot == zeroF)
+                                {
+                                    if (portalsInLastRoomList[k].eulerAngles.y != newPortalRot + twoSeventyF)
+                                    {
+                                        containedPortals++;
+                                        rotationParameter = twoSeventyF;
+                                    }
+                                }
+                                else if (unrotatedRot == ninetyF)           // 270 + 90 = 360 -> 0
+                                {
+                                    if (portalsInLastRoomList[k].eulerAngles.y != zeroF)
+                                    {
+                                        containedPortals++;
+                                        rotationParameter = twoSeventyF;
+                                    }
+                                }
+                                else if (unrotatedRot == oneEightyF)        // 270 + 180 = 450 -> 90
+                                {
+                                    if (portalsInLastRoomList[k].eulerAngles.y != ninetyF)
+                                    {
+                                        containedPortals++;
+                                        rotationParameter = twoSeventyF;
+                                    }
+                                }
+                                else if (unrotatedRot == twoSeventyF)       // 270 + 270 = 540 -> 180
+                                {
+                                    if (portalsInLastRoomList[k].eulerAngles.y != oneEightyF)
+                                    {
+                                        containedPortals++;
+                                        rotationParameter = twoSeventyF;
+                                    }
+                                }
                             }
                         }
                     }
@@ -160,6 +232,7 @@ public class ProceduralLayoutGeneration : MonoBehaviour
                         layoutList[roomsUsed + 1].layer = setNextLayer;
                         Utils.SetActiveChild(layoutList[roomsUsed + 1].transform, false, entryPortalTag, exitPortalTag);
                         Utils.ChangeLayersRecursively(layoutList[roomsUsed + 1].transform, setNextLayer);
+                        layoutList[roomsUsed + 1].SetActive(false);
                         return; // Breaks from the function
                     }
                 }

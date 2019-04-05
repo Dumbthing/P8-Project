@@ -5,7 +5,7 @@ Shader "Stencils/Masks/StencilMask_3"
 {
 	SubShader 
 	{
-		Tags { "RenderType"="Opaque" "Queue"="Geometry-100"}
+		Tags { "RenderType"="Opaque" "Queue"="Geometry-2"}
 		ColorMask 0
 		ZWrite Off
 		Stencil 
