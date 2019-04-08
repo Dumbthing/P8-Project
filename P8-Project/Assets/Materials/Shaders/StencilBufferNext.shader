@@ -1,4 +1,4 @@
-﻿Shader "Stencils/Material/StencilBufferNext" {
+﻿Shader "Stencils/Materials/StencilBufferNext" {
 	Properties{
 		_Color("Main Color", Color) = (1,1,1,1)
 		_MainTex("Base (RGB)", 2D) = "white" {}
@@ -10,8 +10,7 @@
 		Pass keep
 		Fail keep
 		}
-			Tags { "RenderType" = "Opaque"  "Queue" = "Geometry+300"}
-			LOD 200
+			Tags { "RenderType" = "Opaque" "Queue" = "Geometry+300"}
 
 		CGPROGRAM
 		#pragma surface surf Lambert noshadow

@@ -11,7 +11,6 @@
 		Fail keep
 		}
 			Tags { "RenderType" = "Opaque" "Queue" = "Geometry+300" }
-			LOD 200
 
 		CGPROGRAM
 		#pragma surface surf Lambert noshadow
