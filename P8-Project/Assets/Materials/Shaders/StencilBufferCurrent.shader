@@ -1,19 +1,23 @@
 ﻿Shader "Stencils/Materials/StencilBufferCurrent" {
-	Properties{
+	Properties
+	{
 		_Color("Main Color", Color) = (1,1,1,1)
 		_MainTex("Base (RGB)", 2D) = "white" {}
 	}
-		SubShader{
-		Stencil {
-		Ref 0
-		Comp equal
-		Pass keep
-		Fail keep
-		}
-			Tags { "RenderType" = "Opaque" "Queue" = "Geometry"}
+	
+	SubShader
+	{
+		Tags { "RenderType" = "Opaque" "Queue" = "Geometry" }
+			Stencil
+			{
+				Ref 0
+				Comp Equal
+				Pass keep
+				Fail keep
+			}
 
 		CGPROGRAM
-		#pragma surface surf Lambert
+		#pragma surface surf Lambert noshadow
 
 		sampler2D _MainTex;
 		fixed4 _Color;
@@ -29,7 +33,6 @@
 		}
 		ENDCG
 	}
-
 		Fallback Off
 }
 

@@ -7,7 +7,6 @@ Shader "Stencils/ClearPreviousStencilDepthBuffer"
 	SubShader
 	{
 		Tags { "RenderType" = "Opaque" "Queue" = "Geometry+200" }
-		ColorMask 0
 
 		Pass
 		{
@@ -31,10 +30,15 @@ Shader "Stencils/ClearPreviousStencilDepthBuffer"
 			return UnityObjectToClipPos(vertex);
 		 }
 
+		//fixed4 frag(vertexOutput input) : COLOR
+		//{
+		//   return texCUBE(_Cube, input.texcoord);
+		//}
+
+
 		 fixed4 frag() : SV_Target
 		 {
-			//return float4(0.0, 0.0, 0.0, 0.0);
-			 return 0;
+			return float4(0.0, 0.0, 0.0, 0.0);
 		 }
 		 ENDCG
 	  }
