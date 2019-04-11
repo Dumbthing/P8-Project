@@ -13,13 +13,17 @@ public class CubeExtender : MonoBehaviour
     float offsetToPortal;
     Vector3 offsetPortal;
 
+
+    GameObject player;
+    private float portalCubeScale = 1f;
+    Vector3 originalPos;
+
     private float zeroF = 0.0f, ninetyF = 90.0f, oneEightyF = 180.0f, twoSeventyF = 270.0f;
 
-    public GameObject Portal;
     // Start is called before the first frame update
     void Start()
     {
-        
+        player = GameObject.FindGameObjectWithTag("Player");
     }
 
 
@@ -27,12 +31,13 @@ public class CubeExtender : MonoBehaviour
     {
         if (!doOnce)
         {
-            Mesh mesh = Portal.GetComponent<MeshFilter>().mesh;
+            originalPos = new Vector3(other.transform.position.x, other.transform.position.y, other.transform.position.z);
+            Mesh mesh = other.GetComponent<MeshFilter>().mesh;
             orgMesh = mesh.triangles;
             mesh.triangles = mesh.triangles.Reverse().ToArray();
 
-            orgScale = Portal.transform.localScale;
-            orgPosi = Portal.transform.localPosition;
+            orgScale = other.transform.localScale;
+            orgPosi = other.transform.localPosition;
             doOnce = true;
         }
     }
@@ -40,46 +45,55 @@ public class CubeExtender : MonoBehaviour
 
     void OnTriggerStay(Collider other)
     {
-        scaleCube();
+        BoxCollider staticCollider = other.GetComponent<BoxCollider>();
+        ////offsetToPortal = transform.position.z - other.transform.position.z;
+        //offsetPortal = other.transform.position - transform.position;
 
+        //if (other.transform.eulerAngles.y == zeroF || other.transform.eulerAngles.y == oneEightyF) //Stretch on Z
+        //{
+        //    if (other.transform.localScale.z <= 10)
+        //    {
+        //        other.transform.localScale += new Vector3(other.transform.localScale.x, other.transform.localScale.y, transform.localPosition.z + 1);
+        //        //other.transform.localScale += new Vector3(0, 0, 10);
+        //        //other.transform.localPosition += new Vector3(0, 0, 5);
+        //    }
+        //}
+
+        //if (other.transform.eulerAngles.y == ninetyF || other.transform.eulerAngles.y == twoSeventyF) //Stretch on X
+        //{
+        //    if (transform.localScale.x <= 10)
+        //    {
+        //        other.transform.localScale += new Vector3(transform.localPosition.x + 1, other.transform.localScale.y, other.transform.localScale.z);
+
+        //        //other.transform.localScale += new Vector3(10, 0, 0);
+        //        //other.transform.localPosition += new Vector3(5, 0, 0);
+        //    }
+        //}
+
+
+        if (transform.localEulerAngles.y == 90f || transform.localEulerAngles.y == 270f) // x axis
+        {
+            Debug.Log("Inside x portal");
+            other.transform.position = new Vector3(transform.position.x, other.transform.position.y, other.transform.position.z);
+            other.transform.localScale = new Vector3(portalCubeScale, other.transform.localScale.y, other.transform.localScale.z);
+            staticCollider.size = new Vector3(0.01f, 1, 1);
+            staticCollider.center = new Vector3(originalPos.x - other.transform.localPosition.x, staticCollider.center.y, staticCollider.center.z);
+        }
+        else // z axis 
+        {
+            Debug.Log("Inside z portal");
+            other.transform.position = new Vector3(other.transform.position.x, other.transform.position.y, transform.position.z);
+            other.transform.localScale = new Vector3(other.transform.localScale.x, other.transform.localScale.y, portalCubeScale);
+            staticCollider.size = new Vector3(1, 1, 0.01f);
+            staticCollider.center = new Vector3(staticCollider.center.x, staticCollider.center.y, originalPos.z - other.transform.localPosition.z);
+        }
     }
     private void OnTriggerExit(Collider other)
     {
+        other.transform.localScale = orgScale;
+        other.transform.localPosition = orgPosi;
 
-        Portal.transform.localScale = orgScale;
-        Portal.transform.localPosition = orgPosi;
-
-        //mesh.triangles = orgMesh;
-
+        mesh.triangles = orgMesh;
         doOnce = false;
-    }
-
-
-
-    private void scaleCube()
-    {
-        //offsetToPortal = transform.position.z - Portal.transform.position.z;
-        offsetPortal = Portal.transform.position - transform.position;
-
-        if (Portal.transform.eulerAngles.y == zeroF || Portal.transform.eulerAngles.y == oneEightyF) //Stretch on Z
-        {
-            if (Portal.transform.localScale.z <= 10)
-            {
-                Portal.transform.localScale += new Vector3(Portal.transform.localScale.x, Portal.transform.localScale.y, transform.localPosition.z+1);
-                //Portal.transform.localScale += new Vector3(0, 0, 10);
-                //Portal.transform.localPosition += new Vector3(0, 0, 5);
-            }
-        }
-
-        if (Portal.transform.eulerAngles.y == ninetyF || Portal.transform.eulerAngles.y == twoSeventyF) //Stretch on X
-        {
-            if (transform.localScale.x <= 10)
-            {
-                Portal.transform.localScale += new Vector3(transform.localPosition.x+1, Portal.transform.localScale.y, Portal.transform.localScale.z);
-
-                //Portal.transform.localScale += new Vector3(10, 0, 0);
-                //Portal.transform.localPosition += new Vector3(5, 0, 0);
-            }
-        }
     }
 }
