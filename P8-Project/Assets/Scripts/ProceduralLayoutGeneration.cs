@@ -50,6 +50,8 @@ public class ProceduralLayoutGeneration : MonoBehaviour
             List<Transform> portalsInLastRoomList = Utils.GetPortalTransformsInRoom(layoutList[i - 1], exitPortalTag);
             for (int j = 0; j < rooms.Length; j++) // Iterate over rooms
             {
+                /// This code supports dynamic rotation of rooms at a 90 degree angle, such that the portals line up with portals in the last room.
+                /// If this is true, that room can be instantiated at the given rotation, and thereby connected with the previous room.
                 List<Transform> portalsInNewRoomList = Utils.GetPortalTransformsInRoom(rooms[j], entryPortalTag, exitPortalTag);
                 List<Vector3> ninetyDegPortalsInNewRoomList = Utils.GetPortalPositionsInRoom(rooms[j], entryPortalTag, exitPortalTag, ninetyF);
                 List<Vector3> oneEightyDegPortalsInNewRoomList = Utils.GetPortalPositionsInRoom(rooms[j], entryPortalTag, exitPortalTag, oneEightyF);

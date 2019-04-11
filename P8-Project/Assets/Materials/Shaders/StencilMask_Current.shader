@@ -1,14 +1,17 @@
 ﻿Shader "Stencils/Masks/StencilMask_Current"
 {
+	Properties{
+		_Cube("Environment Map", Cube) = "white" {}
+	}
 	SubShader
 	{
 		Tags { "RenderType" = "Opaque" "Queue" = "Geometry-100"}
-		ColorMask 0
-		ZWrite off
 		Stencil
 		{
 			Ref 0
-			Comp always
+			Comp Always
+			
+			ZFail Keep
 			Pass replace
 		}
 
@@ -18,6 +21,19 @@
 			#pragma vertex vert
 			#pragma fragment frag
 
+			// User-specified uniforms
+			samplerCUBE _Cube;
+
+
+			struct vertexInput {
+				float4 vertex : POSITION;
+				float3 texcoord : TEXCOORD0;
+			};
+
+			struct vertexOutput {
+				float4 vertex : SV_POSITION;
+				float3 texcoord : TEXCOORD0;
+			};
 			struct appdata
 			{
 				float4 vertex : POSITION;
@@ -28,17 +44,30 @@
 				float4 pos : SV_POSITION;
 			};
 
-			v2f vert(appdata v)
+			vertexOutput vert(vertexInput input)
 			{
-				v2f o;
-				o.pos = UnityObjectToClipPos(v.vertex);
-				return o;
+			   vertexOutput output;
+			   output.vertex = UnityObjectToClipPos(input.vertex);
+			   output.texcoord = input.texcoord;
+			   return output;
 			}
 
-			half4 frag(v2f i) : COLOR
+			//v2f vert(appdata v)
+			//{
+			//	v2f o;
+			//	o.pos = UnityObjectToClipPos(v.vertex);
+			//	return o;
+			//}
+			
+			fixed4 frag(vertexOutput input) : COLOR
 			{
-				return half4(1,1,0,1);
+			   return texCUBE(_Cube, input.texcoord);
 			}
+
+			//half4 frag(v2f i) : COLOR
+			//{
+			//	return half4(1,1,0,1);
+			//}
 		ENDCG
 		}
 	}

@@ -1,17 +1,19 @@
 ﻿Shader "Stencils/Materials/StencilBufferPrevious" {
-	Properties{
+	Properties
+	{
 		_Color("Main Color", Color) = (1,1,1,1)
 		_MainTex("Base (RGB)", 2D) = "white" {}
 	}
-		SubShader{
-		Stencil {
-		Ref 1
-		Comp equal
-		Pass keep
-		Fail keep
-		}
-			Tags { "RenderType" = "Opaque" "Queue" = "Geometry+300" }
-			LOD 200
+	SubShader
+	{
+		Tags { "RenderType" = "Opaque" "Queue" = "Geometry+300" }
+			Stencil
+			{
+				Ref 1
+				Comp equal
+				Pass keep
+				Fail keep
+			}
 
 		CGPROGRAM
 		#pragma surface surf Lambert noshadow
@@ -29,8 +31,7 @@
 			o.Alpha = c.a;
 		}
 		ENDCG
-	}
-
-		Fallback Off
+		}
+	Fallback Off
 }
 

@@ -4,7 +4,6 @@
 	{
 		Tags { "RenderType" = "Opaque" "Queue" = "Geometry+100"}
 		ColorMask 0
-		ZWrite off
 		Stencil
 		{
 			Ref 2

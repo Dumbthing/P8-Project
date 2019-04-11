@@ -21,8 +21,8 @@ public class StencilController : MonoBehaviour
         {
             if (r.tag != "EntryPortal" && r.tag != "ExitPortal")
             {
-                //r.material.shader = Shader.Find("Stencils/Material/StencilBufferCurrent");
-                r.material.shader = Shader.Find("Standard");
+                r.material.shader = Shader.Find("Stencils/Materials/StencilBufferCurrent");
+                //r.material.shader = Shader.Find("Standard");
             }
         }
 
@@ -33,7 +33,7 @@ public class StencilController : MonoBehaviour
             {
                 if (r.tag != "EntryPortal" && r.tag != "ExitPortal")
                 {
-                    r.material.shader = Shader.Find("Stencils/Material/StencilBufferNext");
+                    r.material.shader = Shader.Find("Stencils/Materials/StencilBufferNext");
                 }
             }
         }
