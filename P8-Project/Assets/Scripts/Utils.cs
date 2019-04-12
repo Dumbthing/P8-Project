@@ -6,7 +6,7 @@ public static class Utils
     static public Vector3 worldSpacePoint = new Vector3(0.0f, 0.0f, 0.0f);
     static int uniqueIterator = 0;
 
-    static public   void RandomizeArray(GameObject[] arr) // Fischer-Yates shuffle
+    static public void RandomizeArray(GameObject[] arr) // Fischer-Yates shuffle
     {
         for (int i = 0; i < arr.Length; i++)
         {
@@ -14,6 +14,16 @@ public static class Utils
             GameObject temp = arr[i];
             arr[i] = arr[r];
             arr[r] = temp;
+        }
+    }
+
+    // For paired renderplanes (reversed)
+    static public void SetActiveChild(Transform parent, bool enabled)
+    {
+        for (int i = 0; i < parent.childCount; i++)
+        {
+            Transform child = parent.GetChild(i);
+            child.gameObject.SetActive(enabled);
         }
     }
 

@@ -22,28 +22,26 @@ public class PortalManager : MonoBehaviour {
 
     private void OnTriggerEnter(Collider portal) // Portal collision
     {
-        if (!singlePortalCollision) // Avoid multiple OnTriggerEnter calls from same collider
-        {
-            if (portal.tag == layout.exitPortalTag && layout.currentRoom < layout.layoutList.Count - 1) // Exit is the exit of the room
-            {
-                layout.currentRoom++;
-                portalExitScenario = 1;
-            }
-            else if (portal.tag == layout.entryPortalTag && layout.currentRoom > 0) // Entry is the entry of the room
-            {
-                layout.currentRoom--;
-                portalExitScenario = 2;
-            }
-            else
-                Debug.Log("Unknown portal tag encountered - No action taken.");
-
-            stencil.SetStencilShader(layout.currentRoom);
-            singlePortalCollision = true;
-        }
+        //Utils.SetActiveChild(portal.transform, true, "OppositeStencil");
     }
 
     private void OnTriggerExit(Collider portal) // Out of portal
     {
+        if (portal.tag == layout.exitPortalTag && layout.currentRoom < layout.layoutList.Count - 1) // Exit is the exit of the room
+        {
+            layout.currentRoom++;
+            portalExitScenario = 1;
+        }
+        else if (portal.tag == layout.entryPortalTag && layout.currentRoom > 0) // Entry is the entry of the room
+        {
+            layout.currentRoom--;
+            portalExitScenario = 2;
+
+        }
+        else
+            Debug.Log("Unknown portal tag encountered - No action taken.");
+
+        stencil.SetStencilShader(layout.currentRoom);
         PortalScenario(portalExitScenario, portal);
         singlePortalCollision = false;
     }
@@ -85,6 +83,7 @@ public class PortalManager : MonoBehaviour {
             Utils.SetActiveChild(layout.layoutList[layout.currentRoom].transform, true, layout.entryPortalTag, layout.exitPortalTag);
             playerReturned = false;
         }
+        Utils.SetActiveChild(portal.transform, false);
     }
 }
 
