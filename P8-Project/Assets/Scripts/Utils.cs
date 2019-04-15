@@ -47,6 +47,25 @@ public static class Utils
                 child.gameObject.SetActive(enabled);
         }
     }
+    static public void SetActivePortal(Transform parent, bool enabled, string _tag1, string _tag2)
+    {
+        for (int i = 0; i < parent.childCount; i++)
+        {
+            Transform child = parent.GetChild(i);
+            if (child.tag == _tag1 || child.tag == _tag2)
+            {
+                child.gameObject.SetActive(enabled);
+                for (int j = 0; j < child.childCount; j++)
+                {
+                    Transform grandchild = child.GetChild(j);
+                    if (grandchild.tag == _tag1 || grandchild.tag == _tag2)
+                    {
+                        grandchild.gameObject.SetActive(enabled);
+                    }
+                }
+            }
+        }
+    }
 
     static public void SetSiblingPortalActivity(Transform parent, bool enabled, string _tag)
     {

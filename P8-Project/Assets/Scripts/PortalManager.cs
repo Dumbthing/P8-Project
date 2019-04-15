@@ -50,11 +50,11 @@ public class PortalManager : MonoBehaviour {
     {
         if (!playerReturned)
         {
-            Utils.SetActiveChild(layout.layoutList[layout.currentRoom].transform, true, layout.entryPortalTag, layout.exitPortalTag); // Enable portals in new room, in case they are disabled.
+            Utils.SetActivePortal(layout.layoutList[layout.currentRoom].transform, true, layout.entryPortalTag, layout.exitPortalTag); // Enable portals in new room, in case they are disabled.
 
             if (portalExitScenario == 1) // Scenario 1: Enter "next-room" portal
             {
-                Utils.SetActiveChild(layout.layoutList[layout.currentRoom - 1].transform, false, layout.entryPortalTag, layout.exitPortalTag); // Since we enabled new portals, we should disable the existing ones.
+                Utils.SetActivePortal(layout.layoutList[layout.currentRoom - 1].transform, false, layout.entryPortalTag, layout.exitPortalTag); // Since we enabled new portals, we should disable the existing ones.
                 if (layout.currentRoom < layout.layoutList.Count - 1)
                     layout.layoutList[layout.currentRoom + 1].SetActive(true);
                 if (layout.currentRoom > 1)
@@ -62,7 +62,7 @@ public class PortalManager : MonoBehaviour {
             }
             else if (portalExitScenario == 2) // Scenario 2: Enter "previous-room" portal
             {
-                Utils.SetActiveChild(layout.layoutList[layout.currentRoom + 1].transform, false, layout.entryPortalTag, layout.exitPortalTag); // Since we enabled new portals, we should disable the existing ones.
+                Utils.SetActivePortal(layout.layoutList[layout.currentRoom + 1].transform, false, layout.entryPortalTag, layout.exitPortalTag); // Since we enabled new portals, we should disable the existing ones.
                 if (layout.currentRoom > 0)
                     layout.layoutList[layout.currentRoom - 1].SetActive(true);
                 if (layout.currentRoom < layout.layoutList.Count - 2)
@@ -74,13 +74,13 @@ public class PortalManager : MonoBehaviour {
         {
             if (portalExitScenario == 1)
             {
-                Utils.SetActiveChild(layout.layoutList[layout.currentRoom + 1].transform, false, layout.entryPortalTag, layout.exitPortalTag);
+                Utils.SetActivePortal(layout.layoutList[layout.currentRoom + 1].transform, false, layout.entryPortalTag, layout.exitPortalTag);
             }
             else if (portalExitScenario == 2)
             {
-                Utils.SetActiveChild(layout.layoutList[layout.currentRoom - 1].transform, false, layout.entryPortalTag, layout.exitPortalTag);
+                Utils.SetActivePortal(layout.layoutList[layout.currentRoom - 1].transform, false, layout.entryPortalTag, layout.exitPortalTag);
             }
-            Utils.SetActiveChild(layout.layoutList[layout.currentRoom].transform, true, layout.entryPortalTag, layout.exitPortalTag);
+            Utils.SetActivePortal(layout.layoutList[layout.currentRoom].transform, true, layout.entryPortalTag, layout.exitPortalTag);
             playerReturned = false;
         }
         Utils.SetActiveChild(portal.transform, false);
