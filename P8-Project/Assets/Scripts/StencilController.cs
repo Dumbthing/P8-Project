@@ -19,10 +19,9 @@ public class StencilController : MonoBehaviour
         /// Current room set to stencil ref 0
         foreach (Renderer r in layout.layoutList[currentRoom].GetComponentsInChildren<Renderer>())
         {
-            if (r.tag != "EntryPortal" && r.tag != "ExitPortal")
+            if (r.tag != "EntryPortal" && r.tag != "ExitPortal" && r.tag != "OppositeStencil")
             {
                 r.material.shader = Shader.Find("Stencils/Materials/StencilBufferCurrent");
-                //r.material.shader = Shader.Find("Standard");
             }
         }
 
@@ -31,7 +30,7 @@ public class StencilController : MonoBehaviour
         {
             foreach (Renderer r in layout.layoutList[currentRoom + 1].GetComponentsInChildren<Renderer>())
             {
-                if (r.tag != "EntryPortal" && r.tag != "ExitPortal")
+                if (r.tag != "EntryPortal" && r.tag != "ExitPortal" && r.tag != "OppositeStencil")
                 {
                     r.material.shader = Shader.Find("Stencils/Materials/StencilBufferNext");
                 }
@@ -43,7 +42,7 @@ public class StencilController : MonoBehaviour
         {
             foreach (Renderer r in layout.layoutList[currentRoom - 1].GetComponentsInChildren<Renderer>())
             {
-                if (r.tag != "EntryPortal" && r.tag != "ExitPortal")
+                if (r.tag != "EntryPortal" && r.tag != "ExitPortal" && r.tag != "OppositeStencil")
                 {
                     r.material.shader = Shader.Find("Stencils/Materials/StencilBufferPrevious");
                 }

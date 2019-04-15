@@ -44,7 +44,7 @@ public class ProceduralLayoutGeneration : MonoBehaviour
 
     private void GenerateLayout()
     {
-        //Utils.RandomizeArray(rooms);
+        Utils.RandomizeArray(rooms);
         for (int i = 1; i < maxRooms; i++) // Iterate over layout
         {
             List<Transform> portalsInLastRoomList = Utils.GetPortalTransformsInRoom(layoutList[i - 1], exitPortalTag);
