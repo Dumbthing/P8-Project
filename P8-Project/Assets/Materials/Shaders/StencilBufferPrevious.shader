@@ -20,15 +20,24 @@
 
 		sampler2D _MainTex;
 		fixed4 _Color;
+		float4x4 _WorldToPortal;
 
 		struct Input {
 			float2 uv_MainTex;
+			float3 worldPos;
 		};
 
 		void surf(Input IN, inout SurfaceOutput o) {
 			fixed4 c = tex2D(_MainTex, IN.uv_MainTex) * _Color;
 			o.Albedo = c.rgb;
 			o.Alpha = c.a;
+			if (mul(_WorldToPortal, float4(IN.worldPos, 1.0)).z
+				* mul(_WorldToPortal, float4(_WorldSpaceCameraPos, 1.0)).z > 0.0) {
+				// position on same side of portal as camera?
+				discard; // discard fragment
+			}
+			
+			//clip(float4(0, 0, 0, 1) - float4(_WorldSpaceCameraPos, 1.0));
 		}
 		ENDCG
 		}
