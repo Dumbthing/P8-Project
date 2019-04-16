@@ -26,8 +26,7 @@ public class StencilController : MonoBehaviour
                 /// Setting the shader of the current material across the project, meaning for all objects using that material (also prefabs)
                 //r.sharedMaterial.shader = Resources.Load("Materials/StencilBufferCurrent", typeof(Shader)) as Shader;
                 /// Setting the material for all objects in the loop.
-                //r.sharedMaterial = Resources.Load("Materials/DefaultStencilCurrent", typeof(Material)) as Material;
-                r.sharedMaterial = Resources.Load("Materials/Default", typeof(Material)) as Material;
+                r.sharedMaterial = Resources.Load("Materials/DefaultStencilCurrent", typeof(Material)) as Material;
             }
         }
 
@@ -39,8 +38,7 @@ public class StencilController : MonoBehaviour
                 if (r.tag != "EntryPortal" && r.tag != "ExitPortal" && r.tag != "Stencil")
                 {
                     //r.material.shader = Shader.Find("Stencils/Materials/StencilBufferNext");
-                    //r.sharedMaterial = Resources.Load("Materials/DefaultStencilNext", typeof(Material)) as Material;
-                    r.sharedMaterial = Resources.Load("Materials/Default", typeof(Material)) as Material;
+                    r.sharedMaterial = Resources.Load("Materials/DefaultStencilNext", typeof(Material)) as Material;
                 }
             }
         }
@@ -53,8 +51,7 @@ public class StencilController : MonoBehaviour
                 if (r.tag != "EntryPortal" && r.tag != "ExitPortal" && r.tag != "Stencil")
                 {
                     //r.material.shader = Shader.Find("Stencils/Materials/StencilBufferPrevious");
-                    //r.sharedMaterial = Resources.Load("Materials/DefaultStencilPrevious", typeof(Material)) as Material;
-                    r.sharedMaterial = Resources.Load("Materials/Default", typeof(Material)) as Material;
+                    r.sharedMaterial = Resources.Load("Materials/DefaultStencilPrevious", typeof(Material)) as Material;
                 }
             }
         }
