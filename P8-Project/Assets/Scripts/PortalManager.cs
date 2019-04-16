@@ -9,7 +9,7 @@ public class PortalManager : MonoBehaviour {
     public ProceduralLayoutGeneration layout;
 
     /// Public, non-inspector variables
-    
+
     /// Private variables
     private bool singlePortalCollision = false, playerReturned = false;
     private int portalExitScenario = 0; // Default is 0: do nothing
@@ -18,11 +18,6 @@ public class PortalManager : MonoBehaviour {
     void Start()
     {
         stencil = GetComponent<StencilController>(); // Script that handles which layer is rendered by which camera
-    }
-
-    private void OnTriggerEnter(Collider portal) // Portal collision
-    {
-        //Utils.SetActiveChild(portal.transform, true, "OppositeStencil");
     }
 
     private void OnTriggerExit(Collider portal) // Out of portal
@@ -43,6 +38,8 @@ public class PortalManager : MonoBehaviour {
 
         stencil.SetStencilShader(layout.currentRoom);
         PortalScenario(portalExitScenario, portal);
+        layout.NextPortalPosUpdater.UpdateActiveNextPortalPos();
+        layout.PreviousPortalUpdater.UpdateActivePreviousPortalPos();
         singlePortalCollision = false;
     }
 
@@ -83,7 +80,6 @@ public class PortalManager : MonoBehaviour {
             Utils.SetActivePortal(layout.layoutList[layout.currentRoom].transform, true, layout.entryPortalTag, layout.exitPortalTag);
             playerReturned = false;
         }
-        Utils.SetActiveChild(portal.transform, false);
-    }
+    } 
 }
 
