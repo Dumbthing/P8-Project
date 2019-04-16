@@ -178,8 +178,8 @@ public class ProceduralLayoutGeneration : MonoBehaviour
                     if (setNextLayer > 31)
                         setNextLayer = 8;
                     layoutList.Add(Instantiate(rooms[j], Utils.worldSpacePoint, Quaternion.Euler(0.0f, rotationParameter, 0.0f)));
-                    layoutList[roomsUsed + 1].layer = setNextLayer;
-                    Utils.ChangeLayersRecursively(layoutList[roomsUsed + 1].transform, setNextLayer);
+                    //layoutList[roomsUsed + 1].layer = setNextLayer;
+                    //Utils.ChangeLayersRecursively(layoutList[roomsUsed + 1].transform, setNextLayer);
                     Utils.SetActiveChild(layoutList[roomsUsed + 1].transform, false, entryPortalTag, exitPortalTag);
                     rooms = Utils.RemoveIndices(rooms, j);
                     roomsUsed++;
@@ -200,6 +200,8 @@ public class ProceduralLayoutGeneration : MonoBehaviour
     private void GenerateEndRoom()
     {
         setNextLayer++;
+        if (setNextLayer > 31)
+            setNextLayer = 8;
         List<Transform> portalsInLastRoomList = Utils.GetPortalTransformsInRoom(layoutList[roomsUsed], exitPortalTag); // Stores portal from previous room in a list
         Utils.RandomizeArray(endRooms);
         /// End room
@@ -243,9 +245,9 @@ public class ProceduralLayoutGeneration : MonoBehaviour
                     if (connectedPortal)
                     {
                         layoutList.Add(Instantiate(endRooms[i], Utils.worldSpacePoint, Quaternion.Euler(0.0f, rotationParameter, 0.0f)));
-                        layoutList[roomsUsed + 1].layer = setNextLayer;
+                        //layoutList[roomsUsed + 1].layer = setNextLayer;
                         Utils.SetActiveChild(layoutList[roomsUsed + 1].transform, false, entryPortalTag, exitPortalTag);
-                        Utils.ChangeLayersRecursively(layoutList[roomsUsed + 1].transform, setNextLayer);
+                        //Utils.ChangeLayersRecursively(layoutList[roomsUsed + 1].transform, setNextLayer);
                         layoutList[roomsUsed + 1].SetActive(false);
                         return; // Breaks from the function
                     }
