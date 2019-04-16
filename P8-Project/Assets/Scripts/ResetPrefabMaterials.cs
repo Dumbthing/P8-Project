@@ -32,7 +32,7 @@ public class ResetPrefabMaterials : MonoBehaviour
         {
             layoutList.Add(Instantiate(endRooms[i], new Vector3(0.0f, 0.0f, 0.0f), Quaternion.identity));
         }
-        SetStencilShader(0);
+        SetStencilShader();
     }
 
     private void LoadPrefabsToList()
@@ -42,7 +42,7 @@ public class ResetPrefabMaterials : MonoBehaviour
         rooms = Resources.LoadAll<GameObject>("Rooms");
     }
 
-    public void SetStencilShader(int currentRoom)
+    public void SetStencilShader()
     {
         for (int i = 0; i < layoutList.Count; i++)
         {
@@ -50,7 +50,7 @@ public class ResetPrefabMaterials : MonoBehaviour
             {
                 if (r.tag != "EntryPortal" && r.tag != "ExitPortal" && r.tag != "Stencil")
                 {
-                    r.sharedMaterial = Resources.Load("Materials/Default", typeof(Material)) as Material;
+                    r.sharedMaterial.shader = Shader.Find("Standard");
                 }
             }
         }
