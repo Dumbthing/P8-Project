@@ -16,7 +16,6 @@ public class PortalManager : MonoBehaviour {
     private Vector3 backwardPortalPos, lastPortalPos;
     private Vector3 playerExitPosition;
     
-
     void Start()
     {
         stencil = GetComponent<StencilController>(); // Script that handles which layer is rendered by which camera
@@ -38,31 +37,11 @@ public class PortalManager : MonoBehaviour {
         else
             Debug.Log("Unknown portal tag encountered - No action taken.");
 
-
-        // Thomas' Dot product calculations
-        playerExitPosition = transform.localPosition.normalized; //Normalized for Dot product to give accurate result
-        if(Vector3.Dot(playerExitPosition, portal.transform.forward) < 0)
-        {
-            Debug.Log("Dot Product" +  " = " + Vector3.Dot(playerExitPosition, portal.transform.forward));
-            Debug.Log("PlayerExitPosition" + " = " + playerExitPosition);
-            Debug.Log("PortalTransformForward" + " = " + portal.transform.forward);
-            //Do code
-            stencil.SetStencilShader(layout.currentRoom);
-            PortalScenario(portalExitScenario, portal);
-            layout.NextPortalPosUpdater.UpdateActiveNextPortalPos();
-            layout.PreviousPortalUpdater.UpdateActivePreviousPortalPos();
-            singlePortalCollision = false;
-
-            Debug.Log("Exit on new side, great success!");
-        }
-        else
-        {
-            Debug.Log("Dot Product" + " = " + Vector3.Dot(playerExitPosition, portal.transform.forward));
-            Debug.Log("PlayerExitPosition" + " = " + playerExitPosition);
-            Debug.Log("PortalTransformForward" + " = " + portal.transform.forward);
-            //Do nothing
-            Debug.Log("Exit on same side, doing nothing");
-        }
+        stencil.SetStencilShader(layout.currentRoom);
+        PortalScenario(portalExitScenario, portal);
+        layout.NextPortalPosUpdater.UpdateActiveNextPortalPos();
+        layout.PreviousPortalUpdater.UpdateActivePreviousPortalPos();
+        singlePortalCollision = false;
 
     }
 
