@@ -17,17 +17,32 @@ public class SetNextPortalPosition : MonoBehaviour
     {
 
         potentialPortals = GameObject.FindGameObjectsWithTag("ExitPortal"); // Find all next portals
-        foreach (GameObject p in potentialPortals) // Loop through each portal to check which is active
-        {
-            if (p.name == "MidStencil")
-                portal = p;
-        }
+        FindMidStencilPos();
+        
         if (portal != null)
         {
             Transform portalRenderer = portal.GetComponent<Transform>();
             otherWorldMaterial = GetComponent<Renderer>().sharedMaterial;
             otherWorldMaterial.SetMatrix("_WorldToPortal", portalRenderer.worldToLocalMatrix);
         }
-        Debug.Log(portal);
+    }
+
+    private void FindMidStencilPos()
+    {
+        foreach (GameObject p in potentialPortals) // Loop through each portal to check which is active
+        {
+            for (int i = 0; i < p.transform.childCount; i++)
+            {
+                Transform child = p.transform.GetChild(i);
+                if (child.name == "MidStencil")
+                {
+                    portal = child.gameObject;
+                    return;
+                }
+            }
+            // Using tag
+            if (p.name == "MidStencil")
+            portal = p;
+        }
     }
 }
