@@ -8,12 +8,18 @@ public class SetNextPortalPosition : MonoBehaviour
     GameObject portal;
     Material otherWorldMaterial;
 
+    private void Update()
+    {
+        UpdateActiveNextPortalPos();
+    }
+
     public void UpdateActiveNextPortalPos()
     {
+
         potentialPortals = GameObject.FindGameObjectsWithTag("ExitPortal"); // Find all next portals
         foreach (GameObject p in potentialPortals) // Loop through each portal to check which is active
         {
-            if (p.activeSelf)
+            if (p.name == "MidStencil")
                 portal = p;
         }
         if (portal != null)
@@ -21,7 +27,7 @@ public class SetNextPortalPosition : MonoBehaviour
             Transform portalRenderer = portal.GetComponent<Transform>();
             otherWorldMaterial = GetComponent<Renderer>().sharedMaterial;
             otherWorldMaterial.SetMatrix("_WorldToPortal", portalRenderer.worldToLocalMatrix);
-            Debug.Log("Set Next portal pos to: " + portalRenderer.name);
         }
+        Debug.Log(portal);
     }
 }
