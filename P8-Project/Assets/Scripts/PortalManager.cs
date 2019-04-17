@@ -14,7 +14,8 @@ public class PortalManager : MonoBehaviour {
     private bool singlePortalCollision = false, playerReturned = false;
     private int portalExitScenario = 0; // Default is 0: do nothing
     private Vector3 backwardPortalPos, lastPortalPos;
-
+    private Vector3 playerExitPosition;
+    
     void Start()
     {
         stencil = GetComponent<StencilController>(); // Script that handles which layer is rendered by which camera
@@ -41,6 +42,7 @@ public class PortalManager : MonoBehaviour {
         layout.NextPortalPosUpdater.UpdateActiveNextPortalPos();
         layout.PreviousPortalUpdater.UpdateActivePreviousPortalPos();
         singlePortalCollision = false;
+
     }
 
     private void PortalScenario(int scenario, Collider portal)
