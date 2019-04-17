@@ -6,7 +6,7 @@ public static class Utils
     static public Vector3 worldSpacePoint = new Vector3(0.0f, 0.0f, 0.0f);
     static int uniqueIterator = 0;
 
-    static public   void RandomizeArray(GameObject[] arr) // Fischer-Yates shuffle
+    static public void RandomizeArray(GameObject[] arr) // Fischer-Yates shuffle
     {
         for (int i = 0; i < arr.Length; i++)
         {
@@ -14,6 +14,16 @@ public static class Utils
             GameObject temp = arr[i];
             arr[i] = arr[r];
             arr[r] = temp;
+        }
+    }
+
+    // For paired renderplanes (reversed)
+    static public void SetActiveChild(Transform parent, bool enabled)
+    {
+        for (int i = 0; i < parent.childCount; i++)
+        {
+            Transform child = parent.GetChild(i);
+            child.gameObject.SetActive(enabled);
         }
     }
 
@@ -35,6 +45,25 @@ public static class Utils
             Transform child = parent.GetChild(i);
             if (child.tag == _tag1 || child.tag == _tag2)
                 child.gameObject.SetActive(enabled);
+        }
+    }
+    static public void SetActivePortal(Transform parent, bool enabled, string _tag1, string _tag2)
+    {
+        for (int i = 0; i < parent.childCount; i++)
+        {
+            Transform child = parent.GetChild(i);
+            if (child.tag == _tag1 || child.tag == _tag2)
+            {
+                child.gameObject.SetActive(enabled);
+                //for (int j = 0; j < child.childCount; j++)
+                //{
+                //    Transform grandchild = child.GetChild(j);
+                //    if (grandchild.tag == _tag1 || grandchild.tag == _tag2)
+                //    {
+                //        grandchild.gameObject.SetActive(enabled);
+                //    }
+                //}
+            }
         }
     }
 

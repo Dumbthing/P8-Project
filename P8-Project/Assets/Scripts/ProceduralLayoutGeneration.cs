@@ -5,16 +5,17 @@ using UnityEngine;
 public class ProceduralLayoutGeneration : MonoBehaviour
 {
     /// Public variables, visible in the Inspector
-    public GameObject[] startRooms, endRooms, rooms; // start rooms only contain EXIT portals, end rooms only contain ENTRY portals, rooms contain both
     public string entryPortalTag = "EntryPortal";   // Public, in case it needs to be changed later
     public string exitPortalTag = "ExitPortal";
     public int maxRooms = 99;    // CURRENTLY OBSELETE, but can be used to limit the max amount of rooms later...
+    public SetNextPortalPosition NextPortalPosUpdater;
+    public SetPreviousPortalPosition PreviousPortalUpdater;
 
     /// Public variables, hidden from the Inspector. Use keyword [HideInInspector] before every variable!
     //[HideInInspector]
     public List<GameObject> layoutList; // Public, since other scripts need access to it
-    [HideInInspector]
-    public int currentRoom = 0;
+    [HideInInspector] public static GameObject[] startRooms, endRooms, rooms;
+    [HideInInspector] public int currentRoom = 0;
 
     /// Private variables
     private int roomsUsed = 0;
@@ -30,9 +31,18 @@ public class ProceduralLayoutGeneration : MonoBehaviour
     private void Awake()
     {
         layoutList = new List<GameObject>();    // We choose to use a list since we don't know the final size of the layout
+        LoadPrefabsToList();
         GenerateStartRoom(); // Randomly generate a starting room, by instantiating a room from the startRooms array
         GenerateLayout();
         GenerateEndRoom();
+        NextPortalPosUpdater.UpdateActiveNextPortalPos();
+    }
+
+    private void LoadPrefabsToList()
+    {
+        startRooms = Resources.LoadAll<GameObject>("Start-Rooms");
+        endRooms = Resources.LoadAll<GameObject>("End-Rooms");
+        rooms = Resources.LoadAll<GameObject>("Rooms");
     }
 
     private void GenerateStartRoom() // No need to rotate start room
@@ -165,9 +175,11 @@ public class ProceduralLayoutGeneration : MonoBehaviour
                 if (containedPortals == 1)
                 {
                     setNextLayer++;
+                    if (setNextLayer > 31)
+                        setNextLayer = 8;
                     layoutList.Add(Instantiate(rooms[j], Utils.worldSpacePoint, Quaternion.Euler(0.0f, rotationParameter, 0.0f)));
-                    layoutList[roomsUsed + 1].layer = setNextLayer;
-                    Utils.ChangeLayersRecursively(layoutList[roomsUsed + 1].transform, setNextLayer);
+                    //layoutList[roomsUsed + 1].layer = setNextLayer;
+                    //Utils.ChangeLayersRecursively(layoutList[roomsUsed + 1].transform, setNextLayer);
                     Utils.SetActiveChild(layoutList[roomsUsed + 1].transform, false, entryPortalTag, exitPortalTag);
                     rooms = Utils.RemoveIndices(rooms, j);
                     roomsUsed++;
@@ -188,6 +200,8 @@ public class ProceduralLayoutGeneration : MonoBehaviour
     private void GenerateEndRoom()
     {
         setNextLayer++;
+        if (setNextLayer > 31)
+            setNextLayer = 8;
         List<Transform> portalsInLastRoomList = Utils.GetPortalTransformsInRoom(layoutList[roomsUsed], exitPortalTag); // Stores portal from previous room in a list
         Utils.RandomizeArray(endRooms);
         /// End room
@@ -231,9 +245,9 @@ public class ProceduralLayoutGeneration : MonoBehaviour
                     if (connectedPortal)
                     {
                         layoutList.Add(Instantiate(endRooms[i], Utils.worldSpacePoint, Quaternion.Euler(0.0f, rotationParameter, 0.0f)));
-                        layoutList[roomsUsed + 1].layer = setNextLayer;
+                        //layoutList[roomsUsed + 1].layer = setNextLayer;
                         Utils.SetActiveChild(layoutList[roomsUsed + 1].transform, false, entryPortalTag, exitPortalTag);
-                        Utils.ChangeLayersRecursively(layoutList[roomsUsed + 1].transform, setNextLayer);
+                        //Utils.ChangeLayersRecursively(layoutList[roomsUsed + 1].transform, setNextLayer);
                         layoutList[roomsUsed + 1].SetActive(false);
                         return; // Breaks from the function
                     }
