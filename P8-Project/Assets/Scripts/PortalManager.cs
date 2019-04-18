@@ -15,13 +15,9 @@ public class PortalManager : MonoBehaviour {
     private int portalExitScenario = 0; // Default is 0: do nothing
     private Vector3 backwardPortalPos, lastPortalPos;
     private Vector3 playerExitPosition;
-<<<<<<< HEAD
+
     private float zeroF = 0.0f, ninetyF = 90.0f, oneEightyF = 180.0f, twoSeventyF = 270.0f;
 
-
-=======
-    
->>>>>>> 66b0d5748a8549719d33686565799ff4021875a6
     void Start()
     {
         stencil = GetComponent<StencilController>(); // Script that handles which layer is rendered by which camera
@@ -55,21 +51,14 @@ public class PortalManager : MonoBehaviour {
         {
             layout.currentRoom--;
             portalExitScenario = 2;
-
         }
         else
             Debug.Log("Unknown portal tag encountered - No action taken.");
 
         stencil.SetStencilShader(layout.currentRoom);
-<<<<<<< HEAD
+        Utils.SetActivePortal(layout.layoutList[layout.currentRoom].transform, true, layout.entryPortalTag, layout.exitPortalTag); // Enable portals in new room, in case they are disabled.=======
+      
 
-        Utils.SetActivePortal(layout.layoutList[layout.currentRoom].transform, true, layout.entryPortalTag, layout.exitPortalTag); // Enable portals in new room, in case they are disabled.
-=======
-        PortalScenario(portalExitScenario, portal);
-        layout.NextPortalPosUpdater.UpdateActiveNextPortalPos();
-        layout.PreviousPortalUpdater.UpdateActivePreviousPortalPos();
-        singlePortalCollision = false;
->>>>>>> 66b0d5748a8549719d33686565799ff4021875a6
 
         if (portalExitScenario == 1) // Scenario 1: Enter "next-room" portal
         {
