@@ -39,7 +39,7 @@ public class ResetPrefabMaterials : MonoBehaviour
     {
         startRooms = Resources.LoadAll<GameObject>("Start-Rooms");
         endRooms = Resources.LoadAll<GameObject>("End-Rooms");
-        rooms = Resources.LoadAll<GameObject>("Rooms");
+        rooms = Resources.LoadAll<GameObject>("Fantasy-Rooms");
     }
 
     public void SetStencilShader()

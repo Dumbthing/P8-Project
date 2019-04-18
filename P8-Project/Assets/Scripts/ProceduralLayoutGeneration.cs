@@ -42,7 +42,7 @@ public class ProceduralLayoutGeneration : MonoBehaviour
     {
         startRooms = Resources.LoadAll<GameObject>("Start-Rooms");
         endRooms = Resources.LoadAll<GameObject>("End-Rooms");
-        rooms = Resources.LoadAll<GameObject>("Rooms");
+        rooms = Resources.LoadAll<GameObject>("Fantasy-Rooms");
     }
 
     private void GenerateStartRoom() // No need to rotate start room
