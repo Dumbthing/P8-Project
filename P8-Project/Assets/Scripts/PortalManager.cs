@@ -7,11 +7,13 @@ public class PortalManager : MonoBehaviour {
     /// Inspector variables
     StencilController stencil;
     public ProceduralLayoutGeneration layout;
+    public Material skyboxFantasy;
+    public Material skyboxScifi;
 
     /// Public, non-inspector variables
 
     /// Private variables
-    private bool singlePortalCollision = false, playerReturned = false;
+    private bool singlePortalCollision = false, playerReturned = false, fantasy = true, scifi = false;
     private int portalExitScenario = 0; // Default is 0: do nothing
     private Vector3 backwardPortalPos, lastPortalPos;
     private Vector3 playerExitPosition;
@@ -20,7 +22,9 @@ public class PortalManager : MonoBehaviour {
 
     void Start()
     {
-        stencil = GetComponent<StencilController>(); // Script that handles which layer is rendered by which camera
+
+        stencil = GetComponent<StencilController>();// Script that handles which layer is rendered by which camera
+       
     }
 
     private void OnTriggerExit(Collider portal) // Out of portal
@@ -39,9 +43,35 @@ public class PortalManager : MonoBehaviour {
         }
     }
 
+    private void ThemeChange()
+    {
+        if (fantasy)
+        {
+            RenderSettings.skybox = skyboxScifi;
+            fantasy = false;
+            scifi = true;
+        }
+        else if (scifi)
+        {
+            RenderSettings.skybox = skyboxFantasy;
+            scifi = false;
+            fantasy = true;
+        }
+    
+            
+        
+    }
+
 
     private void Transition(Collider portal)
     {
+
+        if (layout.currentRoom >= (layout.maxRooms / 2))
+        {
+            ThemeChange();
+        }
+
+
         if (portal.tag == layout.exitPortalTag && layout.currentRoom < layout.layoutList.Count - 1) // Exit is the exit of the room
         {
             layout.currentRoom++;
