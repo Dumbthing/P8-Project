@@ -13,7 +13,7 @@ public class PortalManager : MonoBehaviour {
     /// Public, non-inspector variables
 
     /// Private variables
-    private bool singlePortalCollision = false, playerReturned = false, fantasy = true, scifi = false;
+    private bool singlePortalCollision = false, playerReturned = false, fantasy = true, scifi = false, themeChange = false;
     private int portalExitScenario = 0; // Default is 0: do nothing
     private Vector3 backwardPortalPos, lastPortalPos;
     private Vector3 playerExitPosition;
@@ -24,26 +24,29 @@ public class PortalManager : MonoBehaviour {
     {
 
         stencil = GetComponent<StencilController>();// Script that handles which layer is rendered by which camera
-       
+        RenderSettings.skybox = skyboxFantasy;
     }
 
     private void OnTriggerExit(Collider portal) // Out of portal
     {
-        
-
         playerExitPosition = transform.localPosition;
 
         // Checks for portal's rotation, and the player's exit position to see if they exited on the same side as they entered from. 
-        if ((portal.transform.eulerAngles.y == zeroF && playerExitPosition.z >= portal.transform.position.z) ||
-            (portal.transform.eulerAngles.y == oneEightyF && playerExitPosition.z <= portal.transform.position.z) ||
-            (portal.transform.eulerAngles.y == ninetyF && playerExitPosition.x >= portal.transform.position.x) ||
-            (portal.transform.eulerAngles.y == twoSeventyF && playerExitPosition.x <= portal.transform.position.x)) 
+        if ((Mathf.Round(portal.transform.eulerAngles.y) == zeroF && playerExitPosition.z >= portal.transform.position.z) ||
+            (Mathf.Round(portal.transform.eulerAngles.y) == oneEightyF && playerExitPosition.z <= portal.transform.position.z) ||
+            (Mathf.Round(portal.transform.eulerAngles.y) == ninetyF && playerExitPosition.x >= portal.transform.position.x) ||
+            (Mathf.Round(portal.transform.eulerAngles.y) == twoSeventyF && playerExitPosition.x <= portal.transform.position.x)) 
         {
             Transition(portal);
         }
+        else
+        {
+            Debug.Log("Could not pass through portal, as it detected you went into and out of collider at the same place!" +
+                "\nPortals rotation: " + portal.transform.eulerAngles.y + ", PlayerExitPosition: " + playerExitPosition + " <? PortalTransform.pos.z: " + portal.transform.position.z + " || PortalTransform.pos.x: " + portal.transform.position.x);
+        }
     }
 
-    private void ThemeChange()
+    private void ThemeChangeScifi()
     {
         if (fantasy)
         {
@@ -51,27 +54,21 @@ public class PortalManager : MonoBehaviour {
             fantasy = false;
             scifi = true;
         }
-        else if (scifi)
-        {
-            RenderSettings.skybox = skyboxFantasy;
-            scifi = false;
-            fantasy = true;
-        }
-    
-            
-        
     }
 
+    private void ThemeChangeFantasy()
+    {
+        if (scifi)
+        {
+            RenderSettings.skybox = skyboxFantasy;
+            fantasy = true;
+            scifi = false;
+        }
+    }
 
     private void Transition(Collider portal)
     {
-
-        if (layout.currentRoom >= (layout.maxRooms / 2))
-        {
-            ThemeChange();
-        }
-
-
+  
         if (portal.tag == layout.exitPortalTag && layout.currentRoom < layout.layoutList.Count - 1) // Exit is the exit of the room
         {
             layout.currentRoom++;
@@ -110,6 +107,17 @@ public class PortalManager : MonoBehaviour {
         layout.NextPortalPosUpdater.UpdateActiveNextPortalPos();
         layout.PreviousPortalUpdater.UpdateActivePreviousPortalPos();
         singlePortalCollision = false;
-    } 
+
+        if (layout.currentRoom >= (layout.layoutList.Count / 2))
+        {
+            ThemeChangeScifi();
+        }
+
+        if (layout.currentRoom < (layout.layoutList.Count / 2))
+        {
+            ThemeChangeFantasy();
+        }
+
+    }
 }
 
