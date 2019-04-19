@@ -39,6 +39,7 @@ public class StencilController : MonoBehaviour
             {
                 if (r.tag != "EntryPortal" && r.tag != "ExitPortal" && r.tag != "Stencil")
                 {
+                    Debug.Log("Material name: " + r.material.name + ", capped at _");
                     string materialName = r.material.name.Substring(0, r.material.name.IndexOf('_'));
                     r.material = Resources.Load("Stencil-Materials/" + materialName + "_Next", typeof(Material)) as Material;
                 }

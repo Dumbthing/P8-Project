@@ -29,17 +29,20 @@ public class PortalManager : MonoBehaviour {
 
     private void OnTriggerExit(Collider portal) // Out of portal
     {
-        
-
         playerExitPosition = transform.localPosition;
 
         // Checks for portal's rotation, and the player's exit position to see if they exited on the same side as they entered from. 
-        if ((portal.transform.eulerAngles.y == zeroF && playerExitPosition.z >= portal.transform.position.z) ||
-            (portal.transform.eulerAngles.y == oneEightyF && playerExitPosition.z <= portal.transform.position.z) ||
-            (portal.transform.eulerAngles.y == ninetyF && playerExitPosition.x >= portal.transform.position.x) ||
-            (portal.transform.eulerAngles.y == twoSeventyF && playerExitPosition.x <= portal.transform.position.x)) 
+        if ((Mathf.Round(portal.transform.eulerAngles.y) == zeroF && playerExitPosition.z >= portal.transform.position.z) ||
+            (Mathf.Round(portal.transform.eulerAngles.y) == oneEightyF && playerExitPosition.z <= portal.transform.position.z) ||
+            (Mathf.Round(portal.transform.eulerAngles.y) == ninetyF && playerExitPosition.x >= portal.transform.position.x) ||
+            (Mathf.Round(portal.transform.eulerAngles.y) == twoSeventyF && playerExitPosition.x <= portal.transform.position.x)) 
         {
             Transition(portal);
+        }
+        else
+        {
+            Debug.Log("Could not pass through portal, as it detected you went into and out of collider at the same place!" +
+                "\nPortals rotation: " + portal.transform.eulerAngles.y + ", PlayerExitPosition: " + playerExitPosition + " <? PortalTransform.pos.z: " + portal.transform.position.z + " || PortalTransform.pos.x: " + portal.transform.position.x);
         }
     }
 
@@ -57,20 +60,15 @@ public class PortalManager : MonoBehaviour {
             scifi = false;
             fantasy = true;
         }
-    
-            
-        
     }
 
 
     private void Transition(Collider portal)
     {
-
         if (layout.currentRoom >= (layout.maxRooms / 2))
         {
             ThemeChange();
         }
-
 
         if (portal.tag == layout.exitPortalTag && layout.currentRoom < layout.layoutList.Count - 1) // Exit is the exit of the room
         {
