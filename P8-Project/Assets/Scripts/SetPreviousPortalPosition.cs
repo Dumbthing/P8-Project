@@ -6,7 +6,7 @@ public class SetPreviousPortalPosition : MonoBehaviour
 {
     GameObject[] potentialPortals;
     GameObject portal;
-    Material otherWorldMaterial;
+    Material[] otherWorldMaterial;
 
     private void Update()
     {
@@ -20,8 +20,12 @@ public class SetPreviousPortalPosition : MonoBehaviour
         if (portal != null)
         {
             Transform portalRenderer = portal.GetComponent<Transform>();
-            otherWorldMaterial = GetComponent<Renderer>().sharedMaterial;
-            otherWorldMaterial.SetMatrix("_WorldToPortal", portalRenderer.worldToLocalMatrix);
+
+            otherWorldMaterial = GetComponent<Renderer>().sharedMaterials;
+            foreach (Material m in otherWorldMaterial)
+            {
+                m.SetMatrix("_WorldToPortal", portalRenderer.worldToLocalMatrix);
+            }
         }
     }
 
