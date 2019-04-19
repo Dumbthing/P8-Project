@@ -48,8 +48,8 @@ public class ProceduralLayoutGeneration : MonoBehaviour
     private void GenerateStartRoom() // No need to rotate start room
     {
         layoutList.Add(Instantiate(startRooms[Random.Range(0, startRooms.Length - 1)], new Vector3(0f, 0f, 0f), Quaternion.identity)); // Set a start room
-        layoutList[0].layer = setNextLayer;
-        Utils.ChangeLayersRecursively(layoutList[0].transform, setNextLayer);
+        //layoutList[0].layer = setNextLayer;
+        //Utils.ChangeLayersRecursively(layoutList[0].transform, setNextLayer);
     }
 
     private void GenerateLayout()

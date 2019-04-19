@@ -55,14 +55,6 @@ public static class Utils
             if (child.tag == _tag1 || child.tag == _tag2)
             {
                 child.gameObject.SetActive(enabled);
-                //for (int j = 0; j < child.childCount; j++)
-                //{
-                //    Transform grandchild = child.GetChild(j);
-                //    if (grandchild.tag == _tag1 || grandchild.tag == _tag2)
-                //    {
-                //        grandchild.gameObject.SetActive(enabled);
-                //    }
-                //}
             }
         }
     }
