@@ -13,7 +13,7 @@ public class PortalManager : MonoBehaviour {
     /// Public, non-inspector variables
 
     /// Private variables
-    private bool singlePortalCollision = false, playerReturned = false, fantasy = true, scifi = false;
+    private bool singlePortalCollision = false, playerReturned = false, fantasy = true, scifi = false, themeChange = false;
     private int portalExitScenario = 0; // Default is 0: do nothing
     private Vector3 backwardPortalPos, lastPortalPos;
     private Vector3 playerExitPosition;
@@ -24,7 +24,7 @@ public class PortalManager : MonoBehaviour {
     {
 
         stencil = GetComponent<StencilController>();// Script that handles which layer is rendered by which camera
-       
+        RenderSettings.skybox = skyboxFantasy;
     }
 
     private void OnTriggerExit(Collider portal) // Out of portal
@@ -46,7 +46,7 @@ public class PortalManager : MonoBehaviour {
         }
     }
 
-    private void ThemeChange()
+    private void ThemeChangeScifi()
     {
         if (fantasy)
         {
@@ -54,22 +54,21 @@ public class PortalManager : MonoBehaviour {
             fantasy = false;
             scifi = true;
         }
-        else if (scifi)
+    }
+
+    private void ThemeChangeFantasy()
+    {
+        if (scifi)
         {
             RenderSettings.skybox = skyboxFantasy;
-            scifi = false;
             fantasy = true;
+            scifi = false;
         }
     }
 
-
     private void Transition(Collider portal)
     {
-        if (layout.currentRoom >= (layout.maxRooms / 2))
-        {
-            ThemeChange();
-        }
-
+  
         if (portal.tag == layout.exitPortalTag && layout.currentRoom < layout.layoutList.Count - 1) // Exit is the exit of the room
         {
             layout.currentRoom++;
@@ -108,6 +107,17 @@ public class PortalManager : MonoBehaviour {
         layout.NextPortalPosUpdater.UpdateActiveNextPortalPos();
         layout.PreviousPortalUpdater.UpdateActivePreviousPortalPos();
         singlePortalCollision = false;
-    } 
+
+        if (layout.currentRoom >= (layout.layoutList.Count / 2))
+        {
+            ThemeChangeScifi();
+        }
+
+        if (layout.currentRoom < (layout.layoutList.Count / 2))
+        {
+            ThemeChangeFantasy();
+        }
+
+    }
 }
 
