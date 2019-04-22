@@ -1,12 +1,13 @@
 ﻿Shader "Stencils/Materials/GlassStencilPrevious" {
-	Properties
-	{
-		_Color("Main Color", Color) = (1,1,1,1)
-		_MainTex("Base (RGB)", 2D) = "white" {}
+	Properties{
+		_SpecColor("Specular Color", Color) = (0.5, 0.5, 0.5, 1)
+		_Shininess("Shininess", Range(0.01, 1)) = 0.078125
+		_ReflectColor("Reflection Color", Color) = (1,1,1,0.5)
+		_Cube("Reflection Cubemap", Cube) = "black" { TexGen CubeReflect }
 	}
 		SubShader
 	{
-		Tags { "RenderType" = "Transparent" "Queue" = "Geometry+300" }
+		Tags { "RenderType" = "Transparent" "IgnoreProjector" = "True" "Queue" = "Geometry+300" }
 			Stencil
 			{
 				Ref 1
@@ -16,29 +17,27 @@
 			}
 
 		CGPROGRAM
-		#pragma surface surf Lambert noshadow
+#pragma surface surf BlinnPhong decal:add nolightmap
 
-		sampler2D _MainTex;
-		fixed4 _Color;
-		float4x4 _WorldToPortal;
+		samplerCUBE _Cube;
 
-		struct Input {
-			float2 uv_MainTex;
-			float3 worldPos;
-		};
+	fixed4 _ReflectColor;
+	half _Shininess;
 
-		void surf(Input IN, inout SurfaceOutput o) {
-			fixed4 c = tex2D(_MainTex, IN.uv_MainTex) * _Color;
-			o.Albedo = c.rgb;
-			o.Alpha = c.a;
-			if (mul(_WorldToPortal, float4(_WorldSpaceCameraPos, 1.0)).z > 0.0) {
-				if (mul(_WorldToPortal, float4(IN.worldPos, 1.0)).z > 0.21)
-					discard;
-			}
-			else if (mul(_WorldToPortal, float4(IN.worldPos, 1.0)).z < -0.21)
-				discard;
-		}
-		ENDCG
+	struct Input {
+		float3 worldRefl;
+	};
+
+	void surf(Input IN, inout SurfaceOutput o) {
+		o.Albedo = 0;
+		o.Gloss = 1;
+		o.Specular = _Shininess;
+
+		fixed4 reflcol = texCUBE(_Cube, IN.worldRefl);
+		o.Emission = reflcol.rgb * _ReflectColor.rgb;
+		o.Alpha = reflcol.a * _ReflectColor.a;
 	}
-		Fallback Off
+	ENDCG
+	}
+		FallBack "Transparent/VertexLit"
 }
