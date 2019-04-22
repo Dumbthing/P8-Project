@@ -108,12 +108,12 @@ public class PortalManager : MonoBehaviour {
         layout.PreviousPortalUpdater.UpdateActivePreviousPortalPos();
         singlePortalCollision = false;
 
-        if (layout.currentRoom >= (layout.layoutList.Count / 2))
+        if (layout.currentRoom >= (layout.layoutList.Count / 2 - 2))
         {
             ThemeChangeScifi();
         }
 
-        if (layout.currentRoom < (layout.layoutList.Count / 2))
+        if (layout.currentRoom < (layout.layoutList.Count / 2 - 2))
         {
             ThemeChangeFantasy();
         }

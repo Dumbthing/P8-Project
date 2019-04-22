@@ -47,6 +47,7 @@ public static class Utils
                 child.gameObject.SetActive(enabled);
         }
     }
+
     static public void SetActivePortal(Transform parent, bool enabled, string _tag1, string _tag2)
     {
         for (int i = 0; i < parent.childCount; i++)
@@ -82,6 +83,7 @@ public static class Utils
             }
         }
     }
+
     static public List<Transform> GetPortalTransformsInRoom(GameObject room, string _tag)
     {
         List<Transform> portalList = new List<Transform>();
@@ -212,5 +214,10 @@ public static class Utils
             child.gameObject.layer = newLayer;
             ChangeLayersRecursively(child, newLayer);
         }
+    }
+
+    static public bool VectorApproxComparison(Vector3 a, Vector3 b)
+    {
+        return Vector3.SqrMagnitude(a - b) < 0.0001;
     }
 }
