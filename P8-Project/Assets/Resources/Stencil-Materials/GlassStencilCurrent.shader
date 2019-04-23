@@ -1,13 +1,14 @@
 ﻿Shader "Stencils/Materials/GlassStencilCurrent" {
-	Properties{
-		_SpecColor("Specular Color", Color) = (0.5, 0.5, 0.5, 1)
-		_Shininess("Shininess", Range(0.01, 1)) = 0.078125
-		_ReflectColor("Reflection Color", Color) = (1,1,1,0.5)
-		_Cube("Reflection Cubemap", Cube) = "black" { TexGen CubeReflect }
+	Properties
+	{
+		_MainTex("Texture", 2D) = "white" {}
+	_Color("Color", Color) = (1, 1, 1, 1)
+		_EdgeColor("Edge Color", Color) = (1, 1, 1, 1)
+		_EdgeThickness("Silouette Dropoff Rate", float) = 1.0
 	}
 		SubShader
 	{
-		Tags{ "RenderType" = "Transparent" "IgnoreProjector" = "True" "Queue" = "Geometry+300" }
+		Tags{ "RenderType" = "Transparent" "Queue" = "Geometry+300" }
 		Stencil
 	{
 		Ref 0
@@ -15,29 +16,87 @@
 		Pass keep
 		Fail keep
 	}
+		Pass
+	{
+		ColorMask 0
+		Cull Off
+		ZWrite Off
+		Blend SrcAlpha OneMinusSrcAlpha // standard alpha blending
 
 		CGPROGRAM
-#pragma surface surf BlinnPhong decal:add nolightmap
 
-		samplerCUBE _Cube;
+#pragma vertex vert
+#pragma fragment frag
 
-	fixed4 _ReflectColor;
-	half _Shininess;
+		// Properties
+		sampler2D		_MainTex;
+	uniform float4	_Color;
+	uniform float4	_EdgeColor;
+	uniform float   _EdgeThickness;
 
-	struct Input {
-		float3 worldRefl;
+	struct vertexInput
+	{
+		float4 vertex : POSITION;
+		float3 normal : NORMAL;
+		float3 texCoord : TEXCOORD0;
 	};
 
-	void surf(Input IN, inout SurfaceOutput o) {
-		o.Albedo = 0;
-		o.Gloss = 1;
-		o.Specular = _Shininess;
+	struct vertexOutput
+	{
+		float4 pos : SV_POSITION;
+		float3 normal : NORMAL;
+		float3 texCoord : TEXCOORD0;
+		float3 viewDir : TEXCOORD1;
+	};
 
-		fixed4 reflcol = texCUBE(_Cube, IN.worldRefl);
-		o.Emission = reflcol.rgb * _ReflectColor.rgb;
-		o.Alpha = reflcol.a * _ReflectColor.a;
+	vertexOutput vert(vertexInput input)
+	{
+		vertexOutput output;
+
+		// convert input to world space
+		output.pos = UnityObjectToClipPos(input.vertex);
+		float4 normal4 = float4(input.normal, 0.0);
+		output.normal = normalize(mul(normal4, unity_WorldToObject).xyz);
+		output.viewDir = normalize(_WorldSpaceCameraPos - mul(unity_ObjectToWorld, input.vertex).xyz);
+
+		output.texCoord = input.texCoord;
+
+		return output;
 	}
-	ENDCG
+
+	float4 frag(vertexOutput input) : COLOR
+	{
+		// sample texture for color
+		float4 texColor = tex2D(_MainTex, input.texCoord.xy);
+
+		// apply silouette equation
+		// based on how close normal is to being orthogonal to view vector
+		// dot product is smaller the smaller the angle bw the vectors is
+		// close to edge = closer to 0
+		// far from edge = closer to 1
+		float edgeFactor = abs(dot(input.viewDir, input.normal));
+
+		// apply edgeFactor to Albedo color & EdgeColor
+		float oneMinusEdge = 1.0 - edgeFactor;
+		float3 rgb = (_Color.rgb * edgeFactor) + (_EdgeColor * oneMinusEdge);
+		rgb = min(float3(1, 1, 1), rgb); // clamp to real color vals
+		rgb = rgb * texColor.rgb;
+
+		// apply edgeFactor to Albedo transparency & EdgeColor transparency
+		// close to edge = more opaque EdgeColor & more transparent Albedo 
+		float opacity = min(1.0, _Color.a / edgeFactor);
+
+		// opacity^thickness means the edge color will be near 0 away from the edges
+		// and escalate quickly in opacity towards the edges
+		opacity = pow(opacity, _EdgeThickness);
+		opacity = opacity * texColor.a;
+
+		float4 output = float4(rgb, opacity);
+		return output;
 	}
-		FallBack "Transparent/VertexLit"
+
+		ENDCG
+	}
+	}
+
 }
