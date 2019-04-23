@@ -5,10 +5,25 @@ using UnityEngine;
 public class PortalManager : MonoBehaviour {
 
     /// Inspector variables
+    Shader ClearP;
+    Shader ClearN;
     StencilController stencil;
     public ProceduralLayoutGeneration layout;
     public Material skyboxFantasy;
     public Material skyboxScifi;
+
+    //Clear Depth Buffer Materials - Can be Shrunk 
+    public Material NextFan;
+    public Material NextSci;
+    public Material PrevFan;
+    public Material PrevSci;
+   
+
+    //public Cubemap skyboxFantasy;
+    //public Cubemap skyboxScifi;
+    public GameObject SkyBox;
+    public GameObject NextDB;
+    public GameObject PrevDB;
 
     /// Public, non-inspector variables
 
@@ -50,7 +65,10 @@ public class PortalManager : MonoBehaviour {
     {
         if (fantasy)
         {
-            RenderSettings.skybox = skyboxScifi;
+            SkyBox.GetComponent<Renderer>().material = skyboxScifi;
+            NextDB.GetComponent<Renderer>().material = NextSci;
+            PrevDB.GetComponent<Renderer>().material = PrevSci;
+            //RenderSettings.skybox = skyboxScifi;
             fantasy = false;
             scifi = true;
         }
@@ -60,7 +78,10 @@ public class PortalManager : MonoBehaviour {
     {
         if (scifi)
         {
-            RenderSettings.skybox = skyboxFantasy;
+            SkyBox.GetComponent<Renderer>().material = skyboxFantasy;
+            NextDB.GetComponent<Renderer>().material = NextFan;
+            PrevDB.GetComponent<Renderer>().material = PrevFan;
+            //RenderSettings.skybox = skyboxFantasy;
             fantasy = true;
             scifi = false;
         }
