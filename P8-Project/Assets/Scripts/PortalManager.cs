@@ -27,66 +27,57 @@ public class PortalManager : MonoBehaviour {
         RenderSettings.skybox = skyboxFantasy;
     }
 
+    /// <summary>
+    /// On Enter should store the position of the player, which can be used to check for correct exit
+    /// </summary>
+    /// <param name="portal"></param>
+    private void OnTriggerEnter(Collider portal)
+    {
+        if (!singlePortalCollision)
+        {
+            playerExitPosition = transform.position;
+
+            if (portal.tag == layout.exitPortalTag && layout.currentRoom < layout.layoutList.Count - 1) // Exit is the exit of the room
+            {
+                layout.currentRoom++;
+                portalExitScenario = 1;
+            }
+            else if (portal.tag == layout.entryPortalTag && layout.currentRoom > 0) // Entry is the entry of the room
+            {
+                layout.currentRoom--;
+                portalExitScenario = 2;
+            }
+            else
+                Debug.Log("Unknown portal tag encountered - No action taken.");
+
+            stencil.SetStencilShader(layout.currentRoom);
+            Utils.SetActiveChild(portal.transform, false, "Stencil");
+            Utils.SetActiveChild(portal.transform, true, "OppositeStencil");
+        }
+    }
+
     private void OnTriggerExit(Collider portal) // Out of portal
     {
-        playerExitPosition = transform.localPosition;
-
         // Checks for portal's rotation, and the player's exit position to see if they exited on the same side as they entered from. 
-        if ((Mathf.Round(portal.transform.eulerAngles.y) == zeroF && playerExitPosition.z >= portal.transform.position.z) ||
-            (Mathf.Round(portal.transform.eulerAngles.y) == oneEightyF && playerExitPosition.z <= portal.transform.position.z) ||
-            (Mathf.Round(portal.transform.eulerAngles.y) == ninetyF && playerExitPosition.x >= portal.transform.position.x) ||
-            (Mathf.Round(portal.transform.eulerAngles.y) == twoSeventyF && playerExitPosition.x <= portal.transform.position.x)) 
+        if ((Mathf.Round(portal.transform.eulerAngles.y) == zeroF && playerExitPosition.z <= portal.transform.position.z) ||
+            (Mathf.Round(portal.transform.eulerAngles.y) == oneEightyF && playerExitPosition.z >= portal.transform.position.z) ||
+            (Mathf.Round(portal.transform.eulerAngles.y) == ninetyF && playerExitPosition.x <= portal.transform.position.x) ||
+            (Mathf.Round(portal.transform.eulerAngles.y) == twoSeventyF && playerExitPosition.x >= portal.transform.position.x)) 
         {
             Transition(portal);
+            
         }
         else
         {
+            // Reverse transition if transition was carried out in OnEnter
             Debug.Log("Could not pass through portal, as it detected you went into and out of collider at the same place!" +
                 "\nPortals rotation: " + portal.transform.eulerAngles.y + ", PlayerExitPosition: " + playerExitPosition + " <? PortalTransform.pos.z: " + portal.transform.position.z + " || PortalTransform.pos.x: " + portal.transform.position.x);
         }
     }
 
-    private void ThemeChangeScifi()
-    {
-        if (fantasy)
-        {
-            RenderSettings.skybox = skyboxScifi;
-            fantasy = false;
-            scifi = true;
-        }
-    }
-
-    private void ThemeChangeFantasy()
-    {
-        if (scifi)
-        {
-            RenderSettings.skybox = skyboxFantasy;
-            fantasy = true;
-            scifi = false;
-        }
-    }
-
     private void Transition(Collider portal)
     {
-  
-        if (portal.tag == layout.exitPortalTag && layout.currentRoom < layout.layoutList.Count - 1) // Exit is the exit of the room
-        {
-            layout.currentRoom++;
-            portalExitScenario = 1;
-        }
-        else if (portal.tag == layout.entryPortalTag && layout.currentRoom > 0) // Entry is the entry of the room
-        {
-            layout.currentRoom--;
-            portalExitScenario = 2;
-        }
-        else
-            Debug.Log("Unknown portal tag encountered - No action taken.");
-
-        stencil.SetStencilShader(layout.currentRoom);
         Utils.SetActivePortal(layout.layoutList[layout.currentRoom].transform, true, layout.entryPortalTag, layout.exitPortalTag); // Enable portals in new room, in case they are disabled.=======
-      
-
-
         if (portalExitScenario == 1) // Scenario 1: Enter "next-room" portal
         {
             Utils.SetActivePortal(layout.layoutList[layout.currentRoom - 1].transform, false, layout.entryPortalTag, layout.exitPortalTag); // Since we enabled new portals, we should disable the existing ones.
@@ -117,7 +108,26 @@ public class PortalManager : MonoBehaviour {
         {
             ThemeChangeFantasy();
         }
+    }
 
+    private void ThemeChangeScifi()
+    {
+        if (fantasy)
+        {
+            RenderSettings.skybox = skyboxScifi;
+            fantasy = false;
+            scifi = true;
+        }
+    }
+
+    private void ThemeChangeFantasy()
+    {
+        if (scifi)
+        {
+            RenderSettings.skybox = skyboxFantasy;
+            fantasy = true;
+            scifi = false;
+        }
     }
 }
 
