@@ -4,6 +4,8 @@
 	{
 		Tags { "RenderType" = "Opaque" "Queue" = "Geometry+100"}
 		ColorMask 0
+		Lighting On
+		SeparateSpecular On
 		Stencil
 		{
 			Ref 2
