@@ -25,7 +25,7 @@ public class StencilController : MonoBehaviour
             //r.sharedMaterial.shader = Resources.Load("Standard", typeof(Shader)) as Shader;
             /// Setting the material for all objects in the loop.
             //r.sharedMaterial = Resources.Load("Materials/DefaultStencilCurrent", typeof(Material)) as Material;
-            if (r.tag != "EntryPortal" && r.tag != "ExitPortal" && r.tag != "Stencil")
+            if (r.tag != "EntryPortal" && r.tag != "ExitPortal" && r.tag != "Stencil" && r.tag != "OppositeStencil")
             {
                 string materialName = r.material.name.Substring(0, r.material.name.IndexOf('_'));
                 r.material = Resources.Load("Stencil-Materials/" + materialName + "_Current", typeof(Material)) as Material;
@@ -37,7 +37,7 @@ public class StencilController : MonoBehaviour
         {
             foreach (Renderer r in layout.layoutList[currentRoom + 1].GetComponentsInChildren<Renderer>())
             {
-                if (r.tag != "EntryPortal" && r.tag != "ExitPortal" && r.tag != "Stencil")
+                if (r.tag != "EntryPortal" && r.tag != "ExitPortal" && r.tag != "Stencil" && r.tag != "OppositeStencil")
                 {
                     Debug.Log("Material name: " + r.material.name + ", capped at _");
                     string materialName = r.material.name.Substring(0, r.material.name.IndexOf('_'));
@@ -51,7 +51,7 @@ public class StencilController : MonoBehaviour
         {
             foreach (Renderer r in layout.layoutList[currentRoom - 1].GetComponentsInChildren<Renderer>())
             {
-                if (r.tag != "EntryPortal" && r.tag != "ExitPortal" && r.tag != "Stencil")
+                if (r.tag != "EntryPortal" && r.tag != "ExitPortal" && r.tag != "Stencil" && r.tag != "OppositeStencil")
                 {
                     string materialName = r.material.name.Substring(0, r.material.name.IndexOf('_'));
                     r.material = Resources.Load("Stencil-Materials/" + materialName + "_Previous", typeof(Material)) as Material;

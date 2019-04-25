@@ -10,15 +10,20 @@ public class SetNextPortalPosition : MonoBehaviour
 
     private void Update()
     {
-        UpdateActiveNextPortalPos();
-    }
-
-    public void UpdateActiveNextPortalPos()
-    {
-
         potentialPortals = GameObject.FindGameObjectsWithTag("ExitPortal"); // Find all next portals
-        FindMidStencilPos();
-        
+        FindStencilPos("MidStencil"); // For forward facing stencils
+        if (portal != null)
+        {
+            Transform portalRenderer = portal.GetComponent<Transform>();
+
+            otherWorldMaterial = GetComponent<Renderer>().sharedMaterials;
+            foreach (Material m in otherWorldMaterial)
+            {
+                m.SetMatrix("_WorldToPortal", portalRenderer.worldToLocalMatrix);
+            }
+        }
+        potentialPortals = GameObject.FindGameObjectsWithTag("EntryPortal"); // Find all previous portals
+        FindStencilPos("OppositeMidStencil"); // For bacward facing stencils
         if (portal != null)
         {
             Transform portalRenderer = portal.GetComponent<Transform>();
@@ -31,21 +36,21 @@ public class SetNextPortalPosition : MonoBehaviour
         }
     }
 
-    private void FindMidStencilPos()
+    private void FindStencilPos(string stencilTag)
     {
         foreach (GameObject p in potentialPortals) // Loop through each portal to check which is active
         {
             for (int i = 0; i < p.transform.childCount; i++)
             {
                 Transform child = p.transform.GetChild(i);
-                if (child.name == "MidStencil")
+                if (child.name == stencilTag)
                 {
                     portal = child.gameObject;
                     return;
                 }
             }
             // Using tag
-            if (p.name == "MidStencil")
+            if (p.name == stencilTag)
             portal = p;
         }
     }
