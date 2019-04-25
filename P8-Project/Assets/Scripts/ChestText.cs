@@ -21,11 +21,11 @@ public class ChestText : MonoBehaviour
     void Update()
     {
         Debug.Log("Current angle = " + transform.localEulerAngles.z);
-        if (!thisCanvas.enabled && transform.localEulerAngles.z >= 40f)
+        if (!thisCanvas.enabled && transform.localEulerAngles.z >= 40f /* &&  currentRoom == 0 || currentRoom == maxRoom */)
         {
             thisCanvas.enabled = true;
         }
-        else if (thisCanvas.enabled && transform.localEulerAngles.z < 40f)
+        else if (thisCanvas.enabled && transform.localEulerAngles.z < 40f /* &&  currentRoom != 0 || currentRoom != maxRoom */)
         {
             thisCanvas.enabled = false;
         }
