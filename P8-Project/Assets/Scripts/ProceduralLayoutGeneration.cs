@@ -38,7 +38,6 @@ public class ProceduralLayoutGeneration : MonoBehaviour
         GenerateTransitionRoom();
         GenerateSciFiRooms();
         GenerateEndRoom();
-        NextPortalPosUpdater.UpdateActiveNextPortalPos();
     }
 
     private void LoadPrefabsToList()
