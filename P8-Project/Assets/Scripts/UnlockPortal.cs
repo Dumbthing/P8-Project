@@ -16,7 +16,7 @@ public class UnlockPortal : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {   
-        rend = GetComponent<Renderer>();
+        rend = GetComponentInChildren<Renderer>();
         interactGO = GetComponent<Interactable>();
 /*         portalCol = portalToUnlock.GetComponent<BoxCollider>();
         CircularDrive_ = GetComponent<CircularDrive>();
@@ -34,11 +34,11 @@ public class UnlockPortal : MonoBehaviour
     {       
         // Could use the OnTriggerExit of a portal to start this process. 
         /* if(gameObject.transform.root.gameObject.activeInHierarchy) {} */
-        if(!rend.material.shader.name.Contains("_Current") /* != "_Current" */ && gameObject.activeInHierarchy) {
+        /*if(!rend.material.shader.name.Contains("_Current")   && gameObject.activeInHierarchy) {
             interactGO.enabled = false;
-        } else if(rend.material.shader.name.Contains("_Current") /* == "_Current" */ && !gameObject.activeInHierarchy) {
+        } else if(rend.material.shader.name.Contains("_Current")  && !gameObject.activeInHierarchy) {
             interactGO.enabled = true;
-        }
+        } */
 /*         // Debug.Log("Y Rotation: " + transform.localEulerAngles.y + ", while rotation start was: " + rotationStart + ", and the threshold is: " + doorThreshold);
         if(!portalCol.enabled && (transform.localEulerAngles.y - rotationStart > doorThreshold || transform.localEulerAngles.y - rotationStart < -doorThreshold)) {
             portalCol.enabled = true;
