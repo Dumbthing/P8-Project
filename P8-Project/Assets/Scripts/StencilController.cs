@@ -15,7 +15,7 @@ public class StencilController : MonoBehaviour
         /// Set materials in next and previous rooms to be visible through stencil mask only
         GameObject[] goArray = GameObject.FindGameObjectsWithTag("Room");
         int layer = layout.layoutList[currentRoom].layer;
-        
+
         /// Current room set to stencil ref 0
         foreach (Renderer r in layout.layoutList[currentRoom].GetComponentsInChildren<Renderer>())
         {
@@ -27,7 +27,7 @@ public class StencilController : MonoBehaviour
             //r.sharedMaterial = Resources.Load("Materials/DefaultStencilCurrent", typeof(Material)) as Material;
             if (r.tag != "EntryPortal" && r.tag != "ExitPortal" && r.tag != "Stencil")
             {
-                string materialName = r.material.name.Substring(0,r.material.name.IndexOf('_'));
+                string materialName = r.material.name.Substring(0, r.material.name.IndexOf('_'));
                 r.material = Resources.Load("Stencil-Materials/" + materialName + "_Current", typeof(Material)) as Material;
             }
         }
