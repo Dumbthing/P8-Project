@@ -124,6 +124,8 @@ public static class Utils
                 {
                     Vector3 portal = child.position;
                     portal = Quaternion.Euler(0.0f, rotationParameter, 0.0f) * portal;
+                    portal = new Vector3(Mathf.Round(portal.x * 100.0f) / 100.0f, Mathf.Round(portal.y * 100.0f) / 100.0f, 
+                        Mathf.Round(portal.z * 100.0f) / 100.0f); // Avoid floating-point comparison errors when rotating parent
                     portalPositions.Add(portal);
                 }
                 else
@@ -147,6 +149,8 @@ public static class Utils
                 {
                     Vector3 portal = child.position;
                     portal = Quaternion.Euler(0.0f, rotationParameter, 0.0f) * portal;
+                    portal = new Vector3(Mathf.Round(portal.x * 100.0f) / 100.0f, portal.y,
+                        Mathf.Round(portal.z * 100.0f) / 100.0f); // Avoid floating-point comparison errors when rotating parent
                     portalPositions.Add(portal);
                 }
                 else

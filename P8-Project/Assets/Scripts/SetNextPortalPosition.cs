@@ -7,6 +7,21 @@ public class SetNextPortalPosition : MonoBehaviour
     GameObject[] potentialPortals;
     GameObject portal;
     Material[] otherWorldMaterial;
+    Material[] allMaterials;
+    List<Material> nextMaterials;
+
+    private void Start()
+    {   
+        //allMaterials = Resources.LoadAll<Material>("Stencil-Materials/");
+        //for (int i = 0; i < allMaterials.Length; i++)
+        //{
+        //    if (allMaterials[i].name.Contains("_Next"))
+        //    {
+        //        nextMaterials.Add(allMaterials[i]);
+        //    }
+        //}
+        //GetComponent<Renderer>().sharedMaterials = nextMaterials.ToArray();
+    }
 
     private void Update()
     {
