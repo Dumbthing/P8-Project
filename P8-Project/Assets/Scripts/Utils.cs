@@ -60,26 +60,15 @@ public static class Utils
         }
     }
 
-    static public void SetSiblingPortalActivity(Transform parent, bool enabled, string _tag)
+    static public void SetSiblingPortalActivity(Transform portal, bool enabled, string _tag1, string _tag2)
     {
+        Transform parent = portal.transform.parent;
         for (int i = 0; i < parent.childCount; i++)
         {
-            Transform child = parent.GetChild(i);
-            if (child.tag == _tag)
+            Transform sibling = parent.GetChild(i);
+            if (sibling.tag != portal.tag && (sibling.tag == _tag1 || sibling.tag == _tag2))
             {
-                child.gameObject.SetActive(enabled);
-            }
-        }
-    }
-
-    static public void SetSiblingPortalActivity(Transform parent, bool enabled, string _tag1, string _tag2)
-    {
-        for (int i = 0; i < parent.childCount; i++)
-        {
-            Transform child = parent.GetChild(i);
-            if (child.tag == _tag1 || child.tag == _tag2)
-            {
-                child.gameObject.SetActive(enabled);
+                sibling.gameObject.SetActive(enabled);
             }
         }
     }
@@ -124,6 +113,8 @@ public static class Utils
                 {
                     Vector3 portal = child.position;
                     portal = Quaternion.Euler(0.0f, rotationParameter, 0.0f) * portal;
+                    portal = new Vector3(Mathf.Round(portal.x * 100.0f) / 100.0f, Mathf.Round(portal.y * 100.0f) / 100.0f, 
+                        Mathf.Round(portal.z * 100.0f) / 100.0f); // Avoid floating-point comparison errors when rotating parent
                     portalPositions.Add(portal);
                 }
                 else
@@ -147,6 +138,8 @@ public static class Utils
                 {
                     Vector3 portal = child.position;
                     portal = Quaternion.Euler(0.0f, rotationParameter, 0.0f) * portal;
+                    portal = new Vector3(Mathf.Round(portal.x * 100.0f) / 100.0f, portal.y,
+                        Mathf.Round(portal.z * 100.0f) / 100.0f); // Avoid floating-point comparison errors when rotating parent
                     portalPositions.Add(portal);
                 }
                 else
