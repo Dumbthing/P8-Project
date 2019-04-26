@@ -6,9 +6,11 @@ public class ChestText : MonoBehaviour
 {
     public Canvas thisCanvas;
     GameObject player;
+    public Renderer rend;
     // Start is called before the first frame update
     void Start()
     {
+        
         if (thisCanvas.enabled)
         {
             thisCanvas.enabled = false;
@@ -20,7 +22,7 @@ public class ChestText : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Debug.Log("Current angle = " + transform.localEulerAngles.z);
+        // Debug.Log("Current angle = " + transform.localEulerAngles.z);
         if (!thisCanvas.enabled && transform.localEulerAngles.z >= 40f /* &&  currentRoom == 0 || currentRoom == maxRoom */)
         {
             thisCanvas.enabled = true;
@@ -33,6 +35,10 @@ public class ChestText : MonoBehaviour
         {
             thisCanvas.transform.LookAt(player.transform.position);
             thisCanvas.transform.Rotate(thisCanvas.transform.rotation.x, 180, thisCanvas.transform.rotation.z);
+
+            if(!rend.material.name.Contains("_Current") && thisCanvas.enabled) {
+                thisCanvas.enabled = false;
+            }
         }
 
     }
