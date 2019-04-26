@@ -68,12 +68,6 @@ public class ProceduralLayoutGeneration : MonoBehaviour
             {
                 portalsInLastRoomList[j].position = new Vector3(Mathf.Round(portalsInLastRoomList[j].position.x * 100.0f) / 100.0f, portalsInLastRoomList[j].position.y,
                     Mathf.Round(portalsInLastRoomList[j].position.z * 100.0f) / 100.0f); // Avoid floating-point comparison errors when rotating parent
-                if (portalsInLastRoomList[j].eulerAngles.y >= 360.0f)
-                {
-                    Debug.Log("Before set: " + portalsInLastRoomList[j].eulerAngles.y);
-                    //portalsInLastRoomList[j].eulerAngles.Set(portalsInLastRoomList[j].eulerAngles.x, 0.0f, portalsInLastRoomList[j].eulerAngles.z);
-                    Debug.Log("After set" + portalsInLastRoomList[j].eulerAngles.y);
-                }
             }
             for (int j = 0; j < fantasyRooms.Length; j++) // Iterate over fantasyRooms
             {
@@ -226,12 +220,6 @@ public class ProceduralLayoutGeneration : MonoBehaviour
         {
             portalsInLastRoomList[j].position = new Vector3(Mathf.Round(portalsInLastRoomList[j].position.x * 100.0f) / 100.0f, portalsInLastRoomList[j].position.y,
                 Mathf.Round(portalsInLastRoomList[j].position.z * 100.0f) / 100.0f); // Avoid floating-point comparison errors when rotating parent
-            if (portalsInLastRoomList[j].eulerAngles.y >= 360.0f)
-            {
-                Debug.Log("Before set: " + portalsInLastRoomList[j].eulerAngles.y);
-                //portalsInLastRoomList[j].eulerAngles.Set(portalsInLastRoomList[j].eulerAngles.x, 0.0f, portalsInLastRoomList[j].eulerAngles.z);
-                Debug.Log("After set" + portalsInLastRoomList[j].eulerAngles.y);
-            }
         }
         for (int i = 0; i < transitionRooms.Length; i++) // Iterate over Theme-transition rooms
         {
@@ -369,12 +357,6 @@ public class ProceduralLayoutGeneration : MonoBehaviour
                 portalsInLastRoomList[j].position = new Vector3(Mathf.Round(portalsInLastRoomList[j].position.x * 100.0f) / 100.0f, portalsInLastRoomList[j].position.y,
                     Mathf.Round(portalsInLastRoomList[j].position.z * 100.0f) / 100.0f); // Avoid floating-point comparison errors when rotating parent
                 Debug.Log("Portal in last room rotation: " + portalsInLastRoomList[j].eulerAngles.y);
-                if (portalsInLastRoomList[j].eulerAngles.y >= 360.0f)
-                {
-                    Debug.Log("Before set: " + portalsInLastRoomList[j].eulerAngles.y);
-                    //portalsInLastRoomList[j].eulerAngles.Set(portalsInLastRoomList[j].eulerAngles.x, 0.0f, portalsInLastRoomList[j].eulerAngles.z);
-                    Debug.Log("After set" + portalsInLastRoomList[j].eulerAngles.y);
-                }
             }
             for (int j = 0; j < scifiRooms.Length; j++) // Iterate over scifiRooms
             {
