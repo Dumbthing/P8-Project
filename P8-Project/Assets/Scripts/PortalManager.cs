@@ -29,7 +29,7 @@ public class PortalManager : MonoBehaviour
     /// Public, non-inspector variables
 
     /// Private variables
-    public bool singlePortalCollision = false, playerReturned = false, fantasy = true, scifi = false, themeChange = false;
+    public bool singlePortalCollision = false, fantasy = true, scifi = false, themeChange = false;
     private int portalExitScenario = 0; // Default is 0: do nothing
     private Vector3 backwardPortalPos, lastPortalPos;
     private Vector3 playerExitPosition;
@@ -48,8 +48,7 @@ public class PortalManager : MonoBehaviour
     {
         if (!singlePortalCollision)
         {
-            playerExitPosition = transform.position;
-
+            Utils.SetSiblingPortalActivity(portal.transform, false, layout.entryPortalTag, layout.exitPortalTag);
             if (portal.tag == layout.exitPortalTag && layout.currentRoom < layout.layoutList.Count - 1) // Exit is the exit of the room
             {
                 layout.currentRoom++;
@@ -79,58 +78,95 @@ public class PortalManager : MonoBehaviour
             stencil.SetStencilShader(layout.currentRoom);
             Utils.SetActiveChild(portal.transform, false, stencilTag);
             Utils.SetActiveChild(portal.transform, true, oppositeStencilTag);
-            //layout.NextPortalPosUpdater.UpdateActiveNextPortalPos();
-            //layout.PreviousPortalUpdater.UpdateActivePreviousPortalPos();
             singlePortalCollision = true;
         }
     }
 
     private void OnTriggerExit(Collider portal) // Out of portal
     {
+        playerExitPosition = transform.position;
         // Checks for portal's rotation, and the player's exit position to see if they exited on the same side as they entered from. 
-        if ((Mathf.Round(portal.transform.eulerAngles.y) == zeroF && playerExitPosition.z <= portal.transform.position.z) ||
-            (Mathf.Round(portal.transform.eulerAngles.y) == oneEightyF && playerExitPosition.z >= portal.transform.position.z) ||
-            (Mathf.Round(portal.transform.eulerAngles.y) == ninetyF && playerExitPosition.x <= portal.transform.position.x) ||
-            (Mathf.Round(portal.transform.eulerAngles.y) == twoSeventyF && playerExitPosition.x >= portal.transform.position.x))
+        if ((Mathf.Round(portal.transform.eulerAngles.y) == zeroF && playerExitPosition.z >= portal.transform.position.z) ||
+            (Mathf.Round(portal.transform.eulerAngles.y) == oneEightyF && playerExitPosition.z <= portal.transform.position.z) ||
+            (Mathf.Round(portal.transform.eulerAngles.y) == ninetyF && playerExitPosition.x >= portal.transform.position.x) ||
+            (Mathf.Round(portal.transform.eulerAngles.y) == twoSeventyF && playerExitPosition.x <= portal.transform.position.x))
         {
-            Transition(portal, true);
+            Debug.Log("Portal angles: " + Mathf.Round(portal.transform.eulerAngles.y) + ". Player exit pos x: " + playerExitPosition.x + ", portal pos x: " + portal.transform.position.x +
+               ". Player exit pos z: " + playerExitPosition.z + ", portal pos z: " + portal.transform.position.z);
             Debug.Log("Correctly passed through portal");
+            Transition(portal, true);
         }
         else
         {
-            Debug.Log("Could not pass through portal, as it detected you went into and out of collider at the same place!" +
-                "\nPortals rotation: " + Mathf.Round(portal.transform.eulerAngles.y) + ", PlayerExitPosition: " + playerExitPosition + " <? PortalTransform.pos.z: "
-                + portal.transform.position.z + " || PortalTransform.pos.x: " + portal.transform.position.x);
-            //TODO: Need to implement opposite transition   
+            Debug.Log("Portal angles: " + Mathf.Round(portal.transform.eulerAngles.y) + ". Player exit pos x: " + playerExitPosition.x + ", portal pos x: " + portal.transform.position.x +
+               ". Player exit pos z: " + playerExitPosition.z + ", portal pos z: " + portal.transform.position.z);
+            Debug.Log("Incorrectly passed through portal");
             Transition(portal, false);
         }
+        singlePortalCollision = false;
     }
 
     private void Transition(Collider portal, bool passing)
     {
+        /// Reset portal's stencils to default state
         Utils.SetActiveChild(portal.transform, true, stencilTag);
         Utils.SetActiveChild(portal.transform, false, oppositeStencilTag);
-        Utils.SetActivePortal(layout.layoutList[layout.currentRoom].transform, true, layout.entryPortalTag, layout.exitPortalTag); // Enable portals in new room, in case they are disabled.
-
-        if (portalExitScenario == 1) // Scenario 1: Enter "next-room" portal
+        Utils.SetSiblingPortalActivity(portal.transform, true, layout.entryPortalTag, layout.exitPortalTag);
+        if (passing)
         {
-            Utils.SetActivePortal(layout.layoutList[layout.currentRoom - 1].transform, false, layout.entryPortalTag, layout.exitPortalTag); // Since we enabled new portals, we should disable the existing ones.
+            Utils.SetActivePortal(layout.layoutList[layout.currentRoom].transform, true, layout.entryPortalTag, layout.exitPortalTag); // Enable portals in new room, in case they are disabled.
+
+            if (portalExitScenario == 1) // Scenario 1: Enter "next-room" portal
+            {
+                Utils.SetActivePortal(layout.layoutList[layout.currentRoom - 1].transform, false, layout.entryPortalTag, layout.exitPortalTag); // Since we enabled new portals, we should disable the existing ones.
+            }
+            else if (portalExitScenario == 2) // Scenario 2: Enter "previous-room" portal
+            {
+                Utils.SetActivePortal(layout.layoutList[layout.currentRoom + 1].transform, false, layout.entryPortalTag, layout.exitPortalTag); // Since we enabled new portals, we should disable the existing ones.
+
+            }
+
+            if (layout.currentRoom >= (layout.layoutList.Count / 2 - 2))
+            {
+                ThemeChangeScifi();
+            }
+
+            if (layout.currentRoom < (layout.layoutList.Count / 2 - 2))
+            {
+                ThemeChangeFantasy();
+            }
         }
-        else if (portalExitScenario == 2) // Scenario 2: Enter "previous-room" portal
+        else
         {
-            Utils.SetActivePortal(layout.layoutList[layout.currentRoom + 1].transform, false, layout.entryPortalTag, layout.exitPortalTag); // Since we enabled new portals, we should disable the existing ones.
+            Debug.Log("Detected false passing through portal");
+            if (portal.tag == layout.exitPortalTag && layout.currentRoom > 0) // Exit is the exit of the room
+            {
+                layout.currentRoom--;
+                portalExitScenario = 2;
+            }
+            else if (portal.tag == layout.entryPortalTag && layout.currentRoom < layout.layoutList.Count - 1) // Entry is the entry of the room
+            {
+                layout.currentRoom++;
+                portalExitScenario = 1;
+            }
+            else
+                Debug.Log("Unknown portal tag encountered - No action taken.");
 
-        }
-        singlePortalCollision = false;
-
-        if (layout.currentRoom >= (layout.layoutList.Count / 2 - 2))
-        {
-            ThemeChangeScifi();
-        }
-
-        if (layout.currentRoom < (layout.layoutList.Count / 2 - 2))
-        {
-            ThemeChangeFantasy();
+            if (portalExitScenario == 1)
+            {
+                if (layout.currentRoom < layout.layoutList.Count - 1)
+                    layout.layoutList[layout.currentRoom + 1].SetActive(true);
+                if (layout.currentRoom > 1)
+                    layout.layoutList[layout.currentRoom - 2].SetActive(false);
+            }
+            else if (portalExitScenario == 2)
+            {
+                if (layout.currentRoom > 0)
+                    layout.layoutList[layout.currentRoom - 1].SetActive(true);
+                if (layout.currentRoom < layout.layoutList.Count - 2)
+                    layout.layoutList[layout.currentRoom + 2].SetActive(false);
+            }
+            stencil.SetStencilShader(layout.currentRoom);
         }
     }
 
@@ -159,5 +195,7 @@ public class PortalManager : MonoBehaviour
             scifi = false;
         }
     }
+
+
 }
 
