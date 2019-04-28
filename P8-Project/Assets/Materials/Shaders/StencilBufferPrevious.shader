@@ -31,12 +31,16 @@
 			fixed4 c = tex2D(_MainTex, IN.uv_MainTex) * _Color;
 			o.Albedo = c.rgb;
 			o.Alpha = c.a;
-			if (mul(_WorldToPortal, float4(_WorldSpaceCameraPos, 1.0)).z > 0.0) {
+
+			// Discard geometry based on z axis proximity, but not when camera is close enough to the portal
+			if (mul(_WorldToPortal, float4(_WorldSpaceCameraPos, 1.0)).z > 0.2) {
 				if (mul(_WorldToPortal, float4(IN.worldPos, 1.0)).z > 0.21)
 					discard;
 			}
-			else if (mul(_WorldToPortal, float4(IN.worldPos, 1.0)).z < -0.21)
-				discard;
+			else if (mul(_WorldToPortal, float4(_WorldSpaceCameraPos, 1.0)).z < -0.2) {
+				if (mul(_WorldToPortal, float4(IN.worldPos, 1.0)).z < -0.21)
+					discard;
+			}
 		}
 		ENDCG
 		}
