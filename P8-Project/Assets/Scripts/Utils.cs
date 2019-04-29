@@ -17,7 +17,7 @@ public static class Utils
         }
     }
 
-    // For paired renderplanes (reversed)
+    /// For paired renderplanes (reversed)
     static public void SetActiveChild(Transform parent, bool enabled)
     {
         for (int i = 0; i < parent.childCount; i++)
@@ -27,7 +27,7 @@ public static class Utils
         }
     }
 
-    // Access other portals
+    /// Access other portals
     static public void SetActiveChild(Transform parent, bool enabled, string _tag)
     {
         for (int i = 0; i < parent.childCount; i++)

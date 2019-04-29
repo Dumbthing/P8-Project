@@ -59,8 +59,7 @@ public class PortalManager : MonoBehaviour
                 layout.currentRoom--;
                 portalExitScenario = 2;
             }
-            else
-                Debug.Log("Unknown portal tag encountered - No action taken.");
+
             if (portalExitScenario == 1)
             {
                 if (layout.currentRoom < layout.layoutList.Count - 1)
@@ -85,15 +84,15 @@ public class PortalManager : MonoBehaviour
     private void OnTriggerExit(Collider portal) // Out of portal
     {
         playerExitPosition = transform.position;
-        // Checks for portal's rotation, and the player's exit position to see if they exited on the same side as they entered from. 
+        /// Checks for portal's rotation, and the player's exit position to see if they exited on the same side as they entered from. 
         if ((Mathf.Round(portal.transform.eulerAngles.y) == zeroF && playerExitPosition.z >= portal.transform.position.z) ||
             (Mathf.Round(portal.transform.eulerAngles.y) == oneEightyF && playerExitPosition.z <= portal.transform.position.z) ||
             (Mathf.Round(portal.transform.eulerAngles.y) == ninetyF && playerExitPosition.x >= portal.transform.position.x) ||
             (Mathf.Round(portal.transform.eulerAngles.y) == twoSeventyF && playerExitPosition.x <= portal.transform.position.x))
         {
-            Debug.Log("Portal angles: " + Mathf.Round(portal.transform.eulerAngles.y) + ". Player exit pos x: " + playerExitPosition.x + ", portal pos x: " + portal.transform.position.x +
-               ". Player exit pos z: " + playerExitPosition.z + ", portal pos z: " + portal.transform.position.z);
-            Debug.Log("Correctly passed through portal");
+            //Debug.Log("Portal angles: " + Mathf.Round(portal.transform.eulerAngles.y) + ". Player exit pos x: " + playerExitPosition.x + ", portal pos x: " + portal.transform.position.x +
+            //   ". Player exit pos z: " + playerExitPosition.z + ", portal pos z: " + portal.transform.position.z);
+            //Debug.Log("Correctly passed through portal");
             Transition(portal, true);
         }
         else
@@ -149,8 +148,6 @@ public class PortalManager : MonoBehaviour
                 layout.currentRoom++;
                 portalExitScenario = 1;
             }
-            else
-                Debug.Log("Unknown portal tag encountered - No action taken.");
 
             if (portalExitScenario == 1)
             {
