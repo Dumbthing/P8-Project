@@ -4,6 +4,7 @@
 		_Color("Main Color", Color) = (1,1,1,1)
 		_MainTex("Base (RGB)", 2D) = "white" {}
 		_BumpMap("Normal Map", 2D) = "bump" {}
+		_Emission("Color", Color) = (0,0,0)
 	}
 
 	SubShader

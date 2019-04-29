@@ -1,4 +1,4 @@
-﻿Shader "Stencils/Materials/StencilBufferPrevious" {
+﻿Shader "Stencils/Materials/StencilMatNext" {
 	Properties
 	{
 		_Color("Main Color", Color) = (1,1,1,1)
@@ -11,7 +11,7 @@
 		Tags { "RenderType" = "Opaque" "Queue" = "Geometry+300" }
 		Stencil
 		{
-			Ref 1
+			Ref 2
 			Comp Equal
 			Pass keep
 			Fail keep

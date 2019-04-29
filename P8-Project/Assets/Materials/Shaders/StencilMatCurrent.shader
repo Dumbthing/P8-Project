@@ -1,4 +1,4 @@
-﻿Shader "Stencils/Materials/StencilBufferNext" {
+﻿Shader "Stencils/Materials/StencilMatCurrent" {
 	Properties
 	{
 		_Color("Main Color", Color) = (1,1,1,1)
@@ -8,10 +8,10 @@
 	
 	SubShader
 	{
-		Tags { "RenderType" = "Opaque" "Queue" = "Geometry+300" }
+		Tags { "RenderType" = "Opaque" "Queue" = "Geometry" }
 		Stencil
 		{
-			Ref 2
+			Ref 0
 			Comp Equal
 			Pass keep
 			Fail keep
@@ -25,13 +25,11 @@
 
 		sampler2D _MainTex;
 		sampler2D _BumpMap;
-		float4x4 _WorldToPortal;
 		fixed4 _Color;
 
 		struct Input {
 			float2 uv_MainTex;
 			float2 uv_BumpMap;
-			float3 worldPos;
 		};
 
 		void surf(Input IN, inout SurfaceOutput o) {
@@ -39,16 +37,6 @@
 			o.Albedo = c.rgb;
 			o.Normal = UnpackNormal(tex2D(_BumpMap, IN.uv_BumpMap));
 			o.Alpha = c.a;
-
-			// Discard geometry based on z axis proximity, but not when camera is close enough to the portal
-			if (mul(_WorldToPortal, float4(_WorldSpaceCameraPos, 1.0)).z > 0.2) {
-				if (mul(_WorldToPortal, float4(IN.worldPos, 1.0)).z > 0.21)
-					discard;
-			}
-			else if (mul(_WorldToPortal, float4(_WorldSpaceCameraPos, 1.0)).z < -0.2) {
-				if (mul(_WorldToPortal, float4(IN.worldPos, 1.0)).z < -0.21)
-					discard;
-			}
 		}
 		ENDCG
 	}

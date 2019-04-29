@@ -379,6 +379,6 @@
 			ENDCG
 		}
     }
-	FallBack "Legacy Shaders/Transparent/Diffuse"
+	Fallback Off
 	CustomEditor "MK.Glass.MKGlassFreeEditor"
 }

@@ -1,4 +1,4 @@
-﻿Shader "Custom/StencilEmitMatCurrent"
+﻿Shader "Stencils/Materials/StencilEmitMatCurrent"
 {
     Properties
     {
@@ -37,7 +37,7 @@
 		fixed4 _Color;
 		fixed3 _Emission;
 
-        void surf (Input IN, inout SurfaceOutputStandard o)
+        void surf (Input IN, inout SurfaceOutput o)
         {
             fixed4 c = tex2D (_MainTex, IN.uv_MainTex) * _Color;
             o.Albedo = c.rgb;
