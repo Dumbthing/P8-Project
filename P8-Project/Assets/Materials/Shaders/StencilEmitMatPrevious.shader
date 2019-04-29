@@ -1,17 +1,17 @@
-﻿Shader "Stencils/Materials/StencilBufferNext" {
+﻿Shader "Stencils/Materials/StencilEmitMatPrevious" {
 	Properties
 	{
 		_Color("Main Color", Color) = (1,1,1,1)
 		_MainTex("Base (RGB)", 2D) = "white" {}
 		_BumpMap("Normal Map", 2D) = "bump" {}
 	}
-	
+
 	SubShader
 	{
 		Tags { "RenderType" = "Opaque" "Queue" = "Geometry+300" }
 		Stencil
 		{
-			Ref 2
+			Ref 1
 			Comp Equal
 			Pass keep
 			Fail keep
@@ -27,6 +27,7 @@
 		sampler2D _BumpMap;
 		float4x4 _WorldToPortal;
 		fixed4 _Color;
+		fixed3 _Emission;
 
 		struct Input {
 			float2 uv_MainTex;
@@ -38,6 +39,7 @@
 			fixed4 c = tex2D(_MainTex, IN.uv_MainTex) * _Color;
 			o.Albedo = c.rgb;
 			o.Normal = UnpackNormal(tex2D(_BumpMap, IN.uv_BumpMap));
+			o.Emission = _Emission;
 			o.Alpha = c.a;
 
 			// Discard geometry based on z axis proximity, but not when camera is close enough to the portal
