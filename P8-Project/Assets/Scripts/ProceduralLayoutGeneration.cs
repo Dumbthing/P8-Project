@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class ProceduralLayoutGeneration : MonoBehaviour
 {
+
     /// Public variables, visible in the Inspector
     public string entryPortalTag = "EntryPortal";   // Public, in case it needs to be changed later
     public string exitPortalTag = "ExitPortal";
@@ -17,6 +18,7 @@ public class ProceduralLayoutGeneration : MonoBehaviour
     [HideInInspector] public static GameObject[] startRooms, endRooms, fantasyRooms, transitionRooms, scifiRooms;
     [HideInInspector] public int currentRoom = 0;
 
+    public int Seed;
     /// Private variables
     private int roomsUsed = 0;
     private int setNextLayer = 8;
@@ -51,13 +53,16 @@ public class ProceduralLayoutGeneration : MonoBehaviour
 
     private void GenerateStartRoom() // No need to rotate start room
     {
-        layoutList.Add(Instantiate(startRooms[Random.Range(0, startRooms.Length - 1)], Utils.worldSpacePoint, Quaternion.identity)); // Set a start room
+        layoutList.Add(Instantiate(startRooms[0], Utils.worldSpacePoint, Quaternion.identity)); //A good start room for our Demo;
+
+        //layoutList.Add(Instantiate(startRooms[Random.Range(0, startRooms.Length - 1)], Utils.worldSpacePoint, Quaternion.identity)); // Set a start room
         //layoutList[0].layer = setNextLayer;
         //Utils.ChangeLayersRecursively(layoutList[0].transform, setNextLayer);
     }
 
     private void GenerateFantasyRooms()
     {
+        Random.seed = Seed;
         if (maxRooms < 3) // In case inspector value is too low to include static rooms
             maxRooms = 3;
         Utils.RandomizeArray(fantasyRooms);
@@ -348,6 +353,7 @@ public class ProceduralLayoutGeneration : MonoBehaviour
 
     private void GenerateSciFiRooms()
     {
+        Random.seed = Seed;
         Utils.RandomizeArray(scifiRooms);
         for (int i = layoutList.Count; i < maxRooms-1; i++) // Iterate over layout, going from current count to maxRooms - 1 end room
         {
