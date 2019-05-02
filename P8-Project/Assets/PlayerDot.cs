@@ -15,7 +15,7 @@ public class PlayerDot : MonoBehaviour
     {
         // Set player ref depending on which player is enabled. If both are enabled it should just choose the VR player
 
-        if (vrPlayer.activeSelf == true)
+        if (vrPlayer.transform.root.gameObject.activeSelf == true)
             playerRef = vrPlayer;
         else if (keyboardPlayer.activeSelf == true)
             playerRef = keyboardPlayer;

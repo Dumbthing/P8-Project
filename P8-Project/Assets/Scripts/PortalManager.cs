@@ -125,12 +125,12 @@ public class PortalManager : MonoBehaviour
 
             }
 
-            if (layout.currentRoom >= (layout.layoutList.Count / 2 - 2))
+            if (layout.currentRoom >= (layout.layoutList.Count / 2 - 2) && fantasy)
             {
                 ThemeChangeScifi();
             }
 
-            if (layout.currentRoom < (layout.layoutList.Count / 2 - 2))
+            if (layout.currentRoom < (layout.layoutList.Count / 2 - 2) && scifi)
             {
                 ThemeChangeFantasy();
             }
@@ -169,28 +169,22 @@ public class PortalManager : MonoBehaviour
 
     private void ThemeChangeScifi()
     {
-        if (fantasy)
-        {
-            SkyBox.GetComponent<Renderer>().material = skyboxScifi;
-            NextDB.GetComponent<Renderer>().material = NextSci;
-            PrevDB.GetComponent<Renderer>().material = PrevSci;
-            //RenderSettings.skybox = skyboxScifi;
-            fantasy = false;
-            scifi = true;
-        }
+        SkyBox.GetComponent<Renderer>().material = skyboxScifi;
+        NextDB.GetComponent<Renderer>().material = NextSci;
+        PrevDB.GetComponent<Renderer>().material = PrevSci;
+        //RenderSettings.skybox = skyboxScifi;
+        fantasy = false;
+        scifi = true;
     }
 
     private void ThemeChangeFantasy()
     {
-        if (scifi)
-        {
-            SkyBox.GetComponent<Renderer>().material = skyboxFantasy;
-            NextDB.GetComponent<Renderer>().material = NextFan;
-            PrevDB.GetComponent<Renderer>().material = PrevFan;
-            //RenderSettings.skybox = skyboxFantasy;
-            fantasy = true;
-            scifi = false;
-        }
+        SkyBox.GetComponent<Renderer>().material = skyboxFantasy;
+        NextDB.GetComponent<Renderer>().material = NextFan;
+        PrevDB.GetComponent<Renderer>().material = PrevFan;
+        //RenderSettings.skybox = skyboxFantasy;
+        fantasy = true;
+        scifi = false;
     }
 
 
