@@ -35,10 +35,6 @@ public class ChestText : MonoBehaviour
         {
             thisCanvas.transform.LookAt(player.transform.position);
             thisCanvas.transform.Rotate(thisCanvas.transform.rotation.x, 180, thisCanvas.transform.rotation.z);
-
-            if(!rend.material.name.Contains("_Current") && thisCanvas.enabled) {
-                thisCanvas.enabled = false;
-            }
         }
 
     }
