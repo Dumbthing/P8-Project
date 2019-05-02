@@ -39,9 +39,7 @@ public class PortalManager : MonoBehaviour
 
     void Start()
     {
-
         stencil = GetComponent<StencilController>();// Script that handles which layer is rendered by which camera
-        RenderSettings.skybox = skyboxFantasy;
     }
 
     private void OnTriggerEnter(Collider portal)
@@ -97,9 +95,9 @@ public class PortalManager : MonoBehaviour
         }
         else
         {
-            Debug.Log("Portal angles: " + Mathf.Round(portal.transform.eulerAngles.y) + ". Player exit pos x: " + playerExitPosition.x + ", portal pos x: " + portal.transform.position.x +
-               ". Player exit pos z: " + playerExitPosition.z + ", portal pos z: " + portal.transform.position.z);
-            Debug.Log("Incorrectly passed through portal");
+            //Debug.Log("Portal angles: " + Mathf.Round(portal.transform.eulerAngles.y) + ". Player exit pos x: " + playerExitPosition.x + ", portal pos x: " + portal.transform.position.x +
+            //   ". Player exit pos z: " + playerExitPosition.z + ", portal pos z: " + portal.transform.position.z);
+            //Debug.Log("Incorrectly passed through portal");
             Transition(portal, false);
         }
         singlePortalCollision = false;
