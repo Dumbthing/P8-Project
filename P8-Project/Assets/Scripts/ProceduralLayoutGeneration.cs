@@ -362,7 +362,6 @@ public class ProceduralLayoutGeneration : MonoBehaviour
             {
                 portalsInLastRoomList[j].position = new Vector3(Mathf.Round(portalsInLastRoomList[j].position.x * 100.0f) / 100.0f, portalsInLastRoomList[j].position.y,
                     Mathf.Round(portalsInLastRoomList[j].position.z * 100.0f) / 100.0f); // Avoid floating-point comparison errors when rotating parent
-                Debug.Log("Portal in last room rotation: " + portalsInLastRoomList[j].eulerAngles.y);
             }
             for (int j = 0; j < scifiRooms.Length; j++) // Iterate over scifiRooms
             {

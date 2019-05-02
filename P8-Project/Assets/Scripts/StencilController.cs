@@ -1,10 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class StencilController : MonoBehaviour
 {
     public ProceduralLayoutGeneration layout;   // Assign gameobject with this script in the inspector
+    TextMeshProUGUI startText, endText;
     void Start()
     {
         SetStencilShader(0);
@@ -12,10 +14,6 @@ public class StencilController : MonoBehaviour
 
     public void SetStencilShader(int currentRoom)
     {
-        /// Set materials in next and previous rooms to be visible through stencil mask only
-        GameObject[] goArray = GameObject.FindGameObjectsWithTag("Room");
-        int layer = layout.layoutList[currentRoom].layer;
-
         /// Current room set to stencil ref 0
         foreach (Renderer r in layout.layoutList[currentRoom].GetComponentsInChildren<Renderer>())
         {
@@ -58,5 +56,30 @@ public class StencilController : MonoBehaviour
                 }
             }
         }
+
+        /// Same, but for text materials
+        if (currentRoom <= 1)
+        {
+            if (startText == null)
+                startText = GameObject.FindGameObjectWithTag("StartText").GetComponent<TextMeshProUGUI>();
+
+            string materialName = startText.fontMaterial.name.Substring(0, startText.fontMaterial.name.IndexOf('_'));
+            if (currentRoom == 0) // Assign current to start text
+                startText.fontMaterial = Resources.Load("Stencil-Materials/" + materialName + "_Current", typeof(Material)) as Material;
+            else if (currentRoom == 1) // Assign previous to start text
+                startText.fontMaterial = Resources.Load("Stencil-Materials/" + materialName + "_Previous", typeof(Material)) as Material;
+        }
+        if (currentRoom >= layout.maxRooms - 2)
+        {
+            if (endText == null)
+                endText = GameObject.FindGameObjectWithTag("EndText").GetComponent<TextMeshProUGUI>();
+
+            string materialName = endText.fontMaterial.name.Substring(0, endText.fontMaterial.name.IndexOf('_'));
+            if (currentRoom == layout.maxRooms - 1)
+                endText.fontMaterial = Resources.Load("Stencil-Materials/" + materialName + "_Current", typeof(Material)) as Material;
+            else if (currentRoom == layout.maxRooms - 2) // Assign next to end text
+                endText.fontMaterial = Resources.Load("Stencil-Materials/" + materialName + "_Next", typeof(Material)) as Material;
+        }
+
     }
 }
