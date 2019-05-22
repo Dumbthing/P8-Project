@@ -143,9 +143,7 @@ public static class Utils
                     portalPositions.Add(portal);
                 }
                 else
-                {
                     portalPositions.Add(child.position);
-                }
             }
         }
         return portalPositions;

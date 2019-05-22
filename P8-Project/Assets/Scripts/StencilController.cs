@@ -17,11 +17,11 @@ public class StencilController : MonoBehaviour
         /// Current room set to stencil ref 0
         foreach (Renderer r in layout.layoutList[currentRoom].GetComponentsInChildren<Renderer>())
         {
-            /// Instaniating a new material (copy of an existing)
+            /// Setting the shader of the material (copy of an existing)
             //r.material.shader = Shader.Find("Stencils/Materials/StencilBufferCurrent");
             /// Setting the shader of the current material across the project, meaning for all objects using that material (also prefabs)
             //r.sharedMaterial.shader = Resources.Load("Standard", typeof(Shader)) as Shader;
-            /// Setting the material for all objects in the loop.
+            /// Setting the material for all objects with that material.
             //r.sharedMaterial = Resources.Load("Materials/DefaultStencilCurrent", typeof(Material)) as Material;
             if (r.tag != "EntryPortal" && r.tag != "ExitPortal" && r.tag != "Stencil" && r.tag != "OppositeStencil")
             {
@@ -79,7 +79,7 @@ public class StencilController : MonoBehaviour
                 endText.fontMaterial = Resources.Load("Stencil-Materials/" + materialName + "_Current", typeof(Material)) as Material;
             else if (currentRoom == layout.maxRooms - 2) // Assign next to end text
                 endText.fontMaterial = Resources.Load("Stencil-Materials/" + materialName + "_Next", typeof(Material)) as Material;
-        }
+        }   
 
     }
 }

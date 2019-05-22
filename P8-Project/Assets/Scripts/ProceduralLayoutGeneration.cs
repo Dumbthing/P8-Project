@@ -93,24 +93,16 @@ public class ProceduralLayoutGeneration : MonoBehaviour
                     for (int l = 0; l < portalsInNewRoomList.Count; l++)
                     {
                         if (portalsInLastRoomList[k].tag != portalsInNewRoomList[l].tag)
-                        {
+                        { 
                             float newPortalRot = Mathf.Round(portalsInNewRoomList[l].eulerAngles.y * 100) / 100;
-                            float unrotatedRot = zeroF;
-                            if (Mathf.Round(portalsInNewRoomList[l].eulerAngles.y * 100) / 100 == ninetyF)
-                                unrotatedRot = ninetyF;
-                            else if (Mathf.Round(portalsInNewRoomList[l].eulerAngles.y * 100) / 100 == oneEightyF)
-                                unrotatedRot = oneEightyF;
-                            else if (Mathf.Round(portalsInNewRoomList[l].eulerAngles.y * 100) / 100 == twoSeventyF)
-                                unrotatedRot = twoSeventyF;
+                            //float newPortalRot = Mathf.Round(portalsInNewRoomList[l].eulerAngles.y * 100) / 100;
 
                             if (Utils.VectorApproxComparison(portalsInLastRoomList[k].position, portalsInNewRoomList[l].position) &&
                                 Mathf.Round(portalsInLastRoomList[k].eulerAngles.y * 100) / 100 != newPortalRot)          // Check for world position and y world rotation
-                            {
                                 containedPortals++;
-                            }
                             else if (Utils.VectorApproxComparison(portalsInLastRoomList[k].position, ninetyDegPortalsInNewRoomList[l])) // Check for world position when rotated by 90 degrees
                             {
-                                if (unrotatedRot != twoSeventyF) // unrotated rotation is 90 and rotation should therefore not be incremented by 90 when at 270
+                                if (newPortalRot != twoSeventyF) // unrotated rotation is 90 and rotation should therefore not be incremented by 90 when at 270
                                 {
                                     if (Mathf.Round(portalsInLastRoomList[k].eulerAngles.y * 100) / 100 != newPortalRot + ninetyF )
                                     {
@@ -118,7 +110,7 @@ public class ProceduralLayoutGeneration : MonoBehaviour
                                         rotationParameter = ninetyF;
                                     }
                                 }
-                                else                                    // 90 + 270 = 360 -> 0
+                                else    // 90 + 270 = 360 -> 0
                                 {
                                     if (Mathf.Round(portalsInLastRoomList[k].eulerAngles.y * 100) / 100 != zeroF) 
                                     {
@@ -129,7 +121,7 @@ public class ProceduralLayoutGeneration : MonoBehaviour
                             }
                             else if (Utils.VectorApproxComparison(portalsInLastRoomList[k].position, oneEightyDegPortalsInNewRoomList[l]))  // Check for world position when rotated by 180 degrees
                             {
-                                if (unrotatedRot != oneEightyF && unrotatedRot != twoSeventyF)
+                                if (newPortalRot != oneEightyF && newPortalRot != twoSeventyF)
                                 {
                                     if (Mathf.Round(portalsInLastRoomList[k].eulerAngles.y * 100) / 100 != newPortalRot + oneEightyF)
                                     {
@@ -137,7 +129,7 @@ public class ProceduralLayoutGeneration : MonoBehaviour
                                         rotationParameter = oneEightyF;
                                     }
                                 }
-                                else if (unrotatedRot == oneEightyF)        // 180 + 180 = 360 -> 0
+                                else if (newPortalRot == oneEightyF)        // 180 + 180 = 360 -> 0
                                 {
                                     if (Mathf.Round(portalsInLastRoomList[k].eulerAngles.y * 100) / 100 != zeroF)
                                     {
@@ -145,7 +137,7 @@ public class ProceduralLayoutGeneration : MonoBehaviour
                                         rotationParameter = oneEightyF;
                                     }
                                 }
-                                else if (unrotatedRot == twoSeventyF)       // 180 + 270 = 450 -> 90
+                                else if (newPortalRot == twoSeventyF)       // 180 + 270 = 450 -> 90
                                 {
                                     if (Mathf.Round(portalsInLastRoomList[k].eulerAngles.y * 100) / 100 != ninetyF)
                                     {
@@ -156,7 +148,7 @@ public class ProceduralLayoutGeneration : MonoBehaviour
                             }
                             else if (Utils.VectorApproxComparison(portalsInLastRoomList[k].position, twoSeventyDegPortalsInNewRoomList[l]))  // Check for world position when rotated by 270 degrees
                             {
-                                if (unrotatedRot == zeroF)
+                                if (newPortalRot == zeroF)
                                 {
                                     if (Mathf.Round(portalsInLastRoomList[k].eulerAngles.y * 100) / 100 != newPortalRot + twoSeventyF)
                                     {
@@ -164,7 +156,7 @@ public class ProceduralLayoutGeneration : MonoBehaviour
                                         rotationParameter = twoSeventyF;
                                     }
                                 }
-                                else if (unrotatedRot == ninetyF)           // 270 + 90 = 360 -> 0
+                                else if (newPortalRot == ninetyF)           // 270 + 90 = 360 -> 0
                                 {
                                     if (Mathf.Round(portalsInLastRoomList[k].eulerAngles.y * 100) / 100 != zeroF)
                                     {
@@ -172,7 +164,7 @@ public class ProceduralLayoutGeneration : MonoBehaviour
                                         rotationParameter = twoSeventyF;
                                     }
                                 }
-                                else if (unrotatedRot == oneEightyF)        // 270 + 180 = 450 -> 90
+                                else if (newPortalRot == oneEightyF)        // 270 + 180 = 450 -> 90
                                 {
                                     if (Mathf.Round(portalsInLastRoomList[k].eulerAngles.y * 100) / 100 != ninetyF)
                                     {
@@ -180,7 +172,7 @@ public class ProceduralLayoutGeneration : MonoBehaviour
                                         rotationParameter = twoSeventyF;
                                     }
                                 }
-                                else if (unrotatedRot == twoSeventyF)       // 270 + 270 = 540 -> 180
+                                else if (newPortalRot == twoSeventyF)       // 270 + 270 = 540 -> 180
                                 {
                                     if (Mathf.Round(portalsInLastRoomList[k].eulerAngles.y * 100) / 100 != oneEightyF)
                                     {
@@ -194,19 +186,12 @@ public class ProceduralLayoutGeneration : MonoBehaviour
                 }
                 if (containedPortals == 1)
                 {
-                    //setNextLayer++;
-                    //if (setNextLayer > 31)
-                    //    setNextLayer = 8;
                     layoutList.Add(Instantiate(fantasyRooms[j], Utils.worldSpacePoint, Quaternion.Euler(0.0f, rotationParameter, 0.0f)));
                     roomsUsed++;
-                    //layoutList[roomsUsed].layer = setNextLayer;
-                    //Utils.ChangeLayersRecursively(layoutList[roomsUsed].transform, setNextLayer);
                     Utils.SetActiveChild(layoutList[roomsUsed].transform, false, entryPortalTag, exitPortalTag);
                     fantasyRooms = Utils.RemoveIndices(fantasyRooms, j);
                     if (layoutList.Count > 2) // Only the first two rooms should be active on start
-                    {
                         layoutList[i].SetActive(false);
-                    }
                     break; // Breaks from the current for loop
                 }
                 if (j == fantasyRooms.Length - 1) // Last iteration
@@ -243,13 +228,6 @@ public class ProceduralLayoutGeneration : MonoBehaviour
                     if (portalsInLastRoomList[j].tag != portalsInNewRoomList[k].tag)                        // Check for tag
                     {
                         float newPortalRot = Mathf.Round(portalsInNewRoomList[k].eulerAngles.y * 100) / 100;
-                        float unrotatedRot = zeroF;
-                        if (Mathf.Round(portalsInNewRoomList[k].eulerAngles.y * 100) / 100 == ninetyF)
-                            unrotatedRot = ninetyF;
-                        else if (Mathf.Round(portalsInNewRoomList[k].eulerAngles.y * 100) / 100 == oneEightyF)
-                            unrotatedRot = oneEightyF;
-                        else if (Mathf.Round(portalsInNewRoomList[k].eulerAngles.y * 100) / 100 == twoSeventyF)
-                            unrotatedRot = twoSeventyF;
 
                         if (Utils.VectorApproxComparison(portalsInLastRoomList[j].position, portalsInNewRoomList[k].position) &&
                             Mathf.Round(portalsInLastRoomList[j].eulerAngles.y * 100) / 100 != newPortalRot)          // Check for world position and y world rotation
@@ -258,7 +236,7 @@ public class ProceduralLayoutGeneration : MonoBehaviour
                         }
                         else if (Utils.VectorApproxComparison(portalsInLastRoomList[j].position, ninetyDegPortalsInNewRoomList[k])) // Check for world position when rotated by 90 degrees
                         {
-                            if (unrotatedRot != twoSeventyF) // unrotated rotation is 90 and rotation should therefore not be incremented by 90 when at 270
+                            if (newPortalRot != twoSeventyF) // unrotated rotation is 90 and rotation should therefore not be incremented by 90 when at 270
                             {
                                 if (Mathf.Round(portalsInLastRoomList[j].eulerAngles.y * 100) / 100 != newPortalRot + ninetyF)
                                 {
@@ -277,7 +255,7 @@ public class ProceduralLayoutGeneration : MonoBehaviour
                         }
                         else if (Utils.VectorApproxComparison(portalsInLastRoomList[j].position, oneEightyDegPortalsInNewRoomList[k]))  // Check for world position when rotated by 180 degrees
                         {
-                            if (unrotatedRot != oneEightyF && unrotatedRot != twoSeventyF)
+                            if (newPortalRot != oneEightyF && newPortalRot != twoSeventyF)
                             {
                                 if (Mathf.Round(portalsInLastRoomList[j].eulerAngles.y * 100) / 100 != newPortalRot + oneEightyF)
                                 {
@@ -285,7 +263,7 @@ public class ProceduralLayoutGeneration : MonoBehaviour
                                     rotationParameter = oneEightyF;
                                 }
                             }
-                            else if (unrotatedRot == oneEightyF)        // 180 + 180 = 360 -> 0
+                            else if (newPortalRot == oneEightyF)        // 180 + 180 = 360 -> 0
                             {
                                 if (Mathf.Round(portalsInLastRoomList[j].eulerAngles.y * 100) / 100 != zeroF)
                                 {
@@ -293,7 +271,7 @@ public class ProceduralLayoutGeneration : MonoBehaviour
                                     rotationParameter = oneEightyF;
                                 }
                             }
-                            else if (unrotatedRot == twoSeventyF)       // 180 + 270 = 450 -> 90
+                            else if (newPortalRot == twoSeventyF)       // 180 + 270 = 450 -> 90
                             {
                                 if (Mathf.Round(portalsInLastRoomList[j].eulerAngles.y * 100) / 100 != ninetyF)
                                 {
@@ -304,7 +282,7 @@ public class ProceduralLayoutGeneration : MonoBehaviour
                         }
                         else if (Utils.VectorApproxComparison(portalsInLastRoomList[j].position, twoSeventyDegPortalsInNewRoomList[k]))  // Check for world position when rotated by 270 degrees
                         {
-                            if (unrotatedRot == zeroF)
+                            if (newPortalRot == zeroF)
                             {
                                 if (Mathf.Round(portalsInLastRoomList[j].eulerAngles.y * 100) / 100 != newPortalRot + twoSeventyF)
                                 {
@@ -312,7 +290,7 @@ public class ProceduralLayoutGeneration : MonoBehaviour
                                     rotationParameter = twoSeventyF;
                                 }
                             }
-                            else if (unrotatedRot == ninetyF)           // 270 + 90 = 360 -> 0
+                            else if (newPortalRot == ninetyF)           // 270 + 90 = 360 -> 0
                             {
                                 if (Mathf.Round(portalsInLastRoomList[j].eulerAngles.y * 100) / 100 != zeroF)
                                 {
@@ -320,7 +298,7 @@ public class ProceduralLayoutGeneration : MonoBehaviour
                                     rotationParameter = twoSeventyF;
                                 }
                             }
-                            else if (unrotatedRot == oneEightyF)        // 270 + 180 = 450 -> 90
+                            else if (newPortalRot == oneEightyF)        // 270 + 180 = 450 -> 90
                             {
                                 if (Mathf.Round(portalsInLastRoomList[j].eulerAngles.y * 100) / 100 != ninetyF)
                                 {
@@ -328,7 +306,7 @@ public class ProceduralLayoutGeneration : MonoBehaviour
                                     rotationParameter = twoSeventyF;
                                 }
                             }
-                            else if (unrotatedRot == twoSeventyF)       // 270 + 270 = 540 -> 180
+                            else if (newPortalRot == twoSeventyF)       // 270 + 270 = 540 -> 180
                             {
                                 if (Mathf.Round(portalsInLastRoomList[j].eulerAngles.y * 100) / 100 != oneEightyF)
                                 {
@@ -380,13 +358,6 @@ public class ProceduralLayoutGeneration : MonoBehaviour
                         if (portalsInLastRoomList[k].tag != portalsInNewRoomList[l].tag)
                         {
                             float newPortalRot = Mathf.Round(portalsInNewRoomList[l].eulerAngles.y * 100) / 100;
-                            float unrotatedRot = zeroF;
-                            if (Mathf.Round(portalsInNewRoomList[l].eulerAngles.y * 100) / 100 == ninetyF)
-                                unrotatedRot = ninetyF;
-                            else if (Mathf.Round(portalsInNewRoomList[l].eulerAngles.y * 100) / 100 == oneEightyF)
-                                unrotatedRot = oneEightyF;
-                            else if (Mathf.Round(portalsInNewRoomList[l].eulerAngles.y * 100) / 100 == twoSeventyF)
-                                unrotatedRot = twoSeventyF;
 
                             if (Utils.VectorApproxComparison(portalsInLastRoomList[k].position, portalsInNewRoomList[l].position) &&
                               Mathf.Round(portalsInLastRoomList[k].eulerAngles.y * 100) / 100 != newPortalRot)          // Check for world position and y world rotation
@@ -395,7 +366,7 @@ public class ProceduralLayoutGeneration : MonoBehaviour
                             }
                             else if (Utils.VectorApproxComparison(portalsInLastRoomList[k].position, ninetyDegPortalsInNewRoomList[l])) // Check for world position when rotated by 90 degrees
                             {
-                                if (unrotatedRot != twoSeventyF) // unrotated rotation is 90 and rotation should therefore not be incremented by 90 when at 270
+                                if (newPortalRot != twoSeventyF) // unrotated rotation is 90 and rotation should therefore not be incremented by 90 when at 270
                                 {
                                     if (Mathf.Round(portalsInLastRoomList[k].eulerAngles.y * 100) / 100 != newPortalRot + ninetyF)
                                     {
@@ -414,7 +385,7 @@ public class ProceduralLayoutGeneration : MonoBehaviour
                             }
                             else if (Utils.VectorApproxComparison(portalsInLastRoomList[k].position, oneEightyDegPortalsInNewRoomList[l]))  // Check for world position when rotated by 180 degrees
                             {
-                                if (unrotatedRot != oneEightyF && unrotatedRot != twoSeventyF)
+                                if (newPortalRot != oneEightyF && newPortalRot != twoSeventyF)
                                 {
                                     if (Mathf.Round(portalsInLastRoomList[k].eulerAngles.y * 100) / 100 != newPortalRot + oneEightyF)
                                     {
@@ -422,7 +393,7 @@ public class ProceduralLayoutGeneration : MonoBehaviour
                                         rotationParameter = oneEightyF;
                                     }
                                 }
-                                else if (unrotatedRot == oneEightyF)        // 180 + 180 = 360 -> 0
+                                else if (newPortalRot == oneEightyF)        // 180 + 180 = 360 -> 0
                                 {
                                     if (Mathf.Round(portalsInLastRoomList[k].eulerAngles.y * 100) / 100 != zeroF)
                                     {
@@ -430,7 +401,7 @@ public class ProceduralLayoutGeneration : MonoBehaviour
                                         rotationParameter = oneEightyF;
                                     }
                                 }
-                                else if (unrotatedRot == twoSeventyF)       // 180 + 270 = 450 -> 90
+                                else if (newPortalRot == twoSeventyF)       // 180 + 270 = 450 -> 90
                                 {
                                     if (Mathf.Round(portalsInLastRoomList[k].eulerAngles.y * 100) / 100 != ninetyF)
                                     {
@@ -441,7 +412,7 @@ public class ProceduralLayoutGeneration : MonoBehaviour
                             }
                             else if (Utils.VectorApproxComparison(portalsInLastRoomList[k].position, twoSeventyDegPortalsInNewRoomList[l]))  // Check for world position when rotated by 270 degrees
                             {
-                                if (unrotatedRot == zeroF)
+                                if (newPortalRot == zeroF)
                                 {
                                     if (Mathf.Round(portalsInLastRoomList[k].eulerAngles.y * 100) / 100 != newPortalRot + twoSeventyF)
                                     {
@@ -449,7 +420,7 @@ public class ProceduralLayoutGeneration : MonoBehaviour
                                         rotationParameter = twoSeventyF;
                                     }
                                 }
-                                else if (unrotatedRot == ninetyF)           // 270 + 90 = 360 -> 0
+                                else if (newPortalRot == ninetyF)           // 270 + 90 = 360 -> 0
                                 {
                                     if (Mathf.Round(portalsInLastRoomList[k].eulerAngles.y * 100) / 100 != zeroF)
                                     {
@@ -457,7 +428,7 @@ public class ProceduralLayoutGeneration : MonoBehaviour
                                         rotationParameter = twoSeventyF;
                                     }
                                 }
-                                else if (unrotatedRot == oneEightyF)        // 270 + 180 = 450 -> 90
+                                else if (newPortalRot == oneEightyF)        // 270 + 180 = 450 -> 90
                                 {
                                     if (Mathf.Round(portalsInLastRoomList[k].eulerAngles.y * 100) / 100 != ninetyF)
                                     {
@@ -465,7 +436,7 @@ public class ProceduralLayoutGeneration : MonoBehaviour
                                         rotationParameter = twoSeventyF;
                                     }
                                 }
-                                else if (unrotatedRot == twoSeventyF)       // 270 + 270 = 540 -> 180
+                                else if (newPortalRot == twoSeventyF)       // 270 + 270 = 540 -> 180
                                 {
                                     if (Mathf.Round(portalsInLastRoomList[k].eulerAngles.y * 100) / 100 != oneEightyF)
                                     {
@@ -527,13 +498,6 @@ public class ProceduralLayoutGeneration : MonoBehaviour
                     if (portalsInLastRoomList[j].tag != portalsInEndRoomList[k].tag)                        // Check for tag
                     {
                         float newPortalRot = Mathf.Round(portalsInEndRoomList[k].eulerAngles.y * 100) / 100;
-                        float unrotatedRot = zeroF;
-                        if (Mathf.Round(portalsInEndRoomList[k].eulerAngles.y * 100) / 100 == ninetyF)
-                            unrotatedRot = ninetyF;
-                        else if (Mathf.Round(portalsInEndRoomList[k].eulerAngles.y * 100) / 100 == oneEightyF)
-                            unrotatedRot = oneEightyF;
-                        else if (Mathf.Round(portalsInEndRoomList[k].eulerAngles.y * 100) / 100 == twoSeventyF)
-                            unrotatedRot = twoSeventyF;
 
                         if (Utils.VectorApproxComparison(portalsInLastRoomList[j].position, portalsInEndRoomList[k].position) &&
                             Mathf.Round(portalsInLastRoomList[j].eulerAngles.y * 100) / 100 != newPortalRot)          // Check for world position and y world rotation
@@ -542,7 +506,7 @@ public class ProceduralLayoutGeneration : MonoBehaviour
                         }
                         else if (Utils.VectorApproxComparison(portalsInLastRoomList[j].position, ninetyDegPortalsInEndRoomList[k])) // Check for world position when rotated by 90 degrees
                         {
-                            if (unrotatedRot != twoSeventyF) // unrotated rotation is 90 and rotation should therefore not be incremented by 90 when at 270
+                            if (newPortalRot != twoSeventyF) // unrotated rotation is 90 and rotation should therefore not be incremented by 90 when at 270
                             {
                                 if (Mathf.Round(portalsInLastRoomList[j].eulerAngles.y * 100) / 100 != newPortalRot + ninetyF)
                                 {
@@ -561,7 +525,7 @@ public class ProceduralLayoutGeneration : MonoBehaviour
                         }
                         else if (Utils.VectorApproxComparison(portalsInLastRoomList[j].position, oneEightyDegPortalsInEndRoomList[k]))  // Check for world position when rotated by 180 degrees
                         {
-                            if (unrotatedRot != oneEightyF && unrotatedRot != twoSeventyF)
+                            if (newPortalRot != oneEightyF && newPortalRot != twoSeventyF)
                             {
                                 if (Mathf.Round(portalsInLastRoomList[j].eulerAngles.y * 100) / 100 != newPortalRot + oneEightyF)
                                 {
@@ -569,7 +533,7 @@ public class ProceduralLayoutGeneration : MonoBehaviour
                                     rotationParameter = oneEightyF;
                                 }
                             }
-                            else if (unrotatedRot == oneEightyF)        // 180 + 180 = 360 -> 0
+                            else if (newPortalRot == oneEightyF)        // 180 + 180 = 360 -> 0
                             {
                                 if (Mathf.Round(portalsInLastRoomList[j].eulerAngles.y * 100) / 100 != zeroF)
                                 {
@@ -577,7 +541,7 @@ public class ProceduralLayoutGeneration : MonoBehaviour
                                     rotationParameter = oneEightyF;
                                 }
                             }
-                            else if (unrotatedRot == twoSeventyF)       // 180 + 270 = 450 -> 90
+                            else if (newPortalRot == twoSeventyF)       // 180 + 270 = 450 -> 90
                             {
                                 if (Mathf.Round(portalsInLastRoomList[j].eulerAngles.y * 100) / 100 != ninetyF)
                                 {
@@ -588,7 +552,7 @@ public class ProceduralLayoutGeneration : MonoBehaviour
                         }
                         else if (Utils.VectorApproxComparison(portalsInLastRoomList[j].position, twoSeventyDegPortalsInEndRoomList[k]))  // Check for world position when rotated by 270 degrees
                         {
-                            if (unrotatedRot == zeroF)
+                            if (newPortalRot == zeroF)
                             {
                                 if (Mathf.Round(portalsInLastRoomList[j].eulerAngles.y * 100) / 100 != newPortalRot + twoSeventyF)
                                 {
@@ -596,7 +560,7 @@ public class ProceduralLayoutGeneration : MonoBehaviour
                                     rotationParameter = twoSeventyF;
                                 }
                             }
-                            else if (unrotatedRot == ninetyF)           // 270 + 90 = 360 -> 0
+                            else if (newPortalRot == ninetyF)           // 270 + 90 = 360 -> 0
                             {
                                 if (Mathf.Round(portalsInLastRoomList[j].eulerAngles.y * 100) / 100 != zeroF)
                                 {
@@ -604,7 +568,7 @@ public class ProceduralLayoutGeneration : MonoBehaviour
                                     rotationParameter = twoSeventyF;
                                 }
                             }
-                            else if (unrotatedRot == oneEightyF)        // 270 + 180 = 450 -> 90
+                            else if (newPortalRot == oneEightyF)        // 270 + 180 = 450 -> 90
                             {
                                 if (Mathf.Round(portalsInLastRoomList[j].eulerAngles.y * 100) / 100 != ninetyF)
                                 {
@@ -612,7 +576,7 @@ public class ProceduralLayoutGeneration : MonoBehaviour
                                     rotationParameter = twoSeventyF;
                                 }
                             }
-                            else if (unrotatedRot == twoSeventyF)       // 270 + 270 = 540 -> 180
+                            else if (newPortalRot == twoSeventyF)       // 270 + 270 = 540 -> 180
                             {
                                 if (Mathf.Round(portalsInLastRoomList[j].eulerAngles.y * 100) / 100 != oneEightyF)
                                 {
