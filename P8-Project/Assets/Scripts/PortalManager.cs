@@ -6,22 +6,16 @@ public class PortalManager : MonoBehaviour
 {
 
     /// Inspector variables
-    Shader ClearP;
-    Shader ClearN;
     StencilController stencil;
     public ProceduralLayoutGeneration layout;
+
     public Material skyboxFantasy;
     public Material skyboxScifi;
-
-    //Clear Depth Buffer Materials - Can be Shrunk 
     public Material NextFan;
     public Material NextSci;
     public Material PrevFan;
     public Material PrevSci;
 
-
-    //public Cubemap skyboxFantasy;
-    //public Cubemap skyboxScifi;
     public GameObject SkyBox;
     public GameObject NextDB;
     public GameObject PrevDB;
@@ -31,7 +25,6 @@ public class PortalManager : MonoBehaviour
     /// Private variables
     public bool singlePortalCollision = false, fantasy = true, scifi = false, themeChange = false;
     private int portalExitScenario = 0; // Default is 0: do nothing
-    private Vector3 backwardPortalPos, lastPortalPos;
     private Vector3 playerExitPosition;
 
     private float zeroF = 0.0f, ninetyF = 90.0f, oneEightyF = 180.0f, twoSeventyF = 270.0f;
@@ -39,7 +32,7 @@ public class PortalManager : MonoBehaviour
 
     void Start()
     {
-        stencil = GetComponent<StencilController>();// Script that handles which layer is rendered by which camera
+        stencil = GetComponent<StencilController>(); // Script that handles updating the materials with the correct stencil reference values
     }
 
     private void OnTriggerEnter(Collider portal)
@@ -88,50 +81,32 @@ public class PortalManager : MonoBehaviour
             (Mathf.Round(portal.transform.eulerAngles.y) == ninetyF && playerExitPosition.x >= portal.transform.position.x) ||
             (Mathf.Round(portal.transform.eulerAngles.y) == twoSeventyF && playerExitPosition.x <= portal.transform.position.x))
         {
-            //Debug.Log("Portal angles: " + Mathf.Round(portal.transform.eulerAngles.y) + ". Player exit pos x: " + playerExitPosition.x + ", portal pos x: " + portal.transform.position.x +
-            //   ". Player exit pos z: " + playerExitPosition.z + ", portal pos z: " + portal.transform.position.z);
-            //Debug.Log("Correctly passed through portal");
             Transition(portal, true);
         }
         else
-        {
-            //Debug.Log("Portal angles: " + Mathf.Round(portal.transform.eulerAngles.y) + ". Player exit pos x: " + playerExitPosition.x + ", portal pos x: " + portal.transform.position.x +
-            //   ". Player exit pos z: " + playerExitPosition.z + ", portal pos z: " + portal.transform.position.z);
-            //Debug.Log("Incorrectly passed through portal");
             Transition(portal, false);
-        }
         singlePortalCollision = false;
     }
 
     private void Transition(Collider portal, bool passing)
     {
-        /// Reset portal's stencils to default state
+        /// Reset portal's stencil polygons to their default state
         Utils.SetActiveChild(portal.transform, true, stencilTag);
         Utils.SetActiveChild(portal.transform, false, oppositeStencilTag);
-        Utils.SetSiblingPortalActivity(portal.transform, true, layout.entryPortalTag, layout.exitPortalTag);
         if (passing)
         {
             Utils.SetActivePortal(layout.layoutList[layout.currentRoom].transform, true, layout.entryPortalTag, layout.exitPortalTag); // Enable portals in new room, in case they are disabled.
 
             if (portalExitScenario == 1) // Scenario 1: Enter "next-room" portal
-            {
-                Utils.SetActivePortal(layout.layoutList[layout.currentRoom - 1].transform, false, layout.entryPortalTag, layout.exitPortalTag); // Since we enabled new portals, we should disable the existing ones.
-            }
-            else if (portalExitScenario == 2) // Scenario 2: Enter "previous-room" portal
-            {
-                Utils.SetActivePortal(layout.layoutList[layout.currentRoom + 1].transform, false, layout.entryPortalTag, layout.exitPortalTag); // Since we enabled new portals, we should disable the existing ones.
+                Utils.SetActivePortal(layout.layoutList[layout.currentRoom - 1].transform, false, layout.entryPortalTag, layout.exitPortalTag); // Disabling portals in the previous room
 
-            }
+            else if (portalExitScenario == 2) // Scenario 2: Enter "previous-room" portal
+                Utils.SetActivePortal(layout.layoutList[layout.currentRoom + 1].transform, false, layout.entryPortalTag, layout.exitPortalTag); // Disabing portals in the next room
 
             if (layout.currentRoom >= (layout.layoutList.Count / 2 - 2) && fantasy)
-            {
                 ThemeChangeScifi();
-            }
-
             if (layout.currentRoom < (layout.layoutList.Count / 2 - 2) && scifi)
-            {
                 ThemeChangeFantasy();
-            }
         }
         else
         {

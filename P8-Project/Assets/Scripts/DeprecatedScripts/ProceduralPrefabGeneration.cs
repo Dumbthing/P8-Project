@@ -60,14 +60,12 @@ public class ProceduralPrefabGeneration : MonoBehaviour {
                 Instantiate(roomTypeThreeArray[i - 1], new Vector3(roomDistance / 2f, 0, roomDistance * i), Quaternion.identity);   // Right
                 portal3 = GameObject.FindGameObjectWithTag("Room3" + "_" + i);
 
-
                 TagCreate.AddTag("Room4" + "_" + i);
                 roomTypeFourArray[i - 1].tag = ("Room4" + "_" + i);
                 Instantiate(roomTypeFourArray[i - 1], new Vector3(roomDistance * 1.5f, 0, roomDistance * i), Quaternion.identity); // Far-right
                 portal4 = GameObject.FindGameObjectWithTag("Room4" + "_" + i);
 
-
-                // Room 1 ---  This for loop links the Entrance and Exit of the portals. 
+                /// Room 1 ---  This for loop links the Entrance and Exit of the portals. 
                 for (int j = 0; j < portal.transform.childCount; j++)
                 {
                     Transform child = portal.transform.GetChild(j);
@@ -82,8 +80,7 @@ public class ProceduralPrefabGeneration : MonoBehaviour {
                         child.GetComponent<PortalTeleporter>().destination = portalTemp2;
                     }
                 }
-
-                // Room 2 ---  This for loop links the Entrance and Exit of the portals. 
+                /// Room 2 ---  This for loop links the Entrance and Exit of the portals. 
                 for (int j = 0; j < portal2.transform.childCount; j++)
                 {
                     Transform child = portal2.transform.GetChild(j);
@@ -97,9 +94,7 @@ public class ProceduralPrefabGeneration : MonoBehaviour {
                         child.GetComponent<PortalTeleporter>().destination = portalTemp2;
                     }
                 }
-
-
-                // Room 3 ---  This for loop links the Entrance and Exit of the portals. 
+                /// Room 3 ---  This for loop links the Entrance and Exit of the portals. 
                 for (int j = 0; j < portal3.transform.childCount; j++)
                 {
                     Transform child = portal3.transform.GetChild(j);
@@ -114,9 +109,7 @@ public class ProceduralPrefabGeneration : MonoBehaviour {
                         child.GetComponent<PortalTeleporter>().destination = portalTemp2;
                     }
                 }
-
-
-                // Room 4 ---  This for loop links the Entrance and Exit of the portals. 
+                /// Room 4 ---  This for loop links the Entrance and Exit of the portals. 
                 for (int j = 0; j < portal4.transform.childCount; j++)
                 {
                     Transform child = portal4.transform.GetChild(j);
@@ -130,8 +123,7 @@ public class ProceduralPrefabGeneration : MonoBehaviour {
                         child.GetComponent<PortalTeleporter>().destination = portalTemp2;
                     }
                 }
-
-                // Start Room --- 
+                /// Start Room --- 
                 for (int j = 0; j < portalStart.transform.childCount; j++)
                 {
                     Transform child = portalStart.transform.GetChild(j);
@@ -144,8 +136,7 @@ public class ProceduralPrefabGeneration : MonoBehaviour {
                         child.GetComponent<PortalTeleporter>().destination = portalTemp2;
                     }
                 }
-
-                // End Room  ---  
+                /// End Room  ---  
                 for (int j = 0; j < portalEnd.transform.childCount; j++)
                 {
                     Transform child = portalEnd.transform.GetChild(j);
