@@ -7,8 +7,14 @@ public class StencilController : MonoBehaviour
 {
     public ProceduralLayoutGeneration layout;   // Assign gameobject with this script in the inspector
     TextMeshProUGUI startText, endText;
+    Object[] resourceMaterials;
     void Start()
     {
+        //resourceMaterials = Resources.LoadAll("Stencil-Materials/", typeof(Material));
+        //foreach (Material mat in resourceMaterials)
+        //{
+        //    new Material(mat.shader);
+        //}
         SetStencilShader(0);
     }
 

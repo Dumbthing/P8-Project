@@ -4,19 +4,19 @@ using UnityEngine;
 
 public class ProceduralLayoutGeneration : MonoBehaviour
 {
-
     /// Public variables, visible in the Inspector
-    public string entryPortalTag = "EntryPortal";   // Public, in case it needs to be changed later
+    public string entryPortalTag = "EntryPortal";
     public string exitPortalTag = "ExitPortal";
-    public int maxRooms = 99;    // CURRENTLY OBSELETE, but can be used to limit the max amount of fantasyRooms later...
+    public int maxRooms = 99;
     public SetNextPortalPosition NextPortalPosUpdater;
     public SetPreviousPortalPosition PreviousPortalUpdater;
 
     /// Public variables, hidden from the Inspector. Use keyword [HideInInspector] before every variable!
-    //[HideInInspector]
-    public List<GameObject> layoutList; // Public, since other scripts need access to it
+    [HideInInspector]
+    public List<GameObject> layoutList;
     [HideInInspector] public static GameObject[] startRooms, endRooms, fantasyRooms, transitionRooms, scifiRooms;
     [HideInInspector] public int currentRoom = 0;
+    [SerializeField] private bool _useSeed;
 
     public int Seed;
     /// Private variables
@@ -24,7 +24,6 @@ public class ProceduralLayoutGeneration : MonoBehaviour
     private int setNextLayer = 8;
     private int uniqueIterator;
     private float zeroF = 0.0f, ninetyF = 90.0f, oneEightyF = 180.0f, twoSeventyF = 270.0f;
-    private float tolerance = 0.001f;
 
     /* We use awake as it is called before start, and this must always be called exactly once.
      * Note that if we want to be able to call this function multiple times, like if we want to
@@ -59,7 +58,8 @@ public class ProceduralLayoutGeneration : MonoBehaviour
 
     private void GenerateFantasyRooms()
     {
-        Random.seed = Seed;
+        if (_useSeed)
+            Random.seed = Seed;
         if (maxRooms < 3) // In case inspector value is too low to include static rooms
             maxRooms = 3;
         Utils.RandomizeArray(fantasyRooms);
@@ -329,7 +329,8 @@ public class ProceduralLayoutGeneration : MonoBehaviour
 
     private void GenerateSciFiRooms()
     {
-        Random.seed = Seed;
+        if (_useSeed)
+            Random.seed = Seed;
         Utils.RandomizeArray(scifiRooms);
         for (int i = layoutList.Count; i < maxRooms-1; i++) // Iterate over layout, going from current count to maxRooms - 1 end room
         {
@@ -458,7 +459,7 @@ public class ProceduralLayoutGeneration : MonoBehaviour
                 }
                 if (j == scifiRooms.Length - 1) // Last iteration
                 {
-                    Debug.Log("Ran out of Sci-Fi rooms");
+                    Debug.Log("Ran out of Sci-Fi rooms when j was " + j);
                     return; // Breaks from both for loops since they are inside a method
                 }
             }

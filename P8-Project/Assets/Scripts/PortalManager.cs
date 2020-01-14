@@ -159,7 +159,5 @@ public class PortalManager : MonoBehaviour
         fantasy = true;
         scifi = false;
     }
-
-
 }
 

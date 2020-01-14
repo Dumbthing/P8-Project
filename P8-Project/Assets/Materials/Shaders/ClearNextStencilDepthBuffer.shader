@@ -19,12 +19,9 @@ Shader "Stencils/ClearNextStencilDepthBuffer"
 		ZTest Always // always pass depth test (nothing occludes this material) 
 		Cull Off // turn off backface culling
 
-		Stencil{
+	Stencil{
 		Ref 2
-		Comp Equal // only pass stencil test if stencil value equals 1
-		Fail Keep // do not change stencil value if stencil test fails
-		ZFail Keep // do not change stencil value if stencil test passes but depth test fails
-		Pass Keep // keep stencil value if stencil test passes
+		Comp Equal // only pass stencil test if stencil value equals 2
 	}
 
 		CGPROGRAM
